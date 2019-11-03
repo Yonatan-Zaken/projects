@@ -1,0 +1,8 @@
+# ignore all files except the source and header files #
+#######################################################
+*
+!/**/
+!**.c
+!**.h
+!.gitignore
+!**.md
