@@ -7,9 +7,7 @@
 /*   Reviewed by:		         */   
 /*			                   	 */
 /*			  	                 */
-/*			   	                 */
 /*********************************/
-
 
 #include <stdio.h>
 #include "funWS2.h"
@@ -17,11 +15,7 @@
 int main()
 {
 	
- 
-    char str1[] = "hellkwo";
-    
 
-    printf("%ld\n\n",StrLen(str1));
     
 	
     return 0;
