@@ -1,7 +1,21 @@
+/*********************************/
+/*   			             	 */
+/*				                 */
+/* Implement file work sheet 2   */
+/*   Yonatan Zaken		         */
+/*   Last Updated 4/11/19        */
+/*   Reviewed by:		         */   
+/*			                   	 */
+/*			  	                 */
+/*********************************/
+
 #include <stdio.h>
 #include <assert.h>
 #include <ctype.h>
-
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include "mystring.h"
 
 
 /*****************************************/
@@ -85,7 +99,7 @@ char *StrCpy(char *dest, const char *src)
     /* Check if src/dest point to '\0' in debug mode */
     assert(NULL != src && NULL != dest);
     
-    while( '\0' != *runner1)
+    while( '\0' != *runner2)
     {
         *runner1 = *runner2;
         ++runner1;     
@@ -143,7 +157,7 @@ int StrCaseCmp(const char *s1, const char *s2)
 {
     const char *runner1 = s1;
     const char *runner2 = s2;
-    int return_val = 0;
+   
     
     /* Check if src/dest point to '\0' in debug mode */
     assert(NULL != s1 && NULL != s2);    
@@ -155,17 +169,8 @@ int StrCaseCmp(const char *s1, const char *s2)
         ++runner2;
     }
     
-    if(*runner1 > *runner2)
-    {
-        return_val = 1;    
-    }
     
-    else if(*runner1 < *runner2)
-    {
-        return_val = -1;
-    } 
-    
-    return (return_val);
+    return (tolower(*runner1)-tolower(*runner2));
 }
 
 /*****************************************/
@@ -181,7 +186,7 @@ int StrCaseCmp(const char *s1, const char *s2)
 char *StrChr(const char *s, int c)
 {
     const char *runner = s; 
-    char *temp = NULL;
+    /*char *temp = NULL;*/
     
     assert(NULL != s);
    
@@ -195,7 +200,7 @@ char *StrChr(const char *s, int c)
         return NULL;        
     }
 
-    return(StrCpy(temp, runner));
+    return ((char*)runner);
 }
 
 
