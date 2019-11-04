@@ -2,17 +2,22 @@
 #include <assert.h>
 #include <ctype.h>
 
+
+
 /*****************************************/
 /*			                             */
 /*     strlen function  for WS 2         */
 /*					                     */
 /*****************************************/
 
+/* This function gets a string and returns its length*/
+
 size_t StrLen(const char *str)
 {
     const char *runner = str;	
     
-    assert(NULL != str); /* Check if str points to \0 in debug mode */
+    /* Check if str points to \0 in debug mode */
+    assert(NULL != str); 
     
     while ('\0' != *runner)	
     {
@@ -28,6 +33,9 @@ size_t StrLen(const char *str)
 /*     strcmp function  for WS 2         */
 /*					                     */
 /*****************************************/
+
+/* This function gets two strings,
+   compares them and returns a value accordingly */
 
 int StrCmp(const char *s1, const char *s2)
 {
@@ -64,6 +72,9 @@ int StrCmp(const char *s1, const char *s2)
 /*					                     */
 /*****************************************/
 
+/* This function gets 2 strings and copies the
+   source string to the destination string    */
+
 char *StrCpy(char *dest, const char *src)
 {
     char *runner1 = dest;
@@ -93,6 +104,9 @@ char *StrCpy(char *dest, const char *src)
 /*					                     */
 /*****************************************/
 
+/* This function gets 2 strings and copies n elements
+   from source to the destination string            */
+
 char *StrnCpy(char *dest, const char *src, size_t n)
 {
     char *runner1 = dest;
@@ -120,6 +134,10 @@ char *StrnCpy(char *dest, const char *src, size_t n)
 /*     strcasecmp function for WS 2      */
 /*					                     */
 /*****************************************/
+
+/* This function gets 2 strings and compares them
+   regardless of upper/lower case and returns a 
+    value accordingly                          */
 
 int StrCaseCmp(const char *s1, const char *s2)
 {
@@ -155,6 +173,10 @@ int StrCaseCmp(const char *s1, const char *s2)
 /*     strchr function for WS 2          */
 /*					                     */
 /*****************************************/
+
+/* This function gets a string and a character and
+   returns a string starting from the character. 
+   If the character doesnt exist returns NULL    */
 
 char *StrChr(const char *s, int c)
 {
