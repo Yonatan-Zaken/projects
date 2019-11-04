@@ -3,10 +3,10 @@
 
 int main()
 {
-    char *str1 = " ";
-    char *str2 = "";
+    char str1[] = "fgh";
+    char str2[] = "abcde";
 
-    printf("%d\n\n",StrCmp(str1,str2));
+    printf("%s\n\n",StrnCpy(str1, str2, 7));
     
 	
     return 0;

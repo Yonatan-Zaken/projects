@@ -62,15 +62,65 @@ int StrCmp(const char *s1, const char *s2)
 
 char *StrCpy(char *dest, const char *src)
 {
+    char temp[StrLen(src) + 1];
     const char *runner = src;
-    char temp[StrLen(src)+1] = {};
-        
+    int i = 0;
+    
     while( '\0' != *runner)
     {
-        *temp =     
+        temp[i] = *runner;
+        ++i;     
+        ++runner;    
     }    
-
+    
+    temp[i] = '\0';    
+    dest = temp;    
+    
+    return dest;
 }
+
+
+/*****************************************/
+/*			                             */
+/*     strncpy function  for WS 2        */
+/*					                     */
+/*****************************************/
+
+char *StrnCpy(char *dest, const char *src, size_t n)
+{
+    char temp[n + 1];
+    const char *runner = src;
+    int i = 0;
+    
+    while (i < n && '\0' != *runner)
+	{
+        temp[i] = *runner;
+        ++runner;
+        ++i;
+    }    
+    
+    temp[i] = '\0';    
+    dest = temp;    
+    
+    return dest;
+}
+
+/*****************************************/
+/*			                             */
+/*     strcasecmp function for WS 2      */
+/*					                     */
+/*****************************************/
+
+
+
+
+
+
+
+
+
+
+
 
 
 
