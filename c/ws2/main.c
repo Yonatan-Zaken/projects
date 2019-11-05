@@ -19,7 +19,7 @@
 int main()
 {
     
-    char str1[] = "";
+    char str1[] = "as";
     char str2[] = "abcde";
     char str3[] = "";
     char str4[] = "hello world";
@@ -47,12 +47,12 @@ int main()
     
 
     
-/*    printf("%s\n", StrDup(str5));*/
+      printf("%s\n", StrDup(str5));
 
     
-/*    printf("%s\n", StrCat(str1, str3));*/
+/*      printf("%s\n", StrCat(str1, str3));*/
     
-    printf("%s\n", StrnCat(str1, str2, 15));
+/*    printf("%s\n", StrnCat(str1, str2, 15));*/
        
     return 0;
 }
