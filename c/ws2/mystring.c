@@ -268,7 +268,7 @@ char *StrCat(char *dest, const char *src)
 
 /*****************************************/
 /*			                             */
-/*     strncat function for WS 2          */
+/*     strncat function for WS 2         */
 /*					                     */
 /*****************************************/
 
