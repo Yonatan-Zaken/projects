@@ -203,9 +203,99 @@ char *StrChr(const char *s, int c)
     return ((char*)runner);
 }
 
+/*****************************************/
+/*			                             */
+/*     strdup function for WS 2          */
+/*					                     */
+/*****************************************/
 
+/* !!Don't forget to free allocated memory!! */
+char *StrDup(const char* s)
+{
+    int str_size = StrLen(s) + 1; 
+    
+    char *temp = (char*)malloc(sizeof(char) * str_size);
+   
+       
+    
+    const char *runner = s;
+    assert(NULL != s);
+    
+ 
+    
+    assert(NULL != temp);
+    
+    if(NULL == temp) 
+    {
+        return NULL;
+    }
+    
+    strcpy(temp, runner);
+        
+    return temp;
+    
+}
 
+/*****************************************/
+/*			                             */
+/*     strcat function for WS 2          */
+/*					                     */
+/*****************************************/
 
+/* !!Dest string must have enough space for the result!! */
+char *StrCat(char *dest, const char *src)
+{
+   char *runner1 = dest;
+   const char *runner2 = src;
+   
+   while ('\0' != *runner1)
+   {
+        ++runner1;     
+   } 
+        
+   while('\0' != *runner2)
+   {
+        *runner1 = *runner2;
+        ++runner1;
+        ++runner2;     
+   }
+   
+   *runner1 = '\0';
+   
+   return dest;
+   
+}
+
+/*****************************************/
+/*			                             */
+/*     strncat function for WS 2          */
+/*					                     */
+/*****************************************/
+
+/* !!Dest string must have enough space for the result!! */
+char *StrnCat(char *dest, const char *src, size_t n)
+{
+   char *runner1 = dest;
+   const char *runner2 = src;
+   unsigned int i = 0;
+   
+   while ('\0' != *runner1)
+   {
+        ++runner1;     
+   } 
+        
+   while('\0' != *runner2 && i < n)
+   {
+        *runner1 = *runner2;
+        ++runner1;
+        ++runner2;
+        ++i;     
+   }
+   
+   *runner1 = '\0';
+   
+   return dest;
+}
 
 
 

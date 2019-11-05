@@ -19,7 +19,7 @@
 int main()
 {
     
-    char str1[] = "fgh";
+    char str1[] = "";
     char str2[] = "abcde";
     char str3[] = "";
     char str4[] = "hello world";
@@ -45,18 +45,14 @@ int main()
 /*    printf("strncpy : %s\n", strncpy(str1, str2, 2));*/
 /*    printf("strncpy : %s\n", strncpy(str1, str3, 3));*/
     
-    /* check strcasecmp */
+
     
-    printf("StrCaseCmp = %d\n", StrCaseCmp(str4,str5));
-    printf("strcasecmp = %d\n", strcasecmp(str4,str5));
+/*    printf("%s\n", StrDup(str5));*/
+
     
-    /* check strchr */
+/*    printf("%s\n", StrCat(str1, str3));*/
     
-    printf("StrChr : %s\n", StrChr(str5, 'l'));
-/*    printf("strchr : %s\n", strchr(str5, 'l'));*/
-/*    */
-    
-    
+    printf("%s\n", StrnCat(str1, str2, 15));
        
     return 0;
 }
