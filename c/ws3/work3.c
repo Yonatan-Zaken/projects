@@ -1,7 +1,7 @@
 /*********************************/
 /*   			             	 */
 /*				                 */
-/* Implement file work sheet 3   */
+/*Implementing file work sheet 3 */
 /*   Yonatan Zaken		         */
 /*   Last Updated 4/11/19        */
 /*   Reviewed by:		         */   
@@ -17,6 +17,7 @@
 #include <strings.h>
 #include "work3.h"
 
+/* This function copies the environment variables to buffer*/
 char **CopyEnv(const char **buffer)
 {
     char **copy;
@@ -45,8 +46,8 @@ char **CopyEnv(const char **buffer)
     return copy; 
 }
 
-
-void PrintEnv(const char **buffer) /* PROBLEM WITH LAST PRINT IN LOOP */
+/* This function prints the copied environment variables from the argument*/
+void PrintEnv(const char **buffer) 
 {
     const char **runner = buffer;
     int buff_size = 0;
@@ -60,6 +61,7 @@ void PrintEnv(const char **buffer) /* PROBLEM WITH LAST PRINT IN LOOP */
     } 
 }
 
+/* This function converts the environment variables to lower case */
 void StringToLower(char *string)
 {
     char *runner = string;
@@ -71,6 +73,7 @@ void StringToLower(char *string)
     }
 }
 
+/* Counts the buffer size */ 
 int BufferSize(const char **buffer)
 {
     int count = 0;
@@ -85,6 +88,7 @@ int BufferSize(const char **buffer)
     return count;
 }
 
+/* This function duplicates the string it gets as a argument */
 char *StrDup(const char* s)
 {
     int str_size = strlen(s) + 1; 
@@ -105,7 +109,7 @@ char *StrDup(const char* s)
     return temp; 
 }
 
-
+/* This function deallocates all the memory we allocated to store variables */
 void CleanEnvCopy(char **buffer)
 {
     char **runner = buffer;
@@ -119,7 +123,7 @@ void CleanEnvCopy(char **buffer)
         --buff_size;
     }    
     
-    free(runner);
+    free(buffer);
     buffer = NULL;
 }
 
