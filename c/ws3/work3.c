@@ -17,16 +17,24 @@
 #include <strings.h>
 #include "work3.h"
 
+/*****************************************/
+/*			                             */
+/*     CopyEnv function for WS 3         */
+/*					                     */
+/*****************************************/
+
 /* This function copies the environment variables to buffer*/
 char **CopyEnv(const char **buffer)
 {
-    char **copy;
-    char **header;
     const char **temp = buffer;
+    char **copy;       /* This is the pointer to the copied variables */
+    char **header;     /* This pointer's is used to rewind copy in line 52 */     
     int buff_size = 0;
-
+    
+    /* Check if buffer points to \0 in debug mode */
+    assert(NULL != temp); 
+    
     buff_size = BufferSize(buffer) - 1;
-    printf("%d\n", buff_size);
     
     copy = (char**)calloc(buff_size, sizeof(char*));
     header = copy;
@@ -46,13 +54,23 @@ char **CopyEnv(const char **buffer)
     return copy; 
 }
 
+/*****************************************/
+/*			                             */
+/*     PrintEnv function for WS 3        */
+/*					                     */
+/*****************************************/
+
 /* This function prints the copied environment variables from the argument*/
 void PrintEnv(const char **buffer) 
 {
     const char **runner = buffer;
     int buff_size = 0;
+    
+    /* Check if buffer points to \0 in debug mode */
+    assert(NULL != runner); 
+    
     buff_size = BufferSize(runner);  
-    printf("first call: %d\n", buff_size);
+    
     while (0 < buff_size)
     {
         printf("%s\n", *runner);
@@ -61,10 +79,19 @@ void PrintEnv(const char **buffer)
     } 
 }
 
+/*****************************************/
+/*			                             */
+/*    StringToLower function for WS 3    */
+/*					                     */
+/*****************************************/
+
 /* This function converts the environment variables to lower case */
 void StringToLower(char *string)
 {
     char *runner = string;
+    
+    /* Check if string points to \0 in debug mode */
+    assert(NULL != runner);
     
     while ('\0' != *runner)
     {
@@ -73,11 +100,20 @@ void StringToLower(char *string)
     }
 }
 
+/*****************************************/
+/*			                             */
+/*     BufferSize function for WS 3      */
+/*					                     */
+/*****************************************/
+
 /* Counts the buffer size */ 
 int BufferSize(const char **buffer)
 {
-    int count = 0;
     const char **runner = buffer;
+    int count = 0;
+    
+    /* Check if buffer points to \0 in debug mode */
+    assert(NULL != runner);
     
     while (NULL != *runner)
     {
@@ -88,15 +124,20 @@ int BufferSize(const char **buffer)
     return count;
 }
 
+/*****************************************/
+/*			                             */
+/*      StrDup function for WS 3         */
+/*					                     */
+/*****************************************/
+
 /* This function duplicates the string it gets as a argument */
-char *StrDup(const char* s)
+char *StrDup(const char* string)
 {
-    int str_size = strlen(s) + 1; 
-    
+    int str_size = strlen(string) + 1; 
     char *temp = (char*)malloc(sizeof(char) * str_size);
-   
-    const char *runner = s;
-    assert(NULL != s);
+    const char *runner = string;
+    
+    assert(NULL != string);
     assert(NULL != temp);
     
     if(NULL == temp) 
@@ -109,11 +150,20 @@ char *StrDup(const char* s)
     return temp; 
 }
 
+/*****************************************/
+/*			                             */
+/*    CleanEnvCopy function for WS 3     */
+/*					                     */
+/*****************************************/
+
 /* This function deallocates all the memory we allocated to store variables */
 void CleanEnvCopy(char **buffer)
 {
     char **runner = buffer;
     int buff_size = BufferSize((const char**)runner);
+    
+    /* Check if buffer points to \0 in debug mode */
+    assert(NULL != buffer);
     
     while(0 < buff_size)
     {

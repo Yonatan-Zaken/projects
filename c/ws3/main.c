@@ -22,10 +22,10 @@ int main(int argc, char *argv[],const char *envp[])
   
     const char **buffer = envp;
     char **result;
-    result = CopyEnv(buffer);
     
-    PrintEnv((const char**)result);
-    CleanEnvCopy(result);
+    result = CopyEnv(buffer);  /* result is initialized with copied variables*/
+    PrintEnv((const char**)result); /* print copied variables */
+    CleanEnvCopy(result);           /* de-allocate memory */
     
     return 0;
 }

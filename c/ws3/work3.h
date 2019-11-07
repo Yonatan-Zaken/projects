@@ -17,7 +17,7 @@ void PrintEnv(const char** );
 char **CopyEnv(const char** );
 void CleanEnvCopy(char** );
 void MyAlloc(char* );
-int BufferSize(const char **buffer);
-char *StrDup(const char *s);
+int BufferSize(const char **);
+char *StrDup(const char *);
 
 #endif 
