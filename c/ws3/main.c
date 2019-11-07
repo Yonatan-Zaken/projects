@@ -6,13 +6,15 @@
 #include <strings.h>
 #include "work3.h"
 
-int main(int argc, char *argv[], char **envp)
+int main(int argc, char *argv[],const char *envp[])
 {
+  
+    const char **buffer = envp;
+    char **result;
+    result = CopyEnv(buffer);
     
-    const char **array = (const char**) envp;
-    
-    CopyEnv(array);
-   /* PrintEnv(array);*/
+    PrintEnv((const char**)result);
+    CleanEnvCopy(result);
     
     return 0;
 }
