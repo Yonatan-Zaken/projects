@@ -13,7 +13,10 @@ int main()
     int last_alive = 0;
     
     InitializeArr(arr, 9);
-    last_alive = FindLastAlive(arr, 9, 5);
+    
+    /*To start from person j enter j-1 in the start_index*/
+    /* n = number of people */
+    last_alive = FindLastAlive(arr, 9, 5); 
     printf("Soldier %d survives.\n",last_alive);
     
     return 0;    
