@@ -10,12 +10,8 @@
 /*********************************/
 
 #include <stdio.h>
-#include <time.h>
-#include <assert.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-#include "work3.h"
+
+#include "environment.h"
 
 int main(int argc, char *argv[], char *envp[])
 {

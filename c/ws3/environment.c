@@ -15,7 +15,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include "work3.h"
+#include "environment.h"
 
 
 static void *MyMalloc(size_t n, int flag, int random_num, int iteration);
