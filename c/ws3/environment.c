@@ -4,18 +4,21 @@
 /*Implementing file work sheet 3 */
 /*   Yonatan Zaken		         */
 /*   Last Updated 4/11/19        */
-/*   Reviewed by:		         */   
+/*   Reviewed by: Ben            */   
 /*			                   	 */
 /*			  	                 */
 /*********************************/
 
 #include <stdio.h>
+#include <time.h>
 #include <assert.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 #include "work3.h"
+
+
+static void *MyMalloc(size_t n, int flag, int random_num, int iteration);
 
 /*****************************************/
 /*			                             */
@@ -24,25 +27,49 @@
 /*****************************************/
 
 /* This function copies the environment variables to buffer*/
-char **CopyEnv(const char **buffer)
+char **CopyEnv(const char **buffer, int flag)
 {
+    /* random number related variable */
+    time_t t;
+    
     const char **temp = buffer;
     char **copy;       /* This is the pointer to the copied variables */
-    char **header;     /* This pointer's is used to rewind copy in line 52 */     
+    char **header;     /* This pointer is used to rewind copy in line 52 */     
     int buff_size = 0;
+    int string_size = 0;
+    int random_num = 0;
     
     /* Check if buffer points to \0 in debug mode */
     assert(NULL != temp); 
     
-    buff_size = BufferSize(buffer) - 1;
+    buff_size = BufferSize(temp) - 1;
     
-    copy = (char**)calloc(buff_size, sizeof(char*));
+    /* Lines 48 + 49 generate random number for MyMalloc use */
+    srand((unsigned) time(&t));
+    random_num = rand() % buff_size + 1;
+    
+    /* Allocate memory for pointer to pointer */
+    copy = (char**)malloc(buff_size * sizeof(char*));
     header = copy;
     
     while(0 < buff_size)
     {
-        *copy = StrDup(*temp);
-        StringToLower(*copy);
+        string_size = strlen(*temp) + 1;
+        
+        /* Allocate memory before copying strings */
+        *copy = (char*)MyMalloc(string_size, flag, random_num, buff_size); 
+        
+        if (NULL == *copy)
+        {
+            printf("Can't allocat memory.");
+            copy = header;
+            CleanEnvCopy(copy);
+            return NULL;
+        }
+        
+        strcpy(*copy, (char*)*temp);   /* <-- Copy strings from buffer */
+        StringToLower(*copy);         /* <-- Convert strings to lowercase */
+       
         ++temp;
         ++copy;
         --buff_size;
@@ -176,6 +203,43 @@ void CleanEnvCopy(char **buffer)
     free(buffer);
     buffer = NULL;
 }
+
+/*****************************************/
+/*			                             */
+/*    MyMalloc function for WS 3         */
+/*					                     */
+/*****************************************/
+
+/* Wrapper function */
+
+static void *MyMalloc(size_t n, int flag, int random_num, int iteration)
+{
+    void *ptr;
+    
+    if(0 != flag && iteration == random_num)
+    { 
+       ptr = NULL;
+       return ptr;
+    }
+    
+    else
+    {
+        ptr = malloc(n);
+    }
+    
+    return ptr;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
