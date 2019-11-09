@@ -9,16 +9,18 @@ int CountAlive(int arr[], int n);
 
 int main()
 {
-    int arr[7] = {0};
+    int arr[9] = {0};
     int last_alive = 0;
     
-    InitializeArr(arr, 7);
-    last_alive = FindLastAlive(arr, 7, 1);
+    InitializeArr(arr, 9);
+    last_alive = FindLastAlive(arr, 9, 5);
     printf("Soldier %d survives.\n",last_alive);
     
     return 0;    
 }
 
+/* This function gets number of people and starting index. */
+/* It returns the index of the last man standing. */
 
 int FindLastAlive(int arr[], int n, int start_index)
 {
@@ -74,6 +76,8 @@ int FindLastAlive(int arr[], int n, int start_index)
     return i;    
 }
 
+/* This function initializes array elements to 1 */
+
 void InitializeArr(int arr[], int n)
 {
     int i = 0;
@@ -83,6 +87,8 @@ void InitializeArr(int arr[], int n)
         arr[i] = 1;
     }
 }
+
+/* This function returns 1 only if 1 is alive */ 
 
 int CountAlive(int arr[], int n)
 {
