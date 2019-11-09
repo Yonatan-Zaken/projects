@@ -28,14 +28,14 @@ int FindLastAlive(int arr[], int n, int start_index)
     
     while(1)                   /* If more than 1 is left */
     {
-        if((n - 1) == i)
+        if((n - 1) == i)        /* Move to next alive */
         {
             i = 0;
         }
         
         else ++i;
         
-        while(0 == arr[i])        /* If current is dead */
+        while(0 == arr[i])        /* If current is dead keep moving */
         {
              if((n - 1) == i)
              {
@@ -46,7 +46,7 @@ int FindLastAlive(int arr[], int n, int start_index)
         }
         
         
-        arr[i] = 0;
+        arr[i] = 0;              /* Kill current */
         
         if((n - 1) == i)         /* Move to next alive */
         {
@@ -55,7 +55,7 @@ int FindLastAlive(int arr[], int n, int start_index)
         
         else ++i;                      
         
-        while(0 == arr[i])        /* If current is dead */
+        while(0 == arr[i])        /* If current is dead keep moving */
         {
              if((n - 1) == i)
              {
