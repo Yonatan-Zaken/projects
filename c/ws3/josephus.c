@@ -9,27 +9,18 @@ int CountAlive(int arr[], int n);
 
 int main()
 {
-<<<<<<< HEAD
-    int arr[12] = {0};
+
+    int arr[40] = {0};
     int last_alive = 0;
-    
-    InitializeArr(arr, 12);
-    
+
+    InitializeArr(arr, 40);
+
     /*To start from person j enter j-1 in the start_index*/
     /* n = number of people */
-    last_alive = FindLastAlive(arr, 12, 2); 
-=======
-    int arr[9] = {0};
-    int last_alive = 0;
-    
-    InitializeArr(arr, 9);
-    
-    /*To start from person j enter j-1 in the start_index*/
-    /* n = number of people */
-    last_alive = FindLastAlive(arr, 9, 5); 
->>>>>>> a0f251f873dc54b2aadf19db4cba285f854d165e
-    printf("Soldier %d survives.\n",last_alive);
-    
+    last_alive = FindLastAlive(arr, 40, 0); 
+
+    printf("Soldier %d survives.\n",last_alive + 1);
+
     return 0;    
 }
 
@@ -39,20 +30,17 @@ int main()
 int FindLastAlive(int arr[], int n, int start_index)
 {
     int i = start_index;
-    
+
     while(1)                   /* If more than 1 is left */
     {
-<<<<<<< HEAD
-       
-=======
->>>>>>> a0f251f873dc54b2aadf19db4cba285f854d165e
+
         if((n - 1) == i)        /* Move to next alive */
         {
             i = 0;
         }
-        
+
         else ++i;
-        
+
         while(0 == arr[i])        /* If current is dead keep moving */
         {
              if((n - 1) == i)
@@ -62,33 +50,33 @@ int FindLastAlive(int arr[], int n, int start_index)
                 
              else ++i;        
         }
-        
-        
+
+
         arr[i] = 0;              /* Kill current */
-        
+
         if((n - 1) == i)         /* Move to next alive */
         {
             i = 0;
         }
-        
+
         else ++i;                      
-        
+
         while(0 == arr[i])        /* If current is dead keep moving */
         {
              if((n - 1) == i)
              {
                 i = 0;
              }
-                
+
              else ++i;        
         }
-        
+
         if(1 == CountAlive(arr, n))
         {
             return i;
             break;
         }
-        
+
     }
     
     return i;    
@@ -99,7 +87,7 @@ int FindLastAlive(int arr[], int n, int start_index)
 void InitializeArr(int arr[], int n)
 {
     int i = 0;
-    
+
     for(; i < n ; ++i)
     {
         arr[i] = 1;
@@ -113,7 +101,7 @@ int CountAlive(int arr[], int n)
     int i = 0;
     int count = 0;
     int is_one_left = 0;
-    
+
     for(i = 0; i < n; i++)
     {
         if(1 == arr[i])
@@ -121,27 +109,14 @@ int CountAlive(int arr[], int n)
             ++count;
         }     
     }
-    
+
     if(1 == count)
     {
         is_one_left = 1;
     }
-    
+
     return is_one_left;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
