@@ -17,7 +17,6 @@
 #include <string.h>
 #include "environment.h"
 
-
 static void *MyMalloc(size_t n, int flag, int random_num, int iteration);
 
 /*****************************************/
@@ -53,7 +52,7 @@ char **CopyEnv(const char **buffer, int flag)
     
     if (NULL == copy)
     {
-        printf("Unable to allocate memory.\n");    
+        
         return NULL;
     }
     
@@ -113,26 +112,6 @@ void PrintEnv(const char **buffer)
     } 
 }
 
-/*****************************************/
-/*			                             */
-/*    StringToLower function for WS 3    */
-/*					                     */
-/*****************************************/
-
-/* This function converts the environment variables to lower case */
-void StringToLower(char *string)
-{
-    char *runner = string;
-    
-    /* Check if string points to \0 in debug mode */
-    assert(NULL != runner);
-    
-    while ('\0' != *runner)
-    {
-        *runner = tolower(*runner);
-        ++runner;
-    }
-}
 
 /*****************************************/
 /*			                             */

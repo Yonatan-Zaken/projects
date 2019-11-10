@@ -14,7 +14,6 @@
 
 char **CopyEnv(const char**, int);
 void PrintEnv(const char** );
-void StringToLower(char* );
 int BufferSize(const char ** );
 char *StrDup(const char * );
 void CleanEnvCopy(char** );
