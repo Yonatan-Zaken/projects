@@ -139,32 +139,6 @@ int BufferSize(const char **buffer)
 
 /*****************************************/
 /*			                             */
-/*      StrDup function for WS 3         */
-/*					                     */
-/*****************************************/
-
-/* This function duplicates the string it gets as a argument */
-char *StrDup(const char* string)
-{
-    int str_size = strlen(string) + 1; 
-    char *temp = (char*)malloc(sizeof(char) * str_size);
-    const char *runner = string;
-    
-    assert(NULL != string);
-    assert(NULL != temp);
-    
-    if(NULL == temp) 
-    {
-        return NULL;
-    }
-    
-    strcpy(temp, runner);
-        
-    return temp; 
-}
-
-/*****************************************/
-/*			                             */
 /*    CleanEnvCopy function for WS 3     */
 /*					                     */
 /*****************************************/
