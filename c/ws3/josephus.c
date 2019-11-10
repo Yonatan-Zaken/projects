@@ -9,6 +9,7 @@ int CountAlive(int arr[], int n);
 
 int main()
 {
+<<<<<<< HEAD
     int arr[12] = {0};
     int last_alive = 0;
     
@@ -17,6 +18,16 @@ int main()
     /*To start from person j enter j-1 in the start_index*/
     /* n = number of people */
     last_alive = FindLastAlive(arr, 12, 2); 
+=======
+    int arr[9] = {0};
+    int last_alive = 0;
+    
+    InitializeArr(arr, 9);
+    
+    /*To start from person j enter j-1 in the start_index*/
+    /* n = number of people */
+    last_alive = FindLastAlive(arr, 9, 5); 
+>>>>>>> a0f251f873dc54b2aadf19db4cba285f854d165e
     printf("Soldier %d survives.\n",last_alive);
     
     return 0;    
@@ -31,7 +42,10 @@ int FindLastAlive(int arr[], int n, int start_index)
     
     while(1)                   /* If more than 1 is left */
     {
+<<<<<<< HEAD
        
+=======
+>>>>>>> a0f251f873dc54b2aadf19db4cba285f854d165e
         if((n - 1) == i)        /* Move to next alive */
         {
             i = 0;
