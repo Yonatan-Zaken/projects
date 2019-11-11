@@ -39,7 +39,7 @@ void IfElse(void)
 
     system("stty -icanon -echo");
     
-    while(27 != c)
+    while(1 != c)
     {
         printf("\nPress A or T to print\nOr press esc to exit program:\n\n");
         c = getchar();
@@ -78,7 +78,7 @@ void SwitchCase(void)
     
     system("stty -icanon -echo");
     
-    while(27 != c)
+    while(1 != c)
     {
         printf("\nPress A or T to print\nOr press esc to exit program:\n\n");
         c = getchar();
@@ -94,6 +94,7 @@ void SwitchCase(void)
                 break;
             
             case 27:
+                c = 1;
                 printf("Exiting Program\n");
                 break;
             
