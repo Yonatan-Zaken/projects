@@ -12,31 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-
-/* Function declerations */
-
-void LutInit(int (*lut_ptr[])(char), int n);
-void LutPrint(int (*lut_ptr[])(char));
-int PrintA(char c);
-int PrintT(char c);
-int ExitProg(char c);
-int EmptyFunc(char c);
-
-
-int main()
-{
-    int (*lut_ptr[256])(char);
-    
-    system("stty -icanon -echo");   
-    
-    LutInit(lut_ptr, 256);
-    LutPrint(lut_ptr);      
-    
-    system("stty icanon echo");
-    
-    return 0;    
-}
-
+#include "ws4head.h"
 
 /* This function sets all function pointers to empty function */
 
@@ -44,10 +20,16 @@ void LutInit(int (*lut_ptr[])(char), int n)
 {
     int i = 0;
     
-    for(i = 0; i < n; i++)
+    for(i = 0; i < 256; i++)
     {
         lut_ptr[i] = &EmptyFunc;
     }
+    
+    lut_ptr[27] = &ExitProg;
+    lut_ptr[65] = &PrintA;
+    lut_ptr[84] = &PrintT;
+    
+    LutPrint(lut_ptr);
 }
 
 
@@ -56,20 +38,21 @@ void LutInit(int (*lut_ptr[])(char), int n)
 /* from keyboard */
 
 void LutPrint(int (*lut_ptr[])(char))
-{   
+{
+    int return_value = 0;   
     char c = 0;
-    int return_value = 0;
     
-    lut_ptr[27] = &ExitProg;
-    lut_ptr[65] = &PrintA;
-    lut_ptr[84] = &PrintT;
+    system("stty -icanon -echo");
     
-    while (27 != return_value)
+    while (1 != return_value)
     {
         printf("\nPress A or T to print\nOr press esc to exit program:\n");    
         c = getchar();
         return_value = (*lut_ptr[c]) (c);
     }
+    
+    system("stty icanon echo");
+    
 }
 
 /* This function prints A if A is pressed */
@@ -92,7 +75,7 @@ int PrintT(char c)
 
 int ExitProg(char c)
 {
-    return 27;
+    return 1;
 }
 
 /* This is and empty function */
