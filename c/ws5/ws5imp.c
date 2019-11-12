@@ -25,7 +25,7 @@ void  InitFunc()
     {
         char *name;
         int (*compare_ptr)(const char *, const char *);
-        enum OP_STATUS (*op_ptr)(const char *);
+        enum OP_STATUS (*op_ptr)(const char *, FILE *);
     };
     
     struct lut lut_arr[5];
