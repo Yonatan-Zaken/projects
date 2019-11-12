@@ -19,13 +19,13 @@ enum OP_STATUS {SUCCESS, FAIL, EXIT};
 /* This function initializes the struct */
 /* and the array of this structure type */
 
-int InitFunc()
+void  InitFunc()
 {
     struct lut
     {
         char *name;
         int (*compare_ptr)(const char *, const char *);
-        enum OP_STATUS (*op_ptr)(const char *, FILE *);
+        enum OP_STATUS (*op_ptr)(const char *);
     };
     
     struct lut lut_arr[5];
@@ -56,9 +56,21 @@ int InitFunc()
 void IterationFunc(const char *file_name)
 {
     
-    char 
+    char input[100]; 
+    int return_val = 0;
+    int i = 0;
     
-
+    
+    while (EXIT != return_val)
+    {
+        gets(input);
+        
+        for (i = 0; i < 5; i++)
+        {
+            
+        }
+          
+    }
 
 }
 
@@ -117,7 +129,7 @@ enum OP_STATUS CountLines(const char *str, FILE *fp)
     return_val = fclose(fp);
     fp = NULL;
     
-    return return_val;
+    return ;
 }
 
 /* This function gets 2 strings and compares them */
