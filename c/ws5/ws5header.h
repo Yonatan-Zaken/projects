@@ -18,7 +18,8 @@ int InitFunc();
 enum OP_STATUS ExitProg(const char *str, FILE *fp);
 enum OP_STATUS RemoveFile(const char *str, FILE *fp);
 enum OP_STATUS CountLines(const char *str, FILE *fp);
-int Compare(const char *str, const char *usr_input);
 enum OP_STATUS AddToFile(const char *str, FILE *fp);
+int Compare(const char *str, const char *usr_input);
+void IterationFunc(const char *file_name);
 
 #endif 

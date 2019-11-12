@@ -42,15 +42,21 @@ int InitFunc()
     lut_arr[2].compare_ptr = &Compare;
     lut_arr[2].op_ptr = &CountLines;
     
-    lut_arr[3].name = "add";
-    lut_arr[3].compare_ptr = NULL;
-    lut_arr[3].op_ptr = &AddToFile;
+    lut_arr[3].name = "<";
+    lut_arr[3].compare_ptr = &Compare;
+    lut_arr[3].compare_ptr = &AddToTop;
+    
+    lut_arr[4].name = "add";
+    lut_arr[4].compare_ptr = NULL;
+    lut_arr[4].op_ptr = &AddToBottom;
     
     
 }
 
 void IterationFunc(const char *file_name)
 {
+    
+    char 
     
 
 
@@ -93,6 +99,7 @@ enum OP_STATUS RemoveFile(const char *str, FILE *fp)
 
 enum OP_STATUS CountLines(const char *str, FILE *fp)
 {
+    int return_val = 0;
     int count = 0;
     char c = 0;
     
@@ -107,10 +114,10 @@ enum OP_STATUS CountLines(const char *str, FILE *fp)
     /* additional ++ on count because EOF won't count last line */
     printf("There are %d lines in %s\n", ++count, str); 
     
-    fclose(fp);
+    return_val = fclose(fp);
     fp = NULL;
     
-    
+    return return_val;
 }
 
 /* This function gets 2 strings and compares them */
@@ -148,14 +155,11 @@ enum OP_STATUS AddToBottom(const char *str, FILE *fp)
 
 enum OP_STATUS AddToTop(const char *str, FILE *fp)
 {   
-
-    if ('<' == *str)
-    {
         ++str;
         FILE *fp2 = fopen("temp.txt");
             
         
-    }
+    
         
 }
 
