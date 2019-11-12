@@ -18,9 +18,13 @@ enum OP_STATUS {SUCCESS, FAIL, EXIT};
 
 int main()
 {
-    int remove = 0;
+    
     FILE *fp = fopen("ws5.txt", "r");
-    remove = RemoveFile("ws5.txt", fp);
+    fprintf(fp, "%s", "This is better\nWhat\nWait what?\nHello Hello");
+    
+    
+    CountLines("ws5.txt",fp);
+    
         
     return 0;
 }

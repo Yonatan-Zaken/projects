@@ -15,7 +15,10 @@
 /* Function declerations */
 
 int InitFunc();
-enum OP_STATUS ExitProg(const char *str, FILE *);
-enum OP_STATUS RemoveFile(const char *str, FILE *);
+enum OP_STATUS ExitProg(const char *str, FILE *fp);
+enum OP_STATUS RemoveFile(const char *str, FILE *fp);
+enum OP_STATUS CountLines(const char *str, FILE *fp);
+enum OP_STATUS Compare(const char *str, const char *usr_input);
+enum OP_STATUS AddToFile(const char *str, FILE *fp);
 
 #endif 
