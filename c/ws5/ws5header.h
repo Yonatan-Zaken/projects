@@ -14,6 +14,8 @@
 
 /* Function declerations */
 
-
+int InitFunc();
+enum OP_STATUS ExitProg(const char *str, FILE *);
+enum OP_STATUS RemoveFile(const char *str, FILE *);
 
 #endif 

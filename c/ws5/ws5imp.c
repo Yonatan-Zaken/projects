@@ -7,15 +7,13 @@
 /*			                   	 */
 /*********************************/
 
+/* success = 0, fail = 1, exit = 2 */
+enum OP_STATUS {SUCCESS, FAIL, EXIT};
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include "ws5header.h"
-
-/* success = 0 and fail = 1 */
-
-typedef enum op_status{success, fail} op_status;
-op_status status;
 
 /* This function initializes the struct */
 /* and the array of this structure type */
@@ -26,22 +24,37 @@ int InitFunc()
     {
         char *str;
         int (*compare_ptr)(const char *, const char *);
-        enum op_status(*op_ptr)(const char *, FILE *);
+        enum OP_STATUS(*op_ptr)(const char *, FILE *);
     };
     
     struct lut lut_arr[5];    
     
-    
-    
 }
 
-
-op_status ExitProg(const char *str)
+enum OP_STATUS ExitProg(const char *str, FILE *fp)
 {
     
     
-    
 }
+
+enum OP_STATUS RemoveFile(const char *str, FILE *fp)
+{
+    int is_removed = 0;
+    
+    fclose(fp);
+    fp = NULL;
+    
+    is_removed = remove(str);
+    
+    if(SUCCESS == is_removed)
+    {
+        return SUCCESS;
+    }
+    
+    return FAIL;
+}
+
+
 
 
 
