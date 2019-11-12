@@ -24,8 +24,8 @@ int InitFunc()
     struct lut
     {
         char *name;
-        enum OP_STATUS(*compare_ptr)(const char *, const char *);
-        enum OP_STATUS(*op_ptr)(const char *, FILE *);
+        int (*compare_ptr)(const char *, const char *);
+        enum OP_STATUS (*op_ptr)(const char *, FILE *);
     };
     
     struct lut lut_arr[5];
@@ -49,11 +49,26 @@ int InitFunc()
     
 }
 
+void IterationFunc(const char *file_name)
+{
+    
+
+
+}
+
+
+
+/* If this function is called it exits the program */
+
 enum OP_STATUS ExitProg(const char *str, FILE *fp)
 {
     printf("Exiting program...\n");
     return EXIT;
 }
+
+/* If this program is called it closes the file     */
+/* it gets as argument and deletes it. The function */
+/* returns SUCCESS if the file was removed.         */ 
 
 enum OP_STATUS RemoveFile(const char *str, FILE *fp)
 {
@@ -72,6 +87,9 @@ enum OP_STATUS RemoveFile(const char *str, FILE *fp)
     return FAIL;
 }
 
+/* This function gets a pointer to file and */
+/* counts the number of lines in the file.  */
+/* New line without strings are also counted*/
 
 enum OP_STATUS CountLines(const char *str, FILE *fp)
 {
@@ -95,29 +113,51 @@ enum OP_STATUS CountLines(const char *str, FILE *fp)
     
 }
 
+/* This function gets 2 strings and compares them */
+/* The function returns SUCCESS if they are equal */
 
-enum OP_STATUS Compare(const char *str, const char *usr_input)
+int Compare(const char *str, const char *usr_input)
 {
-    int is_equal = 0;
+    int is_equal = 1;
     
     is_equal = strcmp(str, usr_input);
     
-    if (SUCCESS == is_equal)
+    if (0 == is_equal)
     {
         return SUCCESS;
     }
     
-    return FAIL;
+    return is_equal;
 }
 
 
-enum OP_STATUS AddToFile(const char *str, FILE *fp)
+enum OP_STATUS AddToBottom(const char *str, FILE *fp)
 {
-
-
+    int return_val = 0;
+    
+    fflush(fp);
+    fputs(str, fp);
+    fputs("\n",fp);
+    
+    return_val = fclose(fp);
+    fp = NULL;
+    
+    return return_val;
+    
 }
 
+enum OP_STATUS AddToTop(const char *str, FILE *fp)
+{   
 
+    if ('<' == *str)
+    {
+        ++str;
+        FILE *fp2 = fopen("temp.txt");
+            
+        
+    }
+        
+}
 
 
 

@@ -19,12 +19,18 @@ enum OP_STATUS {SUCCESS, FAIL, EXIT};
 int main()
 {
     
-    FILE *fp = fopen("ws5.txt", "r");
-    fprintf(fp, "%s", "This is better\nWhat\nWait what?\nHello Hello");
+    FILE *fp = fopen("ws5.txt", "a");
+    
+    if (NULL == fp)
+    {
+        printf("Can't open file.\n");
+        return 0;
+    }
+    
+    printf("%d\n", AddToFile("akuna matata",fp));
     
     
-    CountLines("ws5.txt",fp);
-    
+     
         
     return 0;
 }
