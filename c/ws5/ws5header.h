@@ -1,12 +1,10 @@
 /*********************************/
 /*   			             	 */
-/*				                 */
 /* Header file for work sheet 5  */
 /*   Yonatan Zaken		         */
-/*   Last Updated 12/11/19       */
+/*   Last Updated 13/11/19       */
 /*   Reviewed by: Aviran         */   
 /*			                   	 */
-/*			  	                 */
 /*********************************/
 
 #ifndef __LOOKUP_H__
@@ -16,7 +14,7 @@
 #define UNUSED(x) (void)(x)
 
 #define NUM_ELEM 5    /* Size of LUT array                 */
-#define INPUT_SIZE 50 /* size of char array for user input */
+#define INPUT_SIZE 50 /* Size of char array for user input */
 
 
 struct lut

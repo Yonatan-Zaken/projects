@@ -2,7 +2,7 @@
 /*   			             	 */
 /*Implementing file work sheet 5 */
 /*   Yonatan Zaken		         */
-/*   Last Updated 12/11/19       */
+/*   Last Updated 13/11/19       */
 /*   Reviewed by: Aviran         */   
 /*			                   	 */
 /*********************************/
@@ -61,8 +61,10 @@ void Infrastructure(const char *file_name, struct lut lut_arr[])
     int status = 0;    
     
     assert(NULL != file_name);
-       
-    while (SUCCESS == status)
+    
+    /* Think how to improve exit status       */
+    /* considering if failure status returns  */   
+    while (EXIT != status)
     {
         
         fgets(input, INPUT_SIZE, stdin);

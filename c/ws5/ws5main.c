@@ -1,12 +1,10 @@
 /*********************************/
 /*   			             	 */
-/*				                 */
 /*   Main file work sheet 5      */
 /*   Yonatan Zaken		         */
-/*   Last Updated 12/11/19       */
+/*   Last Updated 13/11/19       */
 /*   Reviewed by: Aviran         */   
 /*			                   	 */
-/*			  	                 */
 /*********************************/
 
 enum OP_STATUS {SUCCESS, FAIL_REMOVE, FAIL_COUNT, FAIL_APPEND, FAIL_PREPEND,  FAIL_CHRCMP, EXIT};
