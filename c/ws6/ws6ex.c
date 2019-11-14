@@ -17,11 +17,12 @@ long Pow2 (unsigned int x, unsigned int y)
 
 int NPow2 (unsigned int n)
 {
-    while (0 < n)
-    {
-        if ((0 &     
-        
-    }
+    is_pow2 = 0;    
     
-       
+    while ((n & 1))
+    {
+        n >> 1;     
+            
+    }
+      
 }
