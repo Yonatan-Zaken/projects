@@ -12,6 +12,7 @@
 #define __BITWISE_H__
 
 long Pow2(unsigned int x, unsigned int y);
-int NPow2 (unsigned int n);
+int NPow2Loop (unsigned int n);
+int NPow2L (unsigned int n);
 
 #endif
