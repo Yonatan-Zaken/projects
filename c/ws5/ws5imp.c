@@ -7,16 +7,12 @@
 /*			                   	 */
 /*********************************/
 
-
-enum OP_STATUS {SUCCESS, FAIL_REMOVE, FAIL_COUNT, FAIL_APPEND, FAIL_PREPEND,  FAIL_CHRCMP, EXIT};
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
 #include <assert.h>
 #include "ws5header.h"
-
 
 /******************************************/
 /* This function initializes the struct   */
@@ -87,7 +83,7 @@ void Infrastructure(const char *file_name, struct lut lut_arr[])
 /* If this function is called it exits the program */
 /***************************************************/
 
-enum OP_STATUS ExitProg(const char *file_name, const char *str)
+OP_STATUS ExitProg(const char *file_name, const char *str)
 {
     UNUSED(file_name);
     UNUSED(str);
@@ -101,7 +97,7 @@ enum OP_STATUS ExitProg(const char *file_name, const char *str)
 /* returns SUCCESS if the file was removed.         */ 
 /****************************************************/
 
-enum OP_STATUS RemoveFile(const char *file_name, const char *str)
+OP_STATUS RemoveFile(const char *file_name, const char *str)
 {
     int is_removed = 0;
     
@@ -124,7 +120,7 @@ enum OP_STATUS RemoveFile(const char *file_name, const char *str)
 /* number of lines in the file.                 */
 /************************************************/
 
-enum OP_STATUS CountLines(const char *file_name, const char *str)
+OP_STATUS CountLines(const char *file_name, const char *str)
 {
     
     int count = 0;
@@ -163,7 +159,7 @@ enum OP_STATUS CountLines(const char *file_name, const char *str)
 /* from the input of the user to the bottom of the file  */
 /*********************************************************/
 
-enum OP_STATUS Append(const char *file_name, const char *str)
+OP_STATUS Append(const char *file_name, const char *str)
 {
     
     FILE *fp = fopen(file_name, "a");
@@ -190,7 +186,7 @@ enum OP_STATUS Append(const char *file_name, const char *str)
 /* top of it                                   */
 /***********************************************/
 
-enum OP_STATUS Preppend(const char *file_name, const char *str)
+OP_STATUS Preppend(const char *file_name, const char *str)
 {
     const char *runner = str;
     char c = 0;

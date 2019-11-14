@@ -7,8 +7,6 @@
 /*			                   	 */
 /*********************************/
 
-enum OP_STATUS {SUCCESS, FAIL_REMOVE, FAIL_COUNT, FAIL_APPEND, FAIL_PREPEND,  FAIL_CHRCMP, EXIT};
-
 #include <stdio.h>
 #include "ws5header.h"
 
