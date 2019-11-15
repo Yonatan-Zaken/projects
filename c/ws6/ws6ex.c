@@ -10,16 +10,20 @@
 #include <stdio.h>
 #include "ws6.h"
 
+/***************************************/
 /* This function returns the result of */
 /* the computation x AND (2 XOR y)     */
+/***************************************/
 
 long Pow2 (unsigned int x, unsigned int y)
 {
     return (x & (2 ^ y));      
 }
 
+/********************************************************/
 /* This function gets a positive number and returns a   */
 /* value that indicates if it's a power of 2 via loop   */
+/********************************************************/
 
 int NPow2Loop (unsigned int n)
 {
@@ -44,8 +48,10 @@ int NPow2Loop (unsigned int n)
     return is_pow2;
 }
 
+/*******************************************************/
 /* This function gets a positive number and returns a  */
 /* value that indicates if it's a power of 2. No loop  */
+/*******************************************************/
 
 int NPow2 (unsigned int n)
 {
@@ -77,11 +83,51 @@ int AddOne(int n)
     return num;
 }
 
-void ThreeBitsOn(unsigned int arr[])
+/**********************************************************/
+/* This function gets and array and its size and counts   */
+/* the number of set bits each element has. If an element */
+/* has exactly 3 bits set the function prints it.         */
+/**********************************************************/
+
+void ThreeBitsOn(unsigned int arr[], int arr_size)
 {
+    int i = 0;
+    int j = 0;
+    int count = 0;
+    int temp = 0;
     
-    
+    for (i = 0; i < arr_size; i++)
+    {
+        count = 0;
+        j = BIT_RANGE;  /* BIT_RANGE = 32 */
+        temp = 1;
+        
+        while (0 < j)
+        {
+            
+            if (temp & arr[i])  /* Indicates if a bit is set or not */
+            {
+                ++count;
+            }
+            
+            temp <<= 1;        
+            
+            if (THREE_SET < count)
+            {
+                break;
+            }
+            
+            --j;
+        }
+        
+        if (THREE_SET == count)
+        {
+            printf ("%d\n", arr[i]);
+        }   
+    }
 }
+
+/********************************************************/
 
 
 

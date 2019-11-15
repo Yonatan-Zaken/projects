@@ -15,6 +15,10 @@ int main()
     unsigned int x = 4;        
     unsigned int y = 5;
     
+    /* Array for testing ThreeBitsOn function */
+    
+    unsigned int arr1[] = {7, 1, 2, 7, 11, 13, 19, 21, 140};
+    
     /* Pow2 test */  
       
     /*printf("Pow2(x, y) = %ld\n\n", Pow2(x, y));*/
@@ -44,11 +48,17 @@ int main()
     */
     
     
-    /* Bitson3 test */    
+    /* ThreeBitsOn test */    
+    /*
+    ThreeBitsOn(arr1, 9);
+    */
+    
+    /* ByteMirror test */
     
     
-    
+     
         
+     
     return 0;
 }
 
