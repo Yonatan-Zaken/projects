@@ -16,8 +16,10 @@ int main()
     unsigned int y = 5;
     
     /* Array for testing ThreeBitsOn function */
-    
     unsigned int arr1[] = {7, 1, 2, 7, 11, 13, 19, 21, 140};
+    
+    /* Result for CheckSetBits */
+    int result = 0;
     
     /* Pow2 test */  
       
@@ -54,11 +56,30 @@ int main()
     */
     
     /* ByteMirror test */
+    /*
+    printf("%c\n", ByteMirrorLoop('a'));
+    */
     
+    /* CheckSetBitsOne/Two test */
+    /*
+    result = CheckSetBitsOne('z');
     
-     
+    if (0 == result)
+    {
+        printf("true\n");
+    }
+    
+    else printf("false\n");
+    */
+    
+    /* SwapThreeFive test */
+    /*
+    printf("%c\n", SwapThreeFive('g')); 
+    printf("%c\n", SwapThreeFive('X'));   
+    */
+    
+    printf("%d\n", NPow2Loop(40));
         
-     
     return 0;
 }
 
