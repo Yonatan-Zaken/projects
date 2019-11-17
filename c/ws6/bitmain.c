@@ -2,8 +2,8 @@
 /*   			             	 */
 /*   Main file work sheet 6      */
 /*   Yonatan Zaken		         */
-/*   Last Updated 14/11/19       */
-/*   Reviewed by:          */   
+/*   Last Updated 17/11/19       */
+/*   Reviewed by: Ben Zaad       */   
 /*			                   	 */
 /*********************************/
 
@@ -18,8 +18,7 @@ int main()
     /* Array for testing ThreeBitsOn function */
     unsigned int arr1[] = {7, 1, 2, 7, 11, 13, 19, 21, 140};
     
-    /* Pow2 test */  
-      
+    /* Pow2 test */    
     /*printf("Pow2(x, y) = %ld\n\n", Pow2(x, y));*/
     
     /* NPow2 test */ 
@@ -87,6 +86,7 @@ int main()
     /* CountSet test */
     /*
     printf("Number of bits set is %d\n", CountSet(312));
+    printf("Number of bits set is %d\n", CountSet(7));
     */
     
     /* PrintFloatBits test */
