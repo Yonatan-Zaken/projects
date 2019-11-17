@@ -18,9 +18,6 @@ int main()
     /* Array for testing ThreeBitsOn function */
     unsigned int arr1[] = {7, 1, 2, 7, 11, 13, 19, 21, 140};
     
-    /* Result for CheckSetBits */
-    int result = 0;
-    
     /* Pow2 test */  
       
     /*printf("Pow2(x, y) = %ld\n\n", Pow2(x, y));*/
@@ -35,18 +32,18 @@ int main()
     
     /* NPow2 test with no loop*/ 
     /*
-    printf("%d\n", NPow2(0));
-    printf("%d\n", NPow2(1));
-    printf("%d\n", NPow2(7));
-    printf("%d\n", NPow2(1048576));
+    printf("%s\n", (NPow2(0) == 1) ? "is power of 2" : "isn't power of 2");
+    printf("%s\n", (NPow2(1) == 1) ? "is power of 2" : "isn't power of 2");
+    printf("%s\n", (NPow2(7) == 1) ? "is power of 2" : "isn't power of 2");
+    printf("%s\n", (NPow2(1048576) == 1) ? "is power of 2" : "isn't power of 2");
     */
     
     /* AddOne test */
     /*
-    printf("%d\n", AddOne(2147483647));
-    printf("%d\n", AddOne(100));
-    printf("%d\n", AddOne(-1));
-    printf("%d\n", AddOne(-2147483648));
+    printf("Add 1 to 2147483647 = %d\n", AddOne(2147483647));
+    printf("Add 1 to 100 = %d\n", AddOne(100));
+    printf("Add 1 to -1 = %d\n", AddOne(-1));
+    printf("Add 1 to -2147483648 = %d\n", AddOne(-2147483648));
     */
     
     
@@ -57,28 +54,25 @@ int main()
     
     /* ByteMirror test */
     /*
-    printf("%c\n", ByteMirrorLoop('a'));
+    printf("The mirror of %c is %c\n", 'a', ByteMirrorLoop('a'));
     */
     
-    /* CheckSetBitsOne/Two test */
+    /* CheckSetBitsOne test */
     /*
-    result = CheckSetBitsOne('z');
+    printf("%s\n", (CheckSetBitsOne('z') == 1) ? "Both set", "Not both set")
     
-    if (0 == result)
-    {
-        printf("true\n");
-    }
-    
-    else printf("false\n");
-    */
+    /* CheckSetBitsTwo test */
+    /*
+    printf("%s\n", (CheckSetBitsOne('z') == 1) ? "One Set", "None set")
     
     /* SwapThreeFive test */
     /*
-    printf("%c\n", SwapThreeFive('g')); 
-    printf("%c\n", SwapThreeFive('X'));   
+    printf("Swap bits 3 and 5 of %d = %d\n", 16, SwapThreeFive(16)); 
     */
     
-    printf("%d\n", NPow2Loop(40));
+    
+    
+    
         
     return 0;
 }

@@ -49,8 +49,8 @@ int NPow2Loop (unsigned int n)
 }
 
 /*******************************************************/
-/* This function gets a positive number and returns a  */
-/* value that indicates if it's a power of 2. No loop  */
+/* This function gets a positive number and returns 1  */
+/* that indicates if it's a power of 2. No loop        */
 /*******************************************************/
 
 int NPow2 (unsigned int n)
@@ -164,28 +164,11 @@ unsigned char ByteMirrorLoop(unsigned char num)
 
 int CheckSetBitsOne(unsigned char n)
 {
-    unsigned char temp = 1;
-    int result = 0;
+    unsigned char temp1 = 1;
+    unsigned char temp2 = 1;
+    int result = 1;
     
-    temp <<= 1;
-    temp &= n;
-    
-    temp <<= 4;
-    temp &= n;
-    
-    temp >>= 5;
-    
-    switch (temp)
-    {
-        case 1:
-            break;
-            
-        case 0:
-            result = 1;
-            break; 
-    }
-    
-    return result;
+    return (((temp1 << 1) & n)) & (((temp2 << 5) & n) >> 5);
 }
 
 /**************************************************************/
@@ -195,34 +178,34 @@ int CheckSetBitsOne(unsigned char n)
 
 int CheckSetBitsTwo(unsigned char n)
 {
-    int result = 0;
     unsigned char temp1 = 1;
     unsigned char temp2 = 1;
-    unsigned char test = 0;
+    int result = 1;
     
-    temp1 <<= 1;
-    temp1 &= n;
-    
-    temp2 <<= 4;
-    temp2 &= n;
-    
-    test = temp1 + temp2;
-    
-    switch (test)
-    {
-        case 0:
-            result = 1;
-            break;
-    }
-    
-    return result;
+    return (((temp1 << 1) & n)) | (((temp2 << 5) & n) >> 5);
     
 }
 
 unsigned char SwapThreeFive(unsigned char n)
 {
+    int temp1 = 1;
+    int temp2 = 1;
+    int temp = 0;
+    unsigned char result = 0;
     
+    temp1 = (n >> 2) & temp1;
+    temp2 = (n >> 4) & temp2;
     
+    temp = temp1 ^ temp2;
+    
+    temp1 = temp << 2;
+    temp2 = temp << 4;
+    
+    temp = temp1 | temp2;
+    
+    result = n ^ temp;
+    
+    return result;
     
 }
 
@@ -243,6 +226,35 @@ unsigned int ClosestDivis(unsigned int n)
     
 }
 */
+
+/**************************************************************/
+/* This function gets an unsigned int and returns the closest */
+/* smaller number that is divisible by 16 without remainder   */
+/**************************************************************/
+
+void SwapVar(unsigned int *x,unsigned int *y)
+{
+    
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**********************************************/
 /* This function gets an int and returns the  */ 
 /* number of set bits using a loop            */
@@ -270,11 +282,7 @@ int CountSetLoop(int n)
 /* number of set bits without using a loop    */
 /**********************************************/
 
-int CountSet(int n)
-{
 
-
-}
 
 
 

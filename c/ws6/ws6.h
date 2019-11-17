@@ -28,7 +28,8 @@ unsigned char SwapThreeFive(unsigned char n);
 unsigned int ClosestDivis(unsigned int n);
 
 int CountSetLoop(int n);
-int CountSet(int n);
+
+int SwapVar(int x, int y);
 
 
 #endif
