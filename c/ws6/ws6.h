@@ -11,7 +11,6 @@
 #ifndef __BITWISE_H__
 #define __BITWISE_H__
 
-#define BIT_RANGE 32
 #define THREE_SET 3
 #define BYTE_SIZE 8
 
@@ -27,9 +26,9 @@ int CheckSetBitsTwo(unsigned char n);
 unsigned char SwapThreeFive(unsigned char n);
 unsigned int ClosestDivis(unsigned int n);
 
-int CountSetLoop(int n);
-
-int SwapVar(int x, int y);
+int CountSetLoop(unsigned int n);
+int CountSet(unsigned int n);
+void SwapVar(unsigned int *x, unsigned int *y);
 
 
 #endif

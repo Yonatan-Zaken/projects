@@ -60,20 +60,37 @@ int main()
     /* CheckSetBitsOne test */
     /*
     printf("%s\n", (CheckSetBitsOne('z') == 1) ? "Both set", "Not both set")
+    */
     
     /* CheckSetBitsTwo test */
     /*
     printf("%s\n", (CheckSetBitsOne('z') == 1) ? "One Set", "None set")
+    */
     
     /* SwapThreeFive test */
     /*
     printf("Swap bits 3 and 5 of %d = %d\n", 16, SwapThreeFive(16)); 
     */
     
+    /* Swap variables test */
+    /*
+    SwapVar(&x, &y);
+    printf("%d %d", x, y);
+    */
+    
+    /* ClosestDivis test */
+    /*
+    printf("%u closest divisible by 16 is = %u\n", 33, ClosestDivis(33));
+    printf("%u closest divisible by 16 is = %u\n", 17, ClosestDivis(17));
+    */
+    
+    /* CountSet test */
+    /*
+    printf("Number of bits set is %d\n", CountSet(312));
+    */
     
     
     
-        
     return 0;
 }
 

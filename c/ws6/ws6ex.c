@@ -95,11 +95,12 @@ void ThreeBitsOn(unsigned int arr[], int arr_size)
     int j = 0;
     int count = 0;
     int temp = 0;
+    int bit_range = sizeof(unsigned int) * BYTE_SIZE;
     
     for (i = 0; i < arr_size; i++)
     {
         count = 0;
-        j = BIT_RANGE;  /* BIT_RANGE = 32 */
+        j = bit_range;  /* bit_range = 32 */
         temp = 1;
         
         while (0 < j)
@@ -137,12 +138,13 @@ unsigned char ByteMirrorLoop(unsigned char num)
     char mirror = 0;
     int i = 0;
     
+    
     for (i = 0; i < BYTE_SIZE; i++)
     {
         if ((1 << i) & num)     /* Check if bit at current index is set */
         {
             /* Set the bit of the mirror index to i */
-            mirror = mirror | (1 << (BYTE_SIZE - 2 - i));
+            mirror = mirror | (1 << (BYTE_SIZE - 1 - i));
         }
     }
     
@@ -166,9 +168,9 @@ int CheckSetBitsOne(unsigned char n)
 {
     unsigned char temp1 = 1;
     unsigned char temp2 = 1;
-    int result = 1;
+    int result = (((temp1 << 1) & n)) & (((temp2 << 5) & n) >> 5);
     
-    return (((temp1 << 1) & n)) & (((temp2 << 5) & n) >> 5);
+    return result;
 }
 
 /**************************************************************/
@@ -180,18 +182,18 @@ int CheckSetBitsTwo(unsigned char n)
 {
     unsigned char temp1 = 1;
     unsigned char temp2 = 1;
-    int result = 1;
+    unsigned int result = (((temp1 << 1) & n)) | (((temp2 << 5) & n) >> 5);
     
-    return (((temp1 << 1) & n)) | (((temp2 << 5) & n) >> 5);
+    return result;
     
 }
 
 unsigned char SwapThreeFive(unsigned char n)
 {
-    int temp1 = 1;
-    int temp2 = 1;
-    int temp = 0;
-    unsigned char result = 0;
+    unsigned char temp1 = 1U;
+    unsigned char temp2 = 1U;
+    unsigned char temp = 0U;
+    unsigned char result = 0U;
     
     temp1 = (n >> 2) & temp1;
     temp2 = (n >> 4) & temp2;
@@ -207,25 +209,22 @@ unsigned char SwapThreeFive(unsigned char n)
     
     return result;
     
-}
+} 
 
 /**************************************************************/
 /* This function gets an unsigned int and returns the closest */
 /* smaller number that is divisible by 16 without remainder   */
 /**************************************************************/
-/*
+
 unsigned int ClosestDivis(unsigned int n)
 {
-    if (16 > n)
-    {
-        printf("Invalid input.\n");
-        return 0;
-    }
+    unsigned int temp = ~15;  /* Zero in last 4 bits */    
     
+    temp = n & temp;
     
-    
+    return temp;
 }
-*/
+
 
 /**************************************************************/
 /* This function gets an unsigned int and returns the closest */
@@ -234,25 +233,13 @@ unsigned int ClosestDivis(unsigned int n)
 
 void SwapVar(unsigned int *x,unsigned int *y)
 {
+    unsigned int *num1 = x;
+    unsigned int *num2 = y;
+    *num1 = (*num1) ^ (*num2);    
+    *num2 = (*num2) ^ (*num1);
+    *num1 = (*num1) ^ (*num2);
     
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /**********************************************/
@@ -260,12 +247,13 @@ void SwapVar(unsigned int *x,unsigned int *y)
 /* number of set bits using a loop            */
 /**********************************************/
 
-int CountSetLoop(int n)
+int CountSetLoop(unsigned int n)
 {
     int count = 0;
     int i = 0;
+    int bit_range = sizeof(unsigned int) * BYTE_SIZE; /* bit_range = 32 */
     
-    for (i = 0; i < BIT_RANGE; i++)
+    for (i = 0; i < bit_range; i++)
     {
         if ((1 << i) & n)
         {
@@ -277,11 +265,32 @@ int CountSetLoop(int n)
 }
 
 
-/**********************************************/
-/* This function gets an int and returns the  */ 
-/* number of set bits without using a loop    */
-/**********************************************/
+/****************************************************/
+/* This function gets an int and returns the number */ 
+/*  of set bits using HAMMING WEIGHT                */
+/****************************************************/
 
+int CountSet(unsigned int x)
+{
+    const unsigned int m1  = 0x55555555; /*binary: 0101...*/
+    const unsigned int m2  = 0x33333333; /*binary: 00110011..*/
+    const unsigned int m4  = 0x0f0f0f0f; /*binary:  4 zeros,  4 ones ...*/
+    const unsigned int m8  = 0x00ff00ff; /*binary:  8 zeros,  8 ones ...*/
+    const unsigned int m16 = 0x0000ffff; /*binary: 16 zeros, 16 ones ...*/
+    const unsigned int m32 = 0x0000ffff; /*binary: 32 zeros, 32 ones*/
+    const unsigned int h01 = 0x01010101; /*the sum of 256 to the power of 0,1,2,3...*/
+    
+    x = (x & m1 ) + ((x >>  1) & m1 ); 
+    x = (x & m2 ) + ((x >>  2) & m2 );
+    x = (x & m4 ) + ((x >>  4) & m4 ); 
+    x = (x & m8 ) + ((x >>  8) & m8 );  
+    x = (x & m16) + ((x >> 16) & m16);
+    
+    return x;
+
+}
+
+    
 
 
 
