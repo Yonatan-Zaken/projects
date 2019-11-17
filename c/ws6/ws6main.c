@@ -89,6 +89,11 @@ int main()
     printf("Number of bits set is %d\n", CountSet(312));
     */
     
+    /* PrintFloatBits test */
+    /*
+    PrintFloatBits(-2.25);
+    PrintFloatBits(-300);
+    */
     
     
     return 0;

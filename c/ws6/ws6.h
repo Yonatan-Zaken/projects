@@ -29,6 +29,7 @@ unsigned int ClosestDivis(unsigned int n);
 int CountSetLoop(unsigned int n);
 int CountSet(unsigned int n);
 void SwapVar(unsigned int *x, unsigned int *y);
-
+void PrintFloatBits(float n); 
+void PrintBinary(unsigned int);
 
 #endif

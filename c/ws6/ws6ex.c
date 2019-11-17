@@ -237,8 +237,7 @@ void SwapVar(unsigned int *x,unsigned int *y)
     unsigned int *num2 = y;
     *num1 = (*num1) ^ (*num2);    
     *num2 = (*num2) ^ (*num1);
-    *num1 = (*num1) ^ (*num2);
-    
+    *num1 = (*num1) ^ (*num2);  
 }
 
 
@@ -272,14 +271,12 @@ int CountSetLoop(unsigned int n)
 
 int CountSet(unsigned int x)
 {
-    const unsigned int m1  = 0x55555555; /*binary: 0101...*/
-    const unsigned int m2  = 0x33333333; /*binary: 00110011..*/
-    const unsigned int m4  = 0x0f0f0f0f; /*binary:  4 zeros,  4 ones ...*/
-    const unsigned int m8  = 0x00ff00ff; /*binary:  8 zeros,  8 ones ...*/
-    const unsigned int m16 = 0x0000ffff; /*binary: 16 zeros, 16 ones ...*/
-    const unsigned int m32 = 0x0000ffff; /*binary: 32 zeros, 32 ones*/
-    const unsigned int h01 = 0x01010101; /*the sum of 256 to the power of 0,1,2,3...*/
-    
+    unsigned int m1  = 0x55555555; /*binary: 0101...*/
+    unsigned int m2  = 0x33333333; /*binary: 00110011..*/
+    unsigned int m4  = 0x0f0f0f0f; /*binary:  4 zeros,  4 ones ...*/
+    unsigned int m8  = 0x00ff00ff; /*binary:  8 zeros,  8 ones ...*/
+    unsigned int m16 = 0x0000ffff; /*binary: 16 zeros, 16 ones ...*/
+
     x = (x & m1 ) + ((x >>  1) & m1 ); 
     x = (x & m2 ) + ((x >>  2) & m2 );
     x = (x & m4 ) + ((x >>  4) & m4 ); 
@@ -290,9 +287,32 @@ int CountSet(unsigned int x)
 
 }
 
+/***********************************************************************/
+/* This function gets a float value and prints its bits representation */ 
+/***********************************************************************/
+
+void PrintFloatBits(float n)
+{
+    unsigned int *p;
+    p = (unsigned int*)(&n); /* Cast the 
     
+    PrintBinary(*p);
+}    
 
+/*************************************************************************/
+/* This function prints the number in gets as paramater in binary format */ 
+/*************************************************************************/
 
+void PrintBinary(unsigned int n)
+{
+    int size = sizeof(unsigned int) * BYTE_SIZE - 1; 
+    int i = 0;
+    
+    for(i = 0; i <= size; i++)
+    {
+        n & (1 << (size - i)) ? printf("1") : printf("0");  
+    }
+}
 
 
 
