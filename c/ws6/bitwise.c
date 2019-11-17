@@ -271,11 +271,11 @@ int CountSetLoop(unsigned int n)
 
 int CountSet(unsigned int x)
 {
-    unsigned int m1  = 0x55555555; /*binary: 0101...*/
-    unsigned int m2  = 0x33333333; /*binary: 00110011..*/
-    unsigned int m4  = 0x0f0f0f0f; /*binary:  4 zeros,  4 ones ...*/
-    unsigned int m8  = 0x00ff00ff; /*binary:  8 zeros,  8 ones ...*/
-    unsigned int m16 = 0x0000ffff; /*binary: 16 zeros, 16 ones ...*/
+    unsigned int m1  = 0x55555555; 
+    unsigned int m2  = 0x33333333; 
+    unsigned int m4  = 0x0f0f0f0f; 
+    unsigned int m8  = 0x00ff00ff; 
+    unsigned int m16 = 0x0000ffff; 
 
     x = (x & m1 ) + ((x >>  1) & m1 ); 
     x = (x & m2 ) + ((x >>  2) & m2 );
