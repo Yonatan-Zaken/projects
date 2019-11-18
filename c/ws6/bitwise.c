@@ -123,9 +123,10 @@ void ThreeBitsOn(unsigned int arr[], int arr_size)
         
         if (THREE_SET == count)
         {
-            printf ("%d\n", arr[i]);
+            printf ("%d ", arr[i]);
         }   
     }
+    printf("\n");
 }
 
 /********************************************************/
@@ -153,10 +154,20 @@ unsigned char ByteMirrorLoop(unsigned char num)
 
 /**************************************************************/
 /* This function gets a value that is a size of a byte,       */
-/* mirrors it without a loop and returns the mirrored value.  */
+/* mirrors it without a loop using HAMMING WEIGHT method      */
+/* returns the mirrored value.                                */
 /**************************************************************/
 
-
+unsigned int ByteMirror(unsigned int n)
+{
+	n = (((n & 0xaaaaaaaa) >> 1) | ((n & 0x55555555) << 1));
+	n = (((n & 0xcccccccc) >> 2) | ((n & 0x33333333) << 2));
+	n = (((n & 0xf0f0f0f0) >> 4) | ((n & 0x0f0f0f0f) << 4));
+	n = (((n & 0xff00ff00) >> 8) | ((n & 0x00ff00ff) << 8));
+	n = ((n >> 16) | (n << 16));
+	
+    return n;
+}
 
 
 /**************************************************************/
@@ -168,7 +179,7 @@ int CheckSetBitsOne(unsigned char n)
 {
     unsigned char temp1 = 1;
     unsigned char temp2 = 1;
-    int result = (((temp1 << 1) & n)) & (((temp2 << 5) & n) >> 5);
+    int result = (((temp1 << 1) & n) >> 1) & (((temp2 << 5) & n) >> 5);
     
     return result;
 }
@@ -182,7 +193,7 @@ int CheckSetBitsTwo(unsigned char n)
 {
     unsigned char temp1 = 1;
     unsigned char temp2 = 1;
-    unsigned int result = (((temp1 << 1) & n)) | (((temp2 << 5) & n) >> 5);
+    unsigned int result = (((temp1 << 1) & n) >> 1) | (((temp2 << 5) & n) >> 5);
     
     return result;
     

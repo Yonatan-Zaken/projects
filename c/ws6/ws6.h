@@ -16,7 +16,8 @@
 
 long Pow2(unsigned int x, unsigned int y);
 
-unsigned char ByteMirrorLoop(unsigned char);
+unsigned char ByteMirrorLoop(unsigned char n);
+unsigned int ByteMirror(unsigned int n);
 unsigned char SwapThreeFive(unsigned char n);
 unsigned int ClosestDivis(unsigned int n);
 

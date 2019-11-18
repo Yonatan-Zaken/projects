@@ -47,25 +47,23 @@ int main()
     
     
     /* ByteMirror test */
-    /*
     
-    printf("The mirror of %c is %c\n", 'a', ByteMirrorLoop('a'));
-    */
+    TestFunc(ByteMirrorLoop(140) == 49, "ByteMirror test /w loop");
+    TestFunc(ByteMirrorLoop(103) == 230, "ByteMirror test /w loop");
+    TestFunc(ByteMirrorLoop(1) == 128, "ByteMirror test /w loop");
+    TestFunc(ByteMirror(1) == 128, "ByteMirror test /w loop");
     
     /* CheckSetBitsOne test */
-    /*
-    printf("%s\n", (CheckSetBitsOne('z') == 1) ? "Both set", "Not both set")
-    */
+    TestFunc(CheckSetBitsOne(38) == 1, "CheckSetBitsOne test with 38");
+    
     
     /* CheckSetBitsTwo test */
-    /*
-    printf("%s\n", (CheckSetBitsOne('z') == 1) ? "One Set", "None set")
-    */
+    
+    TestFunc(CheckSetBitsTwo(32) == 1, "CheckSetBitsTwo test with 32");
+    
     
     /* SwapThreeFive test */
-    /*
-    printf("Swap bits 3 and 5 of %d = %d\n", 16, SwapThreeFive(16)); 
-    */
+    TestFunc(SwapThreeFive(16) == 4, "SwapThreeFive test with 16");
     
     /* Swap variables test */
     /*
@@ -74,17 +72,15 @@ int main()
     */
     
     /* ClosestDivis test */
-    /*
-    printf("%u closest divisible by 16 is = %u\n", 33, ClosestDivis(33));
-    printf("%u closest divisible by 16 is = %u\n", 17, ClosestDivis(17));
-    */
+    
+    TestFunc(ClosestDivis(33) == 32, "ClosestDivis test with 33");
+    TestFunc(ClosestDivis(100) == 96, "ClosestDivis test with 100");
     
     /* CountSet test */
-    /*
-    printf("Number of bits set is %d\n", CountSet(312));
-    printf("Number of bits set is %d\n", CountSet(7));
-    */
     
+    TestFunc(CountSet(312) == 4, "CountSet test with 312");
+    TestFunc(CountSet(4294967295) == 32, "CountSet test with 4294967295");
+     
     /* PrintFloatBits test */
     /*
     PrintFloatBits(-2.25);
