@@ -33,4 +33,6 @@ void SwapVar(unsigned int *x, unsigned int *y);
 void PrintFloatBits(float n); 
 void PrintBinary(unsigned int);
 
+void TestFunc(int condition, const char *error);
+
 #endif

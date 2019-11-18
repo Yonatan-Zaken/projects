@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include "ws6.h"
 
+
+
 int main()
 {
     unsigned int x = 4;        
@@ -22,37 +24,31 @@ int main()
     /*printf("Pow2(x, y) = %ld\n\n", Pow2(x, y));*/
     
     /* NPow2 test */ 
-    /*
-    printf("%d\n", NPow2Loop(0));
-    printf("%d\n", NPow2Loop(1));
-    printf("%d\n", NPow2Loop(433));
-    printf("%d\n", NPow2Loop(512)); 
-    */
     
+    TestFunc(NPow2Loop(1) == 1, "NPow2Loop test with 1");
+    TestFunc(NPow2Loop(433) == 0, "NPow2Loop test with 433");
+    TestFunc(NPow2Loop(512) == 1, "NPow2Loop test with 512");
+  
     /* NPow2 test with no loop*/ 
-    /*
-    printf("%s\n", (NPow2(0) == 1) ? "is power of 2" : "isn't power of 2");
-    printf("%s\n", (NPow2(1) == 1) ? "is power of 2" : "isn't power of 2");
-    printf("%s\n", (NPow2(7) == 1) ? "is power of 2" : "isn't power of 2");
-    printf("%s\n", (NPow2(1048576) == 1) ? "is power of 2" : "isn't power of 2");
-    */
+    
+    TestFunc(NPow2(1) == 1, "NPow2 test with 1");
+    TestFunc(NPow2(7) == 0, "NPow2 test with 7");
+    TestFunc(NPow2(1048576) == 1, "NPow2 test with 1048576");
+    
     
     /* AddOne test */
-    /*
-    printf("Add 1 to 2147483647 = %d\n", AddOne(2147483647));
-    printf("Add 1 to 100 = %d\n", AddOne(100));
-    printf("Add 1 to -1 = %d\n", AddOne(-1));
-    printf("Add 1 to -2147483648 = %d\n", AddOne(-2147483648));
-    */
-    
+    TestFunc(AddOne(2147483647) == (2147483647 + 1), "AddOne to 2147483647");
+    TestFunc(AddOne(-300) == (-300 + 1), "AddOne to -300");
+    TestFunc(AddOne(-2147483648) == (-2147483648 + 1), "AddOne to -2147483648");
     
     /* ThreeBitsOn test */    
-    /*
+    
     ThreeBitsOn(arr1, 9);
-    */
+    
     
     /* ByteMirror test */
     /*
+    
     printf("The mirror of %c is %c\n", 'a', ByteMirrorLoop('a'));
     */
     
@@ -101,7 +97,23 @@ int main()
 
 
 
-
+void TestFunc(int condition, const char *message)
+{
+    
+    if (1 == condition)
+    {   
+        printf("\033[0;32m");
+        printf("%s %s\n", "SUCCESS", message);
+    }
+    
+    else
+    {
+        printf("\033[1;31m");
+        printf("%s %s\n", "FAIL", message);
+    }
+    
+    printf("\033[0m"); 
+}
 
 
 

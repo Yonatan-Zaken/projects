@@ -17,7 +17,7 @@
 
 long Pow2 (unsigned int x, unsigned int y)
 {
-    return (x & (2 ^ y));      
+    return x << y;      
 }
 
 /********************************************************/
@@ -294,10 +294,10 @@ int CountSet(unsigned int x)
 void PrintFloatBits(float n)
 {
     unsigned int *p;
-    p = (unsigned int*)(&n); /* Cast the 
+    p = (unsigned int*)(&n); 
     
     PrintBinary(*p);
-}    
+}
 
 /*************************************************************************/
 /* This function prints the number in gets as paramater in binary format */ 
