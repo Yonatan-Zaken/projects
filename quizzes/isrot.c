@@ -1,21 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 
-void Red() 
-{
-    printf("\033[1;31m");
-}
-
-void Green()
-{
-    printf("\033[0;32m");
-}
-
-void Reset()
-{
-    printf("\033[0m");
-}
-
 
 int IsRotation(const char *s1, const char *s2)
 {
@@ -49,18 +34,17 @@ void TestFunc(int condition, const char *error)
     
     if (1 == condition)
     {   
-        Green();
+        printf("\033[0;32m");
         printf("%s %s\n", "SUCCESS", error);
-        Reset();
     }
     
     else
     {
-        Red();
+        printf("\033[1;31m");
         printf("%s %s\n", "FAIL", error);
-        Reset();
-    } 
+    }
     
+    printf("\033[0m"); 
 }
 
 
