@@ -57,6 +57,11 @@ int NPow2 (unsigned int n)
 {
     int is_pow2 = 0;
     
+    if (0 == n)
+    {
+        return is_pow2;
+    }
+    
     if (0 == (n & (n - 1)))
     {
         is_pow2 = 1;
@@ -100,13 +105,13 @@ void ThreeBitsOn(unsigned int arr[], int arr_size)
     for (i = 0; i < arr_size; i++)
     {
         count = 0;
-        j = bit_range;  /* bit_range = 32 */
+        j = bit_range;  
         temp = 1;
         
         while (0 < j)
         {
             
-            if (temp & arr[i])  /* Indicates if a bit is set or not */
+            if (temp & arr[i])  
             {
                 ++count;
             }
@@ -139,12 +144,10 @@ unsigned char ByteMirrorLoop(unsigned char num)
     char mirror = 0;
     int i = 0;
     
-    
     for (i = 0; i < BYTE_SIZE; i++)
     {
-        if ((1 << i) & num)     /* Check if bit at current index is set */
+        if ((1 << i) & num)     
         {
-            /* Set the bit of the mirror index to i */
             mirror = mirror | (1 << (BYTE_SIZE - 1 - i));
         }
     }
@@ -195,8 +198,7 @@ int CheckSetBitsTwo(unsigned char n)
     unsigned char temp2 = 1;
     unsigned int result = (((temp1 << 1) & n) >> 1) | (((temp2 << 5) & n) >> 5);
     
-    return result;
-    
+    return result; 
 }
 
 unsigned char SwapThreeFive(unsigned char n)
@@ -218,8 +220,7 @@ unsigned char SwapThreeFive(unsigned char n)
     
     result = n ^ temp;
     
-    return result;
-    
+    return result; 
 } 
 
 /**************************************************************/
@@ -280,7 +281,7 @@ int CountSetLoop(unsigned int n)
 /*  of set bits using HAMMING WEIGHT                */
 /****************************************************/
 
-int CountSet(unsigned int x)
+int CountSet(unsigned int n)
 {
     unsigned int m1  = 0x55555555; 
     unsigned int m2  = 0x33333333; 
@@ -288,14 +289,13 @@ int CountSet(unsigned int x)
     unsigned int m8  = 0x00ff00ff; 
     unsigned int m16 = 0x0000ffff; 
 
-    x = (x & m1 ) + ((x >>  1) & m1 ); 
-    x = (x & m2 ) + ((x >>  2) & m2 );
-    x = (x & m4 ) + ((x >>  4) & m4 ); 
-    x = (x & m8 ) + ((x >>  8) & m8 );  
-    x = (x & m16) + ((x >> 16) & m16);
+    n = (n & m1 ) + ((n >>  1) & m1 ); 
+    n = (n & m2 ) + ((n >>  2) & m2 );
+    n = (n & m4 ) + ((n >>  4) & m4 ); 
+    n = (n & m8 ) + ((n >>  8) & m8 );  
+    n = (n & m16) + ((n >> 16) & m16);
     
-    return x;
-
+    return n;
 }
 
 /***********************************************************************/
