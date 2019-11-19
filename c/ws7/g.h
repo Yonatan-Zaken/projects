@@ -1,2 +1,2 @@
-static int g_s = 3;
+extern int g_s = 3;
 void Foo();
