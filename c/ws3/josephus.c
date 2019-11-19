@@ -10,14 +10,14 @@ int CountAlive(int arr[], int n);
 int main()
 {
 
-    int arr[40] = {0};
+    int arr[1000] = {0};
     int last_alive = 0;
 
-    InitializeArr(arr, 40);
+    InitializeArr(arr, 1000);
 
     /*To start from person j enter j-1 in the start_index*/
     /* n = number of people */
-    last_alive = FindLastAlive(arr, 40, 0); 
+    last_alive = FindLastAlive(arr, 1000, 1); 
 
     printf("Soldier %d survives.\n",last_alive + 1);
 

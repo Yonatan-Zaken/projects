@@ -48,11 +48,10 @@ char **CopyEnv(const char **buffer, int flag)
     random_num = rand() % buff_size + 1;
     
     /* Allocate memory for pointer to pointer */
-    copy = (char**)malloc(buff_size * sizeof(char*));
+    copy = (char**)calloc(buff_size, sizeof(char*));
     
     if (NULL == copy)
     {
-        
         return NULL;
     }
     

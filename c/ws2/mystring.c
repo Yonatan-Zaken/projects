@@ -58,7 +58,8 @@ int StrCmp(const char *s1, const char *s2)
     int return_val = 0;    
         
     /* Check if s1/s2 point to '\0' in debug mode */    
-    assert(NULL != s1 && NULL != s2);  
+    assert(NULL != s1) 
+    assert(NULL != s2);  
      
             
     while (*runner1 == *runner2 && '\0' != *runner1)
@@ -67,17 +68,8 @@ int StrCmp(const char *s1, const char *s2)
         ++runner2;
     }
     
-    if(*runner1 > *runner2)
-    {
-        return_val = 1;    
-    }
     
-    else if(*runner1 < *runner2)
-    {
-        return_val = -1;
-    } 
-    
-    return (return_val);
+    return (*runner1 - *runner2);
 }
 
 /*****************************************/
@@ -129,6 +121,11 @@ char *StrnCpy(char *dest, const char *src, size_t n)
     
     /* Check if src/dest point to '\0' in debug mode */
     assert(NULL != src && NULL != dest);
+    
+    if ( 0 == n)
+    {
+        return dest;
+    }
     
     while (i < n && '\0' != *runner2)
     {
