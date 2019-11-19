@@ -2,19 +2,22 @@
 
 int main()
 {
-    char *c;
+    
     float y;
     long l;
     
-    struct point{
-        char *c;
-        char ch;
-    }first_point;
+    union point{
+        int c;
+        double a;
+    };
     
-    printf("%d\n\n", sizeof());
+    union point first_point;
     
-    printf("char *c = %p\n", &c, &c+1);
-    printf("%d\n", (int)(&first_point + 1) - (int)&first_point);
+    first_point.c = 10;
+    first_point.a = 20; 
+    
+    printf("%d\n\n", sizeof(first_point));
+    
     
     return 0;
 }
