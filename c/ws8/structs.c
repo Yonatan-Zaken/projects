@@ -149,8 +149,10 @@ int AddToStr(void *data_ptr)
 }
 
 
-/********************************************************************/
-
+/*************************************************************/
+/* This function gets a void pointer and frees the address   */
+/* memory that has been allocated to it                      */
+/*************************************************************/
 
 int CleanMem(void *data_ptr)
 {
@@ -159,6 +161,11 @@ int CleanMem(void *data_ptr)
     
     return 0;
 }
+
+/*************************************************/
+/* This a an empty function which is pointed to  */
+/* by pointers to functions that are not in use  */
+/*************************************************/
 
 int EmptyFunc(void *data_ptr)
 {
