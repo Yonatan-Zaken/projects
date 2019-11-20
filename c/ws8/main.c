@@ -17,6 +17,7 @@ int main()
     types_and_oper inf_arr[3];
 
     /* This function initializes the members of the structure */
+    /* in each element of the array                           */
     Initialize(inf_arr);
     
     result = Infrastructure(inf_arr);
