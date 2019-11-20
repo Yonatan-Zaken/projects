@@ -2,22 +2,20 @@
 
 int main()
 {
-    
-    float y;
-    long l;
-    
-    union point{
-        int c;
-        double a;
-    };
-    
-    union point first_point;
-    
-    first_point.c = 10;
-    first_point.a = 20; 
-    
-    printf("%d\n\n", sizeof(first_point));
+    int x = 15;
+    void *data = "hello";
+    void *data2;
     
     
+    
+    /*
+    *((float*)(&data)) = "hey";
+    */
+    printf("%s\n", ()data);
+    
+            
+    
+    
+   
     return 0;
 }
