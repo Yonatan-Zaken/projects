@@ -11,9 +11,12 @@
 #ifndef __STRUCTS_H__
 #define __STRUCTS_H__
 
+#define UNUSED(x) (void)(x)
+
 #include <stdio.h>  /* use of printf */
 #include <stdlib.h> /* use of malloc, realloc and free */ 
 #include <string.h> /* use of strlen and strcat */
+#include <assert.h>
 
 #define ADD_INT_VAL 10
 #define NUM_ELEMENTS 3
@@ -39,3 +42,8 @@ int CleanMem(void *data_ptr);
 int EmptyFunc(void *data_ptr);
 
 #endif
+
+
+
+
+

@@ -18,9 +18,21 @@ int main()
 
     /* This function initializes the members of the structure */
     /* in each element of the array                           */
-    Initialize(inf_arr);
+    result = Initialize(inf_arr);
+    
+    if (1 == result)
+    {
+        printf("Fail to allocate memory to inf_arr[2].data_type.");
+        return 1;
+    }
     
     result = Infrastructure(inf_arr);
+    
+    if (1 == result)
+    {
+        printf("Fail to re-allocate memory to inf_arr[2].data_type.");
+        return 1;
+    }
     
     return 0;
 }

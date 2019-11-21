@@ -26,10 +26,9 @@ int Initialize(types_and_oper inf_arr[])
     inf_arr[1].clean_ptr = &EmptyFunc;
     
     inf_arr[2].data_type = malloc(sizeof(char) * 6);
-    if(NULL == inf_arr[2].data_type)
+    if (NULL == inf_arr[2].data_type)
     {
-        printf("Fail to allocate memory to inf_arr[2].data_type.");
-        return 0;
+        return 1;
     }
     
     strcpy(inf_arr[2].data_type, "hello");
@@ -51,11 +50,18 @@ int Initialize(types_and_oper inf_arr[])
 int Infrastructure(types_and_oper inf_arr[])
 {
     int i = 0;
+    int status = 0;
     
     for(i = 0; i < NUM_ELEMENTS; i++)
     {
         inf_arr[i].print_ptr(inf_arr[i].data_type);
-        inf_arr[i].add_ptr(&inf_arr[i].data_type);
+        
+        status = inf_arr[i].add_ptr(&inf_arr[i].data_type);
+        if (1 == status)
+        {
+            printf("Fail to re-allocate memory, aborting...");
+            return 1;
+        }
         inf_arr[i].print_ptr(inf_arr[i].data_type);
         inf_arr[i].clean_ptr(inf_arr[i].data_type);  
     }
@@ -70,6 +76,8 @@ int Infrastructure(types_and_oper inf_arr[])
 
 void PrintInt(const void *data_ptr)
 {
+    assert(NULL != ((int*)(&data_ptr)));     
+    
     printf("%d\n", *((int*)(&data_ptr)));
 }
 
@@ -80,6 +88,8 @@ void PrintInt(const void *data_ptr)
 
 void PrintFloat(const void *data_ptr)
 {
+    assert(NULL != ((float*)(&data_ptr)));
+
     printf("%f\n", *((float*)(&data_ptr)));
 }
 
@@ -90,6 +100,8 @@ void PrintFloat(const void *data_ptr)
 
 void PrintStr(const void *data_ptr)
 {
+    assert(NULL != data_ptr);    
+    
     printf("%s\n", (char*)data_ptr);
 }
 
@@ -100,9 +112,11 @@ void PrintStr(const void *data_ptr)
 
 int AddToInt(void *data_ptr)
 {
+    assert(NULL != data_ptr);    
+    
     *((int*)data_ptr) = *((int*)(data_ptr)) + ADD_INT_VAL;        
     
-    return 1;
+    return 0;
 }
 
 /*******************************************************************/
@@ -112,9 +126,11 @@ int AddToInt(void *data_ptr)
 
 int AddToFloat(void *data_ptr)
 {
+    assert(NULL != data_ptr);
+
     *((float*)data_ptr) = *((float*)(data_ptr)) + ADD_INT_VAL; 
     
-    return 1;
+    return 0;
 }
 
 /*********************************************************************/
@@ -128,7 +144,9 @@ int AddToStr(void *data_ptr)
     int counter = 0;
     int str_length = strlen(*(char**)data_ptr);
     char buffer[BUFFER_SIZE];
-    
+ 
+    assert(NULL != data_ptr);   
+       
     while (0 != num)
     {
         num /= 10;
@@ -136,10 +154,9 @@ int AddToStr(void *data_ptr)
     }
     
     *((char**)data_ptr) = realloc(*((char**)data_ptr), str_length + counter + 1);
-    if(NULL == *((char**)data_ptr))
+    if (NULL == *((char**)data_ptr))
     {
-        printf("Fail to allocate memory to *data_ptr.");
-        return 0;
+        return 1;
     }
        
     sprintf(buffer, "%d", ADD_INT_VAL);
@@ -156,6 +173,8 @@ int AddToStr(void *data_ptr)
 
 int CleanMem(void *data_ptr)
 {
+    assert(NULL != data_ptr);
+    
     free(data_ptr);
     data_ptr = NULL;
     
@@ -169,6 +188,7 @@ int CleanMem(void *data_ptr)
 
 int EmptyFunc(void *data_ptr)
 {
+    UNUSED(data_ptr);
     return 0;
 }
 
