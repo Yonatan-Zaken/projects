@@ -16,7 +16,7 @@
 #include <string.h>
 
 void *MyMemset(void *str, int c, size_t n);
-
+void *MyMemcpy(void *dest, const void *src, size_t n);
 
 
 #endif

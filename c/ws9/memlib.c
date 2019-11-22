@@ -60,5 +60,46 @@ void *MyMemset(void *str, int c, size_t n)
     return str; 
 }
 
+/**************************************************************/
+/* This function gets a pointer to a string str and sets its  */
+/* first n bytes in memory to the the constant c              */
+/**************************************************************/
+
+void *MyMemcpy(void *dest, const void *src, size_t n)
+{
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
