@@ -12,11 +12,16 @@
 
 #define WORD_IN_BYTES 8 
 
-#include <stdio.h>
-#include <string.h>
+#include <stdio.h>    /* printf */
+#include <string.h>   /* strlen */
+#include <stdlib.h>   /* atoi */
 
 void *MyMemset(void *str, int c, size_t n);
 void *MyMemcpy(void *dest, const void *src, size_t n);
+void *MyMemmove(void *dest, const void *src, size_t n);
+int MyAtoi(const char *str);
+char *MyItoa(int num, char *buffer, int base);
 
+void TestFunc(int condition, const char *message);
 
 #endif

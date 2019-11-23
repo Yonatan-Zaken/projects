@@ -4,12 +4,24 @@
 
 int main()
 {
-    char str[20] = "helloworldhelloworld";
-    int x = 'c';
-    memset(str, 99, 26);
-    printf("%s\n", str);
+    /*
+    char str1[] = "abcde";
+    char *str2 = str1 + 2;
+    size_t n = 3;
     
-    printf("%d\n", x);
+    printf("%ld\n", (size_t)(str1 + n));
+    printf("%ld\n", (size_t)str2);
+    */
+    
+    int n = 4812;
+    int temp = 0;
+    char buffer[40]; 
+    temp = n % 10;
+    
+    buffer[0] = temp + 48;
+    
+    printf("%c\n", buffer[0]);
+    
     
     return 0;
 }
