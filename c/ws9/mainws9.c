@@ -18,7 +18,8 @@ int main()
     char *str3 = str2 + 2;
     char str4[] = "44432324";
     int num = -59;   
-    char str5[11] = {0}; 
+    char str5[11] = {0};
+    int check_endianess = 1;  
     
     /*Test fir MyMemset */
     TestFunc(strcmp(MyMemset(str1, 'c', 18), 
@@ -33,6 +34,9 @@ int main()
     
     /* Test for MyItoa */
     printf("%s\n", MyItoa(num, str5, 10));   
+    
+    /* Test is little Endian */
+    IsLittleEndian(check_endianess);
     
     /*
     if (NULL == result)
@@ -67,6 +71,7 @@ void TestFunc(int condition, const char *message)
     
     printf("\033[0m"); 
 }
+
 
 
 

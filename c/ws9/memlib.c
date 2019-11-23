@@ -195,7 +195,21 @@ char *MyItoa(int num, char *buffer, int base)
     return buffer;        
 }
 
+/*****************************************************/
+/* This function prints the endianness of the system */
+/*****************************************************/
 
+void IsLittleEndian(int num)
+{
+    int *p = &num; /* num = 1 */
+    
+    if (1 == *(char*)p)
+    {
+        printf("Endianness order is Little Endian.\n");
+    }
+    
+    else printf("Endianness order is Big Endian\n");
+}
 
 
 

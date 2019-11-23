@@ -13,14 +13,10 @@ int main()
     printf("%ld\n", (size_t)str2);
     */
     
-    int n = 4812;
-    int temp = 0;
-    char buffer[40]; 
-    temp = n % 10;
+    int n = 4660;
+    int *p = &n;
     
-    buffer[0] = temp + 48;
-    
-    printf("%c\n", buffer[0]);
+    printf("%d\n", *((char*)p));
     
     
     return 0;
