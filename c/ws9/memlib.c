@@ -2,8 +2,8 @@
 /*   			             	 */
 /*Implementing file work sheet 9 */
 /*   Yonatan Zaken		         */
-/*   Last Updated 21/11/19       */
-/*   Reviewed by: Yoav Hattav    */   
+/*   Last Updated 24/11/19       */
+/*   Reviewed by: Eliya          */   
 /*			                   	 */
 /*********************************/
 
@@ -19,6 +19,8 @@ void *MyMemset(void *str, int c, size_t n)
     unsigned char *runner = str;
     size_t const_word = c;
     int i = 0;
+    
+    assert(NULL != str);
     
     if (strlen(str) < n)
     {
@@ -69,6 +71,9 @@ void *MyMemcpy(void *dest, const void *src, size_t n)
     unsigned char *runner_dest = dest;
     const unsigned char *runner_src = src;
     
+    assert(NULL != dest);
+    assert(NULL != src);
+    
     if (0 != ((size_t)runner_dest % WORD_IN_BYTES) && (0 < n))
     {
         *runner_dest = *runner_src;
@@ -106,6 +111,9 @@ void *MyMemmove(void *dest, const void *src, size_t n)
     unsigned char *runner_dest = dest;
     const unsigned char *runner_src = src;
     
+    assert(NULL != dest);
+    assert(NULL != src);
+    
     if (((size_t)runner_src + n > (size_t)runner_dest))
     {
         runner_dest = runner_dest + (n - 1);    
@@ -142,6 +150,8 @@ int MyAtoi(const char *str)
     int result = 0;
     int sign = 1;
     
+    assert(NULL != str);
+    
     if ('-' == *runner)
     {
         sign = -1;
@@ -171,6 +181,8 @@ static void ReverseStr(char *source)
     char temp = 0;
     int i = 0;
     
+    assert(NULL != source);
+    
     for (i = 0; i < stop_cond; ++i)
     {
         temp = *start;
@@ -192,10 +204,19 @@ char *MyItoa(int num, char *buffer, int base)
     int is_negative = 0;
     int remainder = 0;    
     
+    assert(NULL != buffer);
+        
     if (0 > num)
     {
         num = -num;
         is_negative = 1;
+    }
+    
+    if (0 == num)
+    {
+        *runner = 48;
+        *(runner + 1) = '\0';
+        return runner;
     }
     
     while (0 != num)
@@ -245,15 +266,72 @@ void IsLittleEndian(void)
 }
 
 
-/*****************************************************/
-/* This function checks three arrays                 */
-/*****************************************************/
+/*****************************************************************/
+/* This function checks which characters occur in s1 and s2 but  */
+/* not in the string s3                                          */   
+/*****************************************************************/
 
-void CheckThreeArrays()
+int CheckThreeArrays(char array1[], char array2[], char array3[], int size1, int size2, int size3)
 {
+	int i = 0;
+	unsigned char value = 0;
+
+	int **arr = (int **)calloc(2 ,sizeof(int *)); 
+    	for (i = 0; i < 2; ++i)
+	{
+         	arr[i] = (int *)calloc(127 ,sizeof(int)); 
+	}
+
+	if (NULL == arr) 	
+ 	{
+		printf("calloc failed");
+		return 0;
+	}
+	
+	i = 0;
+	
+	while (i < size1)
+	{
+		value = array1[i];
+		if (0 == arr[0][(int)value])
+		{
+		    ++arr[0][(int)value];
+		}
+		++i;
+	}
+	
+	i = 0;
+
+ 	while (i < size2)
+	{
+		value = array2[i];
+		if (1 == arr[0][(int)value])
+		{
+			++arr[0][(int)value];
+		}
+		++i;
+	}
+	i = 0;
+
+	while (i < size3)
+	{
+		value = array3[i];
+	    ++arr[1][(int)value];
+		++i;
+	}
+	
+	for (i = 0; i < 127; ++i)
+	{
+		if ((arr[0][i] == 2) && (arr[1][i] == 0))
+		{
+			printf("%c ",(char)i);
+		}
+	}
     
-
-
+	free(arr);
+    arr = NULL;
+	
+	return 1;
 }
 
                             

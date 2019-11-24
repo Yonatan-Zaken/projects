@@ -2,8 +2,8 @@
 /*   			             	 */
 /*   Main file work sheet 9      */
 /*   Yonatan Zaken		         */
-/*   Last Updated 21/11/19       */
-/*   Reviewed by: Yoav Hattav    */   
+/*   Last Updated 24/11/19       */
+/*   Reviewed by: Eliya          */   
 /*			                   	 */
 /*********************************/
 
@@ -11,7 +11,6 @@
 
 int main()
 {
-    /* Test for MyMemset */
     char str1[30] = "helloworldhelloworld";    
     char str2[] = "abcde";
     char *str3 = str2 + 2;
@@ -19,9 +18,13 @@ int main()
     char str5[11] = {0};  
     char str6[] = "abcdefghijklmno";
     char *str7 = str6 + 5;
-
-    int num = -59;   
-    int endianness = 4660;
+    char str8[] = "abcd";
+    char str9[] = "anec";
+    char str10[] = "tenv";
+    
+    int base = 10;
+    int num = 2;   
+    int endianness = 1;
     
     /*Test fir MyMemset */
     TestFunc(0 == strcmp(MyMemset(str1, 'c', 18), 
@@ -39,7 +42,7 @@ int main()
     TestFunc(MyAtoi(str4) == atoi(str4), "Test Myatoi vs atoi");
     
     /* Test for MyItoa */
-    printf("%s\n", MyItoa(num, str5, 8));   
+    printf("%s\n", MyItoa(num, str5, base));   
     
     /* Test IsLittleEndian Function */
     IsLittleEndian();
@@ -47,11 +50,12 @@ int main()
     /* Test IS_LITTLE_ENDIAN MACRO */
     IS_LITTLE_ENDIAN(endianness);
     
-    
-    
+    /* Test CheckThreeArrays */
+    CheckThreeArrays(str8, str9, str10, 4, 4, 4);
     
     return 0;
 }
+
 
 /*****************************/
 /* This a a testing function */

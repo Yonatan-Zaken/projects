@@ -2,8 +2,8 @@
 /*   			             	 */
 /*   Header file work sheet 9    */
 /*   Yonatan Zaken		         */
-/*   Last Updated 21/11/19       */
-/*   Reviewed by: Yoav Hattav    */   
+/*   Last Updated 24/11/19       */
+/*   Reviewed by: Eliya          */   
 /*			                   	 */
 /*********************************/
 
@@ -11,10 +11,13 @@
 #define __MEMLIB_H__
 
 #include <stdio.h>    /* printf */
-#include <string.h>   /* strlen */
+#include <string.h>   /* strlen, strcmp */
 #include <stdlib.h>   /* atoi */
+#include <assert.h>   
 
 #define WORD_IN_BYTES 8 
+
+#define ASCII_CHARS 59
 
 #define IS_LITTLE_ENDIAN(x)    (*(char*)(&x) == (0xFF & x)) ?\
                               printf("Endianness is Little Endian.\n") :\
@@ -25,10 +28,12 @@ void *MyMemcpy(void *dest, const void *src, size_t n);
 void *MyMemmove(void *dest, const void *src, size_t n);
 void IsLittleEndian(void);
 void TestFunc(int condition, const char *message);
-void CheckThreeArrays();
 
 int MyAtoi(const char *str);
+int CheckThreeArrays(char array1[], char array2[], char array3[], int size1, int size2, int size3);
 
 char *MyItoa(int num, char *buffer, int base);
+
+
 
 #endif
