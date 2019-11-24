@@ -12,40 +12,43 @@
 int main()
 {
     /* Test for MyMemset */
-    void *result = NULL;
     char str1[30] = "helloworldhelloworld";    
     char str2[] = "abcde";
     char *str3 = str2 + 2;
     char str4[] = "44432324";
+    char str5[11] = {0};  
+    char str6[] = "abcdefghijklmno";
+    char *str7 = str6 + 5;
+
     int num = -59;   
-    char str5[11] = {0};
-    int check_endianess = 1;  
+    int endianness = 4660;
     
     /*Test fir MyMemset */
-    TestFunc(strcmp(MyMemset(str1, 'c', 18), 
-                      memset(str1, 'c', 18)) == 0, "MyMemset test");
+    TestFunc(0 == strcmp(MyMemset(str1, 'c', 18), 
+                         memset(str1, 'c', 18)), "MyMemset test");
     
     /* Test for MyMemcpy */
-    TestFunc(strcmp(MyMemcpy(str3, str2, 3), 
-                      memcpy(str3, str2, 3)) == 0, "MyMemcpy test");
+    TestFunc(0 == strcmp(MyMemcpy(str3, str2, 3), 
+                         memcpy(str3, str2, 3)), "MyMemcpy test");
     
+    /* Test for MyMemmove */
+    TestFunc(0 == strcmp(MyMemmove(str7, str6, 8), 
+                           memmove(str7, str6, 8)), "MyMemmove test");
+
     /*Test for MyAtoi */
     TestFunc(MyAtoi(str4) == atoi(str4), "Test Myatoi vs atoi");
     
     /* Test for MyItoa */
-    printf("%s\n", MyItoa(num, str5, 10));   
+    printf("%s\n", MyItoa(num, str5, 8));   
     
-    /* Test is little Endian */
-    IsLittleEndian(check_endianess);
+    /* Test IsLittleEndian Function */
+    IsLittleEndian();
     
-    /*
-    if (NULL == result)
-    {
-        printf("n bytes exceed buffer size. aborting...\n");
-        return 1;
-    }
+    /* Test IS_LITTLE_ENDIAN MACRO */
+    IS_LITTLE_ENDIAN(endianness);
     
-    printf("%s\n", (unsigned char*)result);*/
+    
+    
     
     return 0;
 }

@@ -13,11 +13,15 @@ int main()
     printf("%ld\n", (size_t)str2);
     */
     
-    int n = 4660;
-    int *p = &n;
+    char str1[] = "abcdefghi";
+    char *str2 = str1 + 3;
     
-    printf("%d\n", *((char*)p));
+    printf("%s\n", memmove(str2, str1, 5));
+    
     
     
     return 0;
 }
+
+
+                         

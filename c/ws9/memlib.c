@@ -32,7 +32,7 @@ void *MyMemset(void *str, int c, size_t n)
     }
     
     /* If address is not aligned */
-    if (0 != ((size_t)runner % WORD_IN_BYTES))
+    if (0 != ((size_t)runner % WORD_IN_BYTES) && (0 < n))
     {   
         while (0 != ((size_t)runner % WORD_IN_BYTES))
         {
@@ -44,7 +44,7 @@ void *MyMemset(void *str, int c, size_t n)
     
     while (1 <= (n / WORD_IN_BYTES))
     {
-        *(long*)runner = const_word;
+        *(size_t*)runner = const_word;
         runner = runner + WORD_IN_BYTES;
         n -= WORD_IN_BYTES;
     }
@@ -69,9 +69,17 @@ void *MyMemcpy(void *dest, const void *src, size_t n)
     unsigned char *runner_dest = dest;
     const unsigned char *runner_src = src;
     
+    if (0 != ((size_t)runner_dest % WORD_IN_BYTES) && (0 < n))
+    {
+        *runner_dest = *runner_src;
+        ++runner_dest;
+        ++runner_src;
+        --n;
+    }
+    
     while (1 <= (n / WORD_IN_BYTES))
     {
-        *(long*)runner_dest = *(long*)runner_src;
+        *(size_t*)runner_dest = *(size_t*)runner_src;
         runner_dest += WORD_IN_BYTES;
         runner_src += WORD_IN_BYTES;
         n -= WORD_IN_BYTES;
@@ -95,8 +103,32 @@ void *MyMemcpy(void *dest, const void *src, size_t n)
 
 void *MyMemmove(void *dest, const void *src, size_t n)
 {
+    unsigned char *runner_dest = dest;
+    const unsigned char *runner_src = src;
     
-
+    if (((size_t)runner_src + n > (size_t)runner_dest))
+    {
+        runner_dest = runner_dest + (n - 1);    
+        runner_src = runner_src + (n - 1);
+    
+        while (0 < n)
+        {
+            *runner_dest = *runner_src;
+            --runner_dest;
+            --runner_src; 
+            --n;   
+        }
+        
+        ++runner_dest;
+        return runner_dest;
+    }
+    
+    else 
+    {
+        runner_dest = MyMemcpy(dest, src, n);
+    }
+    
+    return runner_dest;
 }
 
 /********************************************************************/
@@ -199,23 +231,32 @@ char *MyItoa(int num, char *buffer, int base)
 /* This function prints the endianness of the system */
 /*****************************************************/
 
-void IsLittleEndian(int num)
+void IsLittleEndian(void)
 {
-    int *p = &num; /* num = 1 */
+    int num = 1;
+    int *p = &num; 
     
     if (1 == *(char*)p)
     {
-        printf("Endianness order is Little Endian.\n");
+        printf("Endianness is Little Endian.\n");
     }
     
-    else printf("Endianness order is Big Endian\n");
+    else printf("Endianness is Big Endian.\n");
 }
 
 
+/*****************************************************/
+/* This function checks three arrays                 */
+/*****************************************************/
+
+void CheckThreeArrays()
+{
+    
 
 
+}
 
-
+                            
 
 
 
