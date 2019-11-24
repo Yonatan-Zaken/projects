@@ -190,7 +190,9 @@ static void ReverseStr(char *source)
         *end = temp;
         ++start;
         --end;
-    }    
+    }
+    
+        
 }
 
 /*********************************************************************/
@@ -241,7 +243,10 @@ char *MyItoa(int num, char *buffer, int base)
     if (1 == is_negative)
     {
         *runner = '-';
+        ++runner;
     }
+    
+    *runner = '\0';
     
     ReverseStr(buffer);
     
@@ -328,6 +333,8 @@ int CheckThreeArrays(char array1[], char array2[], char array3[], int size1, int
 		}
 	}
     
+	free(arr[0]);
+	free(arr[1]);
 	free(arr);
     arr = NULL;
 	

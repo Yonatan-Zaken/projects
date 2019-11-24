@@ -11,20 +11,29 @@
 
 int main()
 {
-    char str1[30] = "helloworldhelloworld";    
-    char str2[] = "abcde";
-    char *str3 = str2 + 2;
-    char str4[] = "44432324";
-    char str5[11] = {0};  
-    char str6[] = "abcdefghijklmno";
-    char *str7 = str6 + 5;
+    char *str1 = (char*)malloc(sizeof(char) * 50);
+    char *str2 = (char*)malloc(sizeof(char) * 50);   
+    char *str3 = NULL;
+    char *str4 = (char*)malloc(sizeof(char) * 50);
+    char *str5 = (char*)malloc(sizeof(char) * 50); 
+    char *str6 = (char*)malloc(sizeof(char) * 50);
+    char *str7 = NULL;
+    
     char str8[] = "abcd";
     char str9[] = "anec";
     char str10[] = "tenv";
     
     int base = 10;
-    int num = 2;   
+    int num = 2493;   
     int endianness = 1;
+    
+    strcpy(str1, "helloworldhelloworld");
+    strcpy(str2, "abcde");
+    str3 = str2 + 2;
+    strcpy(str4, "44432324");
+    strcpy(str5, "\0\0\0\0\0\0\0\0\0\0\0");
+    strcpy(str6, "abcdefghijklmno");
+    str7 = str6 + 5;
     
     /*Test fir MyMemset */
     TestFunc(0 == strcmp(MyMemset(str1, 'c', 18), 
@@ -37,7 +46,7 @@ int main()
     /* Test for MyMemmove */
     TestFunc(0 == strcmp(MyMemmove(str7, str6, 8), 
                            memmove(str7, str6, 8)), "MyMemmove test");
-
+     
     /*Test for MyAtoi */
     TestFunc(MyAtoi(str4) == atoi(str4), "Test Myatoi vs atoi");
     
@@ -53,9 +62,14 @@ int main()
     /* Test CheckThreeArrays */
     CheckThreeArrays(str8, str9, str10, 4, 4, 4);
     
+    free(str1); str1 = NULL;
+    free(str2); str2 = NULL;
+    free(str4); str4 = NULL;
+    free(str5); str5 = NULL;
+    free(str6); str6 = NULL;
+    
     return 0;
 }
-
 
 /*****************************/
 /* This a a testing function */
