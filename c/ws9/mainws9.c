@@ -11,29 +11,33 @@
 
 int main()
 {
-    char *str1 = (char*)malloc(sizeof(char) * 50);
-    char *str2 = (char*)malloc(sizeof(char) * 50);   
-    char *str3 = NULL;
-    char *str4 = (char*)malloc(sizeof(char) * 50);
-    char *str5 = (char*)malloc(sizeof(char) * 50); 
-    char *str6 = (char*)malloc(sizeof(char) * 50);
+    char *str1 = (char*)malloc(sizeof(char) * 40);
+    char *str2 = (char*)malloc(sizeof(char) * 40);   
+    char *str3 = (char*)malloc(sizeof(char) * 40);
+    char *str4 = (char*)malloc(sizeof(char) * 40);
+    char *str5 = (char*)malloc(sizeof(char) * 40); 
+    char *str6 = (char*)malloc(sizeof(char) * 40);
     char *str7 = NULL;
+    char *str8 = (char*)malloc(sizeof(char) * 40);
+    char *str9 = (char*)malloc(sizeof(char) * 40);
     
-    char str8[] = "abcd";
-    char str9[] = "anec";
-    char str10[] = "tenv";
+    char str10[] = "abcd";
+    char str11[] = "anec";
+    char str12[] = "tenv";
     
     int base = 10;
     int num = 2493;   
     int endianness = 1;
     
     strcpy(str1, "helloworldhelloworld");
-    strcpy(str2, "abcde");
-    str3 = str2 + 2;
+    strcpy(str2, "abcdefghijklmnopqrstuvw");
+    strcpy(str3, "xxxxxxxxxxxxxxx");
     strcpy(str4, "44432324");
     strcpy(str5, "\0\0\0\0\0\0\0\0\0\0\0");
-    strcpy(str6, "abcdefghijklmno");
+    strcpy(str6, "abcdefghijklmnopqrstuvwxyz");
     str7 = str6 + 5;
+    strcpy(str8, "QQQQQQQQQQQQQQQQQQQQQQQQQ");
+    strcpy(str9, "AAAAAAAAAAAAAAAAA");
     
     /*Test fir MyMemset */
     TestFunc(0 == strcmp(MyMemset(str1, 'c', 18), 
@@ -43,12 +47,17 @@ int main()
     TestFunc(0 == strcmp(MyMemcpy(str3, str2, 3), 
                          memcpy(str3, str2, 3)), "MyMemcpy test");
     
-    /* Test for MyMemmove */
+    
+    /* Test for MyMemmove With Overlap */
     TestFunc(0 == strcmp(MyMemmove(str7, str6, 8), 
-                           memmove(str7, str6, 8)), "MyMemmove test");
+                           memmove(str7, str6, 8)), "MyMemmove Overlap test");
      
+    /* Test for MyMemmove Without Overlap */
+    TestFunc(0 == strcmp(MyMemmove(str9, str8, 16), 
+                           memmove(str9, str8, 16)), "MyMemmove test");
+    
     /*Test for MyAtoi */
-    TestFunc(MyAtoi(str4) == atoi(str4), "Test Myatoi vs atoi");
+    TestFunc(MyAtoi(str4) == atoi(str4), "MyAtoi test");
     
     /* Test for MyItoa */
     printf("%s\n", MyItoa(num, str5, base));   
@@ -60,13 +69,15 @@ int main()
     IS_LITTLE_ENDIAN(endianness);
     
     /* Test CheckThreeArrays */
-    CheckThreeArrays(str8, str9, str10, 4, 4, 4);
+    CheckThreeArrays(str10, str11, str12, 4, 4, 4);
     
     free(str1); str1 = NULL;
     free(str2); str2 = NULL;
+    free(str3); str3 = NULL;
     free(str4); str4 = NULL;
     free(str5); str5 = NULL;
     free(str6); str6 = NULL;
+    free(str8); str8 = NULL;
     
     return 0;
 }

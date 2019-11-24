@@ -114,7 +114,8 @@ void *MyMemmove(void *dest, const void *src, size_t n)
     assert(NULL != dest);
     assert(NULL != src);
     
-    if (((size_t)runner_src + n > (size_t)runner_dest))
+    if ((((size_t)runner_src + n > (size_t)runner_dest)) 
+                          && (runner_dest > runner_src))
     {
         runner_dest = runner_dest + (n - 1);    
         runner_src = runner_src + (n - 1);
@@ -127,8 +128,7 @@ void *MyMemmove(void *dest, const void *src, size_t n)
             --n;   
         }
         
-        ++runner_dest;
-        return runner_dest;
+        return dest;
     }
     
     else 
@@ -325,6 +325,8 @@ int CheckThreeArrays(char array1[], char array2[], char array3[], int size1, int
 		++i;
 	}
 	
+	printf("Check Three Arrays Result: ");
+	
 	for (i = 0; i < 127; ++i)
 	{
 		if ((arr[0][i] == 2) && (arr[1][i] == 0))
@@ -332,6 +334,7 @@ int CheckThreeArrays(char array1[], char array2[], char array3[], int size1, int
 			printf("%c ",(char)i);
 		}
 	}
+	printf("\n");
     
 	free(arr[0]);
 	free(arr[1]);
