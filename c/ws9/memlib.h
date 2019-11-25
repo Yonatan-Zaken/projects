@@ -29,7 +29,7 @@ void *MyMemmove(void *dest, const void *src, size_t n);
 void IsLittleEndian(void);
 void TestFunc(int condition, const char *message);
 
-int MyAtoi(const char *str);
+int MyAtoi(const char *str, int base);
 int CheckThreeArrays(char array1[], char array2[], char array3[], int size1, int size2, int size3);
 
 char *MyItoa(int num, char *buffer, int base);

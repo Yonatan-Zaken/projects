@@ -139,33 +139,6 @@ void *MyMemmove(void *dest, const void *src, size_t n)
     return runner_dest;
 }
 
-/********************************************************************/
-/* This function gets a pointer to a string and returns the number  */
-/* represented in the string as an int value                        */
-/********************************************************************/
-
-int MyAtoi(const char *str)
-{
-    const char *runner = str;
-    int result = 0;
-    int sign = 1;
-    
-    assert(NULL != str);
-    
-    if ('-' == *runner)
-    {
-        sign = -1;
-        ++runner;
-    }
-    
-    while (('\0' != *runner) && ('.' != *runner))
-    {
-        result = result * 10 + ((*runner) - 48);
-        ++runner;
-    }    
-    
-    return (result * sign);
-}
 
 /*************************************************************/
 /* Service function for MyItoa. This function gets a pointer */
@@ -190,10 +163,49 @@ static void ReverseStr(char *source)
         *end = temp;
         ++start;
         --end;
+    }   
+}
+
+
+/********************************************************************/
+/* This function gets a pointer to a string and returns the number  */
+/* represented in the string as an int value                        */
+/********************************************************************/
+
+int MyAtoi(const char *str, int base)
+{
+    const char *runner = str;
+    int result = 0;
+    int sign = 1;
+    
+    assert(NULL != str);
+    
+    if ('-' == *runner)
+    {
+        sign = -1;
+        ++runner;
     }
     
+    /*ReverseStr((char*)runner);*/
+    
+    while (('\0' != *runner) && ('.' != *runner))
+    {
+        if ('A' <= *runner)
+        {
+            result = result * base + ((*runner) - 55);
+        }
         
+        else
+        {
+            result = result * base + ((*runner) - 48);
+        }
+        
+        ++runner;
+    }    
+    
+    return (result * sign);
 }
+
 
 /*********************************************************************/
 /* This function gets an int value and returns a pointer to a string */
@@ -281,18 +293,23 @@ int CheckThreeArrays(char array1[], char array2[], char array3[], int size1, int
 	int i = 0;
 	unsigned char value = 0;
 
-	int **arr = (int **)calloc(2 ,sizeof(int *)); 
+	int **arr = (int **)calloc(2 ,sizeof(int *));
+	if (NULL == arr)
+	{
+	    printf("no memory allocated CheckThreeArrays function\n");
+	    return 1;
+	}
+	 
     	for (i = 0; i < 2; ++i)
 	{
-         	arr[i] = (int *)calloc(127 ,sizeof(int)); 
+         	arr[i] = (int *)calloc(127 ,sizeof(int));
+         	if (NULL == arr[i])
+         	{
+         	    printf("no memory allocated CheckThreeArrays function.\n");
+         	    return 1;
+         	} 
 	}
 
-	if (NULL == arr) 	
- 	{
-		printf("calloc failed");
-		return 0;
-	}
-	
 	i = 0;
 	
 	while (i < size1)
@@ -316,6 +333,7 @@ int CheckThreeArrays(char array1[], char array2[], char array3[], int size1, int
 		}
 		++i;
 	}
+	
 	i = 0;
 
 	while (i < size3)
@@ -334,6 +352,7 @@ int CheckThreeArrays(char array1[], char array2[], char array3[], int size1, int
 			printf("%c ",(char)i);
 		}
 	}
+	
 	printf("\n");
     
 	free(arr[0]);
@@ -341,7 +360,7 @@ int CheckThreeArrays(char array1[], char array2[], char array3[], int size1, int
 	free(arr);
     arr = NULL;
 	
-	return 1;
+	return 0;
 }
 
                             
