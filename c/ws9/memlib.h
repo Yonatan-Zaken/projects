@@ -17,7 +17,8 @@
 
 #define WORD_IN_BYTES 8 
 
-#define ASCII_CHARS 59
+#define ASCII_ZERO 48
+#define ASCII_CHAR 55
 
 #define IS_LITTLE_ENDIAN(x)    (*(char*)(&x) == (0xFF & x)) ?\
                               printf("Endianness is Little Endian.\n") :\

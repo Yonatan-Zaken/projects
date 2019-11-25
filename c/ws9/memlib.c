@@ -188,16 +188,16 @@ int MyAtoi(const char *str, int base)
     
     /*ReverseStr((char*)runner);*/
     
-    while (('\0' != *runner) && ('.' != *runner))
+    while ('\0' != *runner)
     {
         if ('A' <= *runner)
         {
-            result = result * base + ((*runner) - 55);
+            result = result * base + ((*runner) - ASCII_CHAR);
         }
         
         else
         {
-            result = result * base + ((*runner) - 48);
+            result = result * base + ((*runner) - ASCII_ZERO);
         }
         
         ++runner;
@@ -228,7 +228,7 @@ char *MyItoa(int num, char *buffer, int base)
     
     if (0 == num)
     {
-        *runner = 48;
+        *runner = ASCII_ZERO;
         *(runner + 1) = '\0';
         return runner;
     }
@@ -239,14 +239,14 @@ char *MyItoa(int num, char *buffer, int base)
         
         if (9 < remainder)
         {
-            *runner = (remainder + 55);
+            *runner = (remainder + ASCII_CHAR);
             num /= base;
             ++runner;
         }
             
         else
         {
-            *runner = (remainder + 48);
+            *runner = (remainder + ASCII_ZERO);
             num /= base;
             ++runner;
         }
