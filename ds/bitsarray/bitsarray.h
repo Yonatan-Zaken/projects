@@ -2,15 +2,17 @@
 /*   			             	 */
 /*   Header file DS 1            */
 /*   Yonatan Zaken		         */
-/*   Last Updated 24/11/19       */
-/*   Reviewed by:          */   
+/*   Last Updated 26/11/19       */
+/*   Reviewed by: Shye           */   
 /*			                   	 */
 /*********************************/
 
 #ifndef __BITS_ARRAY_H__ 
 #define __BITS_ARRAY_H__
 
-#include <stddef.h>
+#include <stddef.h> /* size_t type */
+
+typedef size_t bitsarr_t;
 
 /* This function sets all bits to 1 */
 size_t BArrSetAllBits(size_t bits);
