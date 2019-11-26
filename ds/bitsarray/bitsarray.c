@@ -3,7 +3,7 @@
 /*   Implementing file DS 1      */
 /*   Yonatan Zaken		         */
 /*   Last Updated 24/11/19       */
-/*   Reviewed by: Eliya          */   
+/*   Reviewed by: Shye           */   
 /*			                   	 */
 /*********************************/
 
@@ -32,8 +32,8 @@
 #define ASCII_ZERO 48
 
 /***********************************************************/
-/*                                                         */
-/*                                                         */
+/* This function gets a size_t value and a position and    */
+/* returns if the bit is on                                */   
 /***********************************************************/
 
 int BArrIsOn(size_t bits, int position)
@@ -47,8 +47,8 @@ int BArrIsOn(size_t bits, int position)
 }
 
 /***********************************************************/
-/*                                                         */
-/*                                                         */
+/* This function gets a size_t value and a position and    */
+/* returns if the bit is off                               */   
 /***********************************************************/
 
 int BArrIsOff(size_t bits, int position)
@@ -61,10 +61,9 @@ int BArrIsOff(size_t bits, int position)
     return is_off;
 }
 
-
 /***********************************************************/
-/*                                                         */
-/*                                                         */
+/* This function gets a size_t value and roatates it to    */
+/* the left num_of_rotations times                         */
 /***********************************************************/
 
 size_t BArrRotateLeft(size_t bits, int num_of_rotations)
@@ -88,10 +87,9 @@ size_t BArrRotateLeft(size_t bits, int num_of_rotations)
     return bits;
 }
 
-
 /***********************************************************/
-/*                                                         */
-/*                                                         */
+/* This function gets a size_t value and roatates it to    */
+/* the right num_of_rotations times                        */
 /***********************************************************/
 
 size_t BArrRotateRight(size_t bits, int num_of_rotations)
@@ -115,10 +113,8 @@ size_t BArrRotateRight(size_t bits, int num_of_rotations)
     return bits;
 }
 
-
 /***********************************************************/
-/*                                                         */
-/*                                                         */
+/* This function return a size_t value with all bits set   */
 /***********************************************************/
 
 size_t BArrSetAllBits(size_t bits)
@@ -127,11 +123,9 @@ size_t BArrSetAllBits(size_t bits)
     return (~bits); 
 }
 
-
-/***********************************************************/
-/*                                                         */
-/*                                                         */
-/***********************************************************/
+/*************************************************************/
+/* This function return a size_t value with all bits reset   */
+/*************************************************************/
 
 size_t BArrResetAllBits(size_t bits)
 {
@@ -139,11 +133,9 @@ size_t BArrResetAllBits(size_t bits)
     return bits;
 }
 
-
-/***********************************************************/
-/*                                                         */
-/*                                                         */
-/***********************************************************/
+/************************************************************/
+/* This function flips the state of the bit in the position */
+/************************************************************/
 
 size_t BArrFlipBit(size_t bits, int position)
 {
@@ -151,10 +143,9 @@ size_t BArrFlipBit(size_t bits, int position)
     return bits;
 }
 
-
 /***********************************************************/
-/*                                                         */
-/*                                                         */
+/* This function sets the sets the bit indexed by position */
+/* to be on and returns the new value                      */
 /***********************************************************/
 
 size_t BArrSetOn(size_t bits, int position)
@@ -165,8 +156,8 @@ size_t BArrSetOn(size_t bits, int position)
 
 
 /***********************************************************/
-/*                                                         */
-/*                                                         */
+/* This function sets the sets the bit indexed by position */
+/* to be off and returns the new value                     */
 /***********************************************************/
 
 size_t BArrSetOff(size_t bits, int position)
@@ -177,10 +168,10 @@ size_t BArrSetOff(size_t bits, int position)
 }
 
 
-/***********************************************************/
-/*                                                         */
-/*                                                         */
-/***********************************************************/
+/*****************************************************************/
+/* This functions sets the bit indexed by position to the state  */
+/* mentioned by the variable status                              */
+/*****************************************************************/
 
 size_t BArrSetBit(size_t bits, int position, int status)
 {
@@ -241,10 +232,10 @@ size_t BArrCountOff(size_t bits)
     return bit_num;
 }
 
-/***********************************************/
-/*                                             */
-/*                                             */
-/***********************************************/
+/****************************************************/
+/* This is a helping function for BArrToString that */
+/* reverses the string it gets as argument          */
+/****************************************************/
 
 static void ReverseStr(char *source)
 {
