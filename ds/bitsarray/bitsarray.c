@@ -66,7 +66,7 @@ int BArrIsOff(size_t bits, int position)
 /* the left num_of_rotations times                         */
 /***********************************************************/
 
-size_t BArrRotateLeft(size_t bits, int num_of_rotations)
+bitsarr_t BArrRotateLeft(bitsarr_t bits, int num_of_rotations)
 {
     while (0 < (num_of_rotations % WORD_IN_BITS))
     {
@@ -92,7 +92,7 @@ size_t BArrRotateLeft(size_t bits, int num_of_rotations)
 /* the right num_of_rotations times                        */
 /***********************************************************/
 
-size_t BArrRotateRight(size_t bits, int num_of_rotations)
+bitsarr_t BArrRotateRight(bitsarr_t bits, int num_of_rotations)
 {
     while (0 < (num_of_rotations % WORD_IN_BITS))
     {
@@ -117,7 +117,7 @@ size_t BArrRotateRight(size_t bits, int num_of_rotations)
 /* This function return a size_t value with all bits set   */
 /***********************************************************/
 
-size_t BArrSetAllBits(size_t bits)
+bitsarr_t BArrSetAllBits(bitsarr_t bits)
 {
     bits ^= bits;
     return (~bits); 
@@ -127,7 +127,7 @@ size_t BArrSetAllBits(size_t bits)
 /* This function return a size_t value with all bits reset   */
 /*************************************************************/
 
-size_t BArrResetAllBits(size_t bits)
+bitsarr_t BArrResetAllBits(bitsarr_t bits)
 {
     bits ^= bits;
     return bits;
@@ -137,7 +137,7 @@ size_t BArrResetAllBits(size_t bits)
 /* This function flips the state of the bit in the position */
 /************************************************************/
 
-size_t BArrFlipBit(size_t bits, int position)
+bitsarr_t BArrFlipBit(bitsarr_t bits, int position)
 {
     bits ^= (ONE_MASK << (position - 1));     
     return bits;
@@ -148,7 +148,7 @@ size_t BArrFlipBit(size_t bits, int position)
 /* to be on and returns the new value                      */
 /***********************************************************/
 
-size_t BArrSetOn(size_t bits, int position)
+bitsarr_t BArrSetOn(bitsarr_t bits, int position)
 {
     bits |= (ONE_MASK << (position - 1));        
     return bits;
@@ -160,7 +160,7 @@ size_t BArrSetOn(size_t bits, int position)
 /* to be off and returns the new value                     */
 /***********************************************************/
 
-size_t BArrSetOff(size_t bits, int position)
+bitsarr_t BArrSetOff(bitsarr_t bits, int position)
 {
     
     bits &= ~(ONE_MASK << (position - 1));        
@@ -173,7 +173,7 @@ size_t BArrSetOff(size_t bits, int position)
 /* mentioned by the variable status                              */
 /*****************************************************************/
 
-size_t BArrSetBit(size_t bits, int position, int status)
+bitsarr_t BArrSetBit(bitsarr_t bits, int position, int status)
 {
     size_t value_after_set = 0;
     
@@ -290,7 +290,7 @@ char* BArrToString(size_t bits, char* buffer)
 /* bit representation of that value using Hamming Weight method         */
 /************************************************************************/
 
-size_t BArrMirror(size_t bits)
+bitsarr_t BArrMirror(bitsarr_t bits)
 {
     size_t bit_num = bits;
     
