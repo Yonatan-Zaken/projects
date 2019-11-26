@@ -244,18 +244,14 @@ static void ReverseStr(char *source)
 char* BArrToString(size_t bits, char* buffer)
 {
     size_t remainder = 0;
-    size_t base = 2;
-    size_t counter = BITS_IN_WORD;
+    size_t counter = 0;
     char *runner = buffer;
     
     assert (NULL != buffer);
     
-    while (0 < counter)
+    while (WORD_IN_BITS > counter)
     {
-        remainder = bits % base;
-        *runner = (remainder + ASCII_ZERO);
-        bits /= base;
-        --counter;
+        *runner = (((bits >> counter) & ONE_MASK) + ASCII_ZERO);
         ++runner;
     }
 
