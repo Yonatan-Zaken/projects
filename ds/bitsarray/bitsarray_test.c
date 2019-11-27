@@ -63,7 +63,7 @@ static void TestBArrMirror()
     RUN_TEST((MSB == BArrMirror(1UL)), "BArrMirror Test");
     RUN_TEST((1UL == BArrMirror(MSB)), "BArrMirror Test");
     RUN_TEST(MASKMIRR1 == BArrMirror(MASKMIRR2), "BArrMirror Test");
-    RUN_TEST(~0UL == BArrMirror(~0), "BArrMirror Test"); 
+    RUN_TEST(~0UL == BArrMirror(~0UL), "BArrMirror Test"); 
     printf("\n");   
 }
 

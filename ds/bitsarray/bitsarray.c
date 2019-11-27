@@ -38,10 +38,9 @@
 
 int BArrIsOn(size_t bits, int position)
 {
-    size_t bit_num = bits;
     int is_on = 0;
-    
-    is_on = ((bit_num >> (position - 1)) & ONE_MASK);
+ 
+    is_on = ((bits >> (position - 1)) & ONE_MASK);
     
     return is_on;
 }
@@ -53,10 +52,10 @@ int BArrIsOn(size_t bits, int position)
 
 int BArrIsOff(size_t bits, int position)
 {
-    size_t bit_num = ~(bits);
     int is_off = 0;
+    bits = ~(bits);
    
-    is_off = ((bit_num >> (position - 1)) & ONE_MASK);
+    is_off = ((bits >> (position - 1)) & ONE_MASK);
     
     return is_off;
 }
@@ -66,7 +65,7 @@ int BArrIsOff(size_t bits, int position)
 /* the left num_of_rotations times                         */
 /***********************************************************/
 
-bitsarr_t BArrRotateLeft(bitsarr_t bits, int num_of_rotations)
+size_t BArrRotateLeft(bitsarr_t bits, int num_of_rotations)
 {
     while (0 < (num_of_rotations % WORD_IN_BITS))
     {
@@ -92,7 +91,7 @@ bitsarr_t BArrRotateLeft(bitsarr_t bits, int num_of_rotations)
 /* the right num_of_rotations times                        */
 /***********************************************************/
 
-bitsarr_t BArrRotateRight(bitsarr_t bits, int num_of_rotations)
+size_t BArrRotateRight(bitsarr_t bits, int num_of_rotations)
 {
     while (0 < (num_of_rotations % WORD_IN_BITS))
     {
@@ -117,7 +116,7 @@ bitsarr_t BArrRotateRight(bitsarr_t bits, int num_of_rotations)
 /* This function return a size_t value with all bits set   */
 /***********************************************************/
 
-bitsarr_t BArrSetAllBits(bitsarr_t bits)
+size_t BArrSetAllBits(bitsarr_t bits)
 {
     bits ^= bits;
     return (~bits); 
@@ -127,7 +126,7 @@ bitsarr_t BArrSetAllBits(bitsarr_t bits)
 /* This function return a size_t value with all bits reset   */
 /*************************************************************/
 
-bitsarr_t BArrResetAllBits(bitsarr_t bits)
+size_t BArrResetAllBits(bitsarr_t bits)
 {
     bits ^= bits;
     return bits;
@@ -137,7 +136,7 @@ bitsarr_t BArrResetAllBits(bitsarr_t bits)
 /* This function flips the state of the bit in the position */
 /************************************************************/
 
-bitsarr_t BArrFlipBit(bitsarr_t bits, int position)
+size_t BArrFlipBit(bitsarr_t bits, int position)
 {
     bits ^= (ONE_MASK << (position - 1));     
     return bits;
@@ -148,7 +147,7 @@ bitsarr_t BArrFlipBit(bitsarr_t bits, int position)
 /* to be on and returns the new value                      */
 /***********************************************************/
 
-bitsarr_t BArrSetOn(bitsarr_t bits, int position)
+size_t BArrSetOn(bitsarr_t bits, int position)
 {
     bits |= (ONE_MASK << (position - 1));        
     return bits;
@@ -160,7 +159,7 @@ bitsarr_t BArrSetOn(bitsarr_t bits, int position)
 /* to be off and returns the new value                     */
 /***********************************************************/
 
-bitsarr_t BArrSetOff(bitsarr_t bits, int position)
+size_t BArrSetOff(bitsarr_t bits, int position)
 {
     
     bits &= ~(ONE_MASK << (position - 1));        
@@ -173,7 +172,7 @@ bitsarr_t BArrSetOff(bitsarr_t bits, int position)
 /* mentioned by the variable status                              */
 /*****************************************************************/
 
-bitsarr_t BArrSetBit(bitsarr_t bits, int position, int status)
+size_t BArrSetBit(bitsarr_t bits, int position, int status)
 {
     size_t value_after_set = 0;
     
@@ -190,7 +189,6 @@ bitsarr_t BArrSetBit(bitsarr_t bits, int position, int status)
     return value_after_set;
 }
 
-
 /*************************************************************************/
 /* This function gets a pointer to a size_t value and counts the number  */
 /*  of bits that are set to 1 (on) using Hamming Weight method           */
@@ -198,18 +196,16 @@ bitsarr_t BArrSetBit(bitsarr_t bits, int position, int status)
 
 size_t BArrCountOn(size_t bits)
 {
-    size_t bit_num = bits;
     
-    bit_num = (bit_num & MASK1) + ((bit_num >>  1) & MASK1);
-    bit_num = (bit_num & MASK3) + ((bit_num >>  2) & MASK3);
-    bit_num = (bit_num & MASK5) + ((bit_num >>  4) & MASK5);
-    bit_num = (bit_num & MASK7) + ((bit_num >>  8) & MASK7);
-    bit_num = (bit_num & MASK9) + ((bit_num >>  16) & MASK9);
-    bit_num = (bit_num & MASK11) + ((bit_num >>  32) & MASK11);
+    bits = (bits & MASK1) + ((bits >>  1) & MASK1);
+    bits = (bits & MASK3) + ((bits >>  2) & MASK3);
+    bits = (bits & MASK5) + ((bits >>  4) & MASK5);
+    bits = (bits & MASK7) + ((bits >>  8) & MASK7);
+    bits = (bits & MASK9) + ((bits >>  16) & MASK9);
+    bits = (bits & MASK11) + ((bits >>  32) & MASK11);
     
-    return bit_num;                              
+    return bits;                              
 }
-
 
 /*************************************************************/
 /* This function gets a pointer to a size_t value and counts */
@@ -218,18 +214,10 @@ size_t BArrCountOn(size_t bits)
 
 size_t BArrCountOff(size_t bits)
 {
-    size_t bit_num = bits;
     
-    bit_num = ~(bit_num);    
-    
-    bit_num = (bit_num & MASK1) + ((bit_num >>  1) & MASK1);
-    bit_num = (bit_num & MASK3) + ((bit_num >>  2) & MASK3);
-    bit_num = (bit_num & MASK5) + ((bit_num >>  4) & MASK5);
-    bit_num = (bit_num & MASK7) + ((bit_num >>  8) & MASK7);
-    bit_num = (bit_num & MASK9) + ((bit_num >>  16) & MASK9);
-    bit_num = (bit_num & MASK11) + ((bit_num >>  32) & MASK11);
-    
-    return bit_num;
+    bits = ~(BArrCountOn(bits));    
+   
+    return bits;
 }
 
 /****************************************************/
@@ -284,24 +272,22 @@ char* BArrToString(size_t bits, char* buffer)
     return buffer;
 }
 
-
 /************************************************************************/
 /* This functions receives a pointer to a size_t value and mirrors the  */
 /* bit representation of that value using Hamming Weight method         */
 /************************************************************************/
 
-bitsarr_t BArrMirror(bitsarr_t bits)
+size_t BArrMirror(bitsarr_t bits)
 {
-    size_t bit_num = bits;
     
-    bit_num = ((bit_num & MASK2) >> 1) | ((bit_num & MASK1) << 1);
-    bit_num = ((bit_num & MASK4) >> 2) | ((bit_num & MASK3) << 2);
-    bit_num = ((bit_num & MASK6) >> 4) | ((bit_num & MASK5) << 4);
-    bit_num = ((bit_num & MASK8) >> 8) | ((bit_num & MASK7) << 8);              
-    bit_num = ((bit_num & MASK10) >> 16) | ((bit_num & MASK9) << 16);
-    bit_num = ((bit_num & MASK12) >> 32) | ((bit_num & MASK11) << 32);  
+    bits = ((bits & MASK2) >> 1) | ((bits & MASK1) << 1);
+    bits = ((bits & MASK4) >> 2) | ((bits & MASK3) << 2);
+    bits = ((bits & MASK6) >> 4) | ((bits & MASK5) << 4);
+    bits = ((bits & MASK8) >> 8) | ((bits & MASK7) << 8);              
+    bits = ((bits & MASK10) >> 16) | ((bits & MASK9) << 16);
+    bits = ((bits & MASK12) >> 32) | ((bits & MASK11) << 32);  
     
-    return bit_num;
+    return bits;
 }
 
 
