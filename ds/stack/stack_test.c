@@ -72,15 +72,16 @@ static void TestStack2()
     double data3 = 6.2;
     double data4 = 1.1;
     
-    stack_t* stack1 = StackCreate(element_size, capacity);
+    stack_t* stack2 = StackCreate(element_size, capacity);
     
     printf("Test second stack.\n");
     
-    RUN_TEST(80 == (char*)stack1->end - (char*)stack1->start, "Check Stack\n");
-    RUN_TEST(1 == StackPush(stack1, &data1), "push 1 second stack");
-    RUN_TEST(1 == StackPush(stack1, &data2), "push 2 second stack");
-    RUN_TEST(1 == StackPush(stack1, &data3), "push 3 second stack");
-    RUN_TEST(1 == StackPush(stack1, &data4), "push 4 second stack");
+    RUN_TEST(80 == (char*)stack2->end - (char*)stack2->start, "Check Stack\n");
+    RUN_TEST(1 == StackPush(stack2, &data1), "push 1 second stack");
+    RUN_TEST(1 == StackPush(stack2, &data2), "push 2 second stack");
+    RUN_TEST(1 == StackPush(stack2, &data3), "push 3 second stack");
+    RUN_TEST(1 == StackPush(stack2, &data4), "push 4 second stack");
+    
     
     
     StackDestroy(stack2);
