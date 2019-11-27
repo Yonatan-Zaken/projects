@@ -153,7 +153,6 @@ size_t BArrSetOn(bitsarr_t bits, int position)
     return bits;
 }
 
-
 /***********************************************************/
 /* This function sets the sets the bit indexed by position */
 /* to be off and returns the new value                     */
@@ -165,7 +164,6 @@ size_t BArrSetOff(bitsarr_t bits, int position)
     bits &= ~(ONE_MASK << (position - 1));        
     return bits;
 }
-
 
 /*****************************************************************/
 /* This functions sets the bit indexed by position to the state  */
@@ -215,18 +213,10 @@ size_t BArrCountOn(size_t bits)
 size_t BArrCountOff(size_t bits)
 {
     
-    bits = ~bits;
-        
-    bits = (bits & MASK1) + ((bits >> 1) & MASK1);
-    bits = (bits & MASK3) + ((bits >> 2) & MASK3);
-    bits = (bits & MASK5) + ((bits >> 4) & MASK5);
-    bits = (bits & MASK7) + ((bits >> 8) & MASK7);
-    bits = (bits & MASK9) + ((bits >> 16) & MASK9);
-    bits = (bits & MASK11) + ((bits >> 32) & MASK11);
-    
-    return bits;
+    bits = BArrCountOn(bits);
+   
+    return (WORD_IN_BITS - bits);
 }
-
 
 /***********************************************************/
 /* This function gets a pointer to a size_t value and      */
