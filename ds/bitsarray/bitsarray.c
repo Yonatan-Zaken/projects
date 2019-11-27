@@ -197,12 +197,12 @@ size_t BArrSetBit(bitsarr_t bits, int position, int status)
 size_t BArrCountOn(size_t bits)
 {
     
-    bits = (bits & MASK1) + ((bits >>  1) & MASK1);
-    bits = (bits & MASK3) + ((bits >>  2) & MASK3);
-    bits = (bits & MASK5) + ((bits >>  4) & MASK5);
-    bits = (bits & MASK7) + ((bits >>  8) & MASK7);
-    bits = (bits & MASK9) + ((bits >>  16) & MASK9);
-    bits = (bits & MASK11) + ((bits >>  32) & MASK11);
+    bits = (bits & MASK1) + ((bits >> 1) & MASK1);
+    bits = (bits & MASK3) + ((bits >> 2) & MASK3);
+    bits = (bits & MASK5) + ((bits >> 4) & MASK5);
+    bits = (bits & MASK7) + ((bits >> 8) & MASK7);
+    bits = (bits & MASK9) + ((bits >> 16) & MASK9);
+    bits = (bits & MASK11) + ((bits >> 32) & MASK11);
     
     return bits;                              
 }
@@ -215,36 +215,18 @@ size_t BArrCountOn(size_t bits)
 size_t BArrCountOff(size_t bits)
 {
     
-    bits = ~(BArrCountOn(bits));    
-   
+    bits = ~bits;
+        
+    bits = (bits & MASK1) + ((bits >> 1) & MASK1);
+    bits = (bits & MASK3) + ((bits >> 2) & MASK3);
+    bits = (bits & MASK5) + ((bits >> 4) & MASK5);
+    bits = (bits & MASK7) + ((bits >> 8) & MASK7);
+    bits = (bits & MASK9) + ((bits >> 16) & MASK9);
+    bits = (bits & MASK11) + ((bits >> 32) & MASK11);
+    
     return bits;
 }
 
-/****************************************************/
-/* This is a helping function for BArrToString that */
-/* reverses the string it gets as argument          */
-/****************************************************/
-
-static void ReverseStr(char *source)
-{
-    int size = strlen(source);
-    int stop_cond = size / 2;
-    char *start = source;
-    char *end = source + (size - 1); 
-    char temp = 0;
-    int i = 0;
-    
-    assert(NULL != source);
-    
-    for (i = 0; i < stop_cond; ++i)
-    {
-        temp = *start;
-        *start = *end;
-        *end = temp;
-        ++start;
-        --end;
-    }   
-}
 
 /***********************************************************/
 /* This function gets a pointer to a size_t value and      */
@@ -258,6 +240,8 @@ char* BArrToString(size_t bits, char* buffer)
     
     assert (NULL != buffer);
     
+    bits = BArrMirror(bits);
+    
     while (WORD_IN_BITS > counter)
     {
         *runner = (((bits >> counter) & ONE_MASK) + ASCII_ZERO);
@@ -266,8 +250,6 @@ char* BArrToString(size_t bits, char* buffer)
     }
 
     *runner = '\0';
-    
-    ReverseStr(buffer);
     
     return buffer;
 }
