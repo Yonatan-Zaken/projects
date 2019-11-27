@@ -38,11 +38,8 @@
 
 int BArrIsOn(size_t bits, int position)
 {
-    int is_on = 0;
- 
-    is_on = ((bits >> (position - 1)) & ONE_MASK);
-    
-    return is_on;
+
+    return ((bits >> (position - 1)) & ONE_MASK);
 }
 
 /***********************************************************/
@@ -52,12 +49,9 @@ int BArrIsOn(size_t bits, int position)
 
 int BArrIsOff(size_t bits, int position)
 {
-    int is_off = 0;
+  
     bits = ~(bits);
-   
-    is_off = ((bits >> (position - 1)) & ONE_MASK);
-    
-    return is_off;
+    return ((bits >> (position - 1)) & ONE_MASK);
 }
 
 /***********************************************************/
