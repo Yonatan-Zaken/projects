@@ -7,7 +7,6 @@
 /*			                   	 */
 /*********************************/
 
-#include <stddef.h>  /* size_t data type */
 #include <stdlib.h>  /* malloc */
 #include <assert.h>  /* assert checks for validity of input */
 #include <string.h>  /* memcpy */

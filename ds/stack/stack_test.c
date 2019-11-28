@@ -10,7 +10,7 @@
 #include <stdio.h>   /* printf */
 #include <string.h>  /* strcpy, strcmp */
 #include <stdlib.h>  /* malloc */
-#include "stack.h" 
+#include "stack.h"   /* stack data structure functions */
 
 #define NORMAL "\033[0m"
 #define RED "\033[;031m"
@@ -38,7 +38,6 @@ struct Stack
     void* end;
     size_t element_size;
 };
-
 
 static void TestStack1()
 {
