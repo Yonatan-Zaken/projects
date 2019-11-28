@@ -23,7 +23,7 @@ void StackDestroy(stack_t* mystack);
 /* This function push given element to the top of the Stack */
 int StackPush(stack_t* mystack, const void* data);
 
-/* This function pop the element that is on the top of the Stack and remove it */
+/* This function pop the element that on the top of the Stack and removes it */
 void StackPop(stack_t* mystack);
 
 /* This function checkes if the Stack is empty */
