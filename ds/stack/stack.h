@@ -1,10 +1,10 @@
 /*********************************/
-/*    Data Structures            */
-/*    Stack                      */       
-/*    Author :Guy Cohen Zedek    */
-/*    Reviewed By:               */
-/*    Date:     /11/2019         */
-/*                               */
+/*   			             	 */
+/*   Header file DS 2            */
+/*   Yonatan Zaken		         */
+/*   Last Updated 28/11/19       */
+/*   Reviewed by: Daniel         */   
+/*			                   	 */
 /*********************************/
 
 #ifndef __STACK_H__

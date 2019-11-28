@@ -2,8 +2,8 @@
 /*   			             	 */
 /*   Implementing file DS 2      */
 /*   Yonatan Zaken		         */
-/*   Last Updated 27/11/19       */
-/*   Reviewed by:            */   
+/*   Last Updated 28/11/19       */
+/*   Reviewed by: Daniel         */   
 /*			                   	 */
 /*********************************/
 
@@ -34,15 +34,15 @@ stack_t* StackCreate(size_t element_size, size_t capacity)
         return NULL;
     }
     
-    stack_ptr -> start = (void*)malloc(element_size * capacity);
-    if (NULL == stack_ptr -> start)
+    stack_ptr->start = (void*)malloc(element_size * capacity);
+    if (NULL == stack_ptr->start)
     {
         return NULL;
     } 
     
-    stack_ptr -> element_size = element_size;
-    stack_ptr -> current = (stack_ptr -> start);
-    stack_ptr -> end = (char*)(stack_ptr -> start) + (element_size * capacity);
+    stack_ptr->element_size = element_size;
+    stack_ptr->current = (stack_ptr -> start);
+    stack_ptr->end = (char*)(stack_ptr->start) + (element_size * capacity);
     
     return stack_ptr;
 }
@@ -55,7 +55,7 @@ void StackDestroy(stack_t* mystack)
 {
     assert(NULL != mystack);
     
-    free(mystack -> start); mystack -> start = NULL;
+    free(mystack->start); mystack->start = NULL;
     free(mystack); mystack = NULL;
 }
 
@@ -107,7 +107,7 @@ int StackIsEmpty(const stack_t* mystack)
 {
 	assert(NULL != mystack);
 
-	if (mystack -> current == mystack -> start)
+	if (mystack->current == mystack -> start)
 	{
 		return 1;
 	}
@@ -123,8 +123,8 @@ size_t StackSize(const stack_t* mystack)
 {
 	assert(NULL != mystack);
 
-	return (((char*)mystack -> current - 
-	         (char*)mystack -> start)/(mystack -> element_size));                
+	return (((char*)mystack->current - 
+	         (char*)mystack->start) / (mystack->element_size));                
 }
 
 /**********************************************************/

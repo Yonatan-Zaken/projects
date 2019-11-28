@@ -76,7 +76,7 @@ int Infrastructure(types_and_oper inf_arr[])
 
 void PrintInt(const void *data_ptr)
 {
-    assert(NULL != ((int*)(&data_ptr)));     
+    assert(NULL != data_ptr);     
     
     printf("%d\n", *((int*)(&data_ptr)));
 }
@@ -88,7 +88,7 @@ void PrintInt(const void *data_ptr)
 
 void PrintFloat(const void *data_ptr)
 {
-    assert(NULL != ((float*)(&data_ptr)));
+    assert(NULL != data_ptr);
 
     printf("%f\n", *((float*)(&data_ptr)));
 }
