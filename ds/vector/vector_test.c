@@ -7,13 +7,9 @@
 /*			                   	 */
 /*********************************/
 
+#include <stdio.h>   /* printf, size_t */
 
-
-#include <stdio.h>   /* printf */
-#include <string.h>  /* strcpy, strcmp */
-#include <stdlib.h>  /* malloc */
-
-#include "vector.h"   /* stack data structure functions */
+#include "vector.h"   /* dynamic vector data structure functions */
 
 #define NORMAL "\033[0m"
 #define RED "\033[;031m"
@@ -128,26 +124,49 @@ static void TestVector2()
     VectorDestroy(vector2);   
 }
 
+static void TestVector3()
+{
+    size_t element_size = 1;
+    size_t capacity = 10;
+    int i = 0;
+    vector_t* vector3 = VectorCreate(element_size, capacity);
+    
+    printf("vector3 test:\n");
+    
+    RUN_TEST(0 == vector3->size, "check vector1 size");
+    RUN_TEST(10 == vector3->capacity, "check vector1 capacity");
+    RUN_TEST(1 == vector3->element_size, "check vector1 elementsize");
+    VectorPopBack(vector3);
+    VectorPopBack(vector3);
+    VectorPopBack(vector3);
+    printf("capacity: %lu, size: %lu\n", vector3->capacity, vector3->size);
+    
+    for (i = 65; i < 76; ++i)
+    {
+        RUN_TEST(0 == VectorPushBack(vector3, &i), "check vector3 push");
+        printf("capacity: %lu, size: %lu\n", vector3->capacity, vector3->size);
+    }    
+    
+    RUN_TEST('J' == *(char*)VectorGetItemAddress(vector3, 10), "check vector3 IA");
+    
+    for (i = 65; i < 76; ++i)
+    {
+        VectorPopBack(vector3);
+        printf("capacity: %lu, size: %lu\n", vector3->capacity, vector3->size);
+    }
+    
+    
+    
+    
+    printf("\n");
+    VectorDestroy(vector3); 
+}
+
 int main()
 {   
     TestVector1();
     TestVector2();
+    TestVector3();
     
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -26,7 +26,6 @@ struct Vector
 
 vector_t* VectorCreate(size_t element_size, size_t capacity)
 {
- 
     vector_t *myvector = (vector_t*)malloc(sizeof(vector_t));
     if (NULL == myvector)
     {
@@ -149,15 +148,3 @@ void* VectorGetItemAddress(const vector_t *myvector, size_t position)
     
     return ((char*)myvector->start + (position - 1) * (myvector->element_size));
 }
-
-
-
-
-
-
-
-
-
-
-
-
