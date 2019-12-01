@@ -39,14 +39,11 @@ int FindMaxProfit(int arr[], int size, int* buy, int *sell)
 
 int main()
 {
-    int array[] = {6,12,3,5,1,4,9,2};
+    int array[] = {6,6,6,6};
     int buy = 0;
     int sell = 0;
-    /*
-    int *pbuy = &buy;
-    int *psell = &sell;
-    */
-    int result = FindMaxProfit(array, 8, &buy, &sell);
+    int result = FindMaxProfit(array, 4, &buy, &sell);
+  
     printf("maxprofit = %d\n buy %d sell %d", result, buy, sell);
     
     return 0;
