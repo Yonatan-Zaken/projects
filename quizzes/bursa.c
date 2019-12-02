@@ -1,11 +1,14 @@
+/***************/
+/* Bursa Quizz */
+/***************/
+
 #include <stdio.h>
-#include <assert.h>
 
 int FindMaxProfit(int arr[], int size, int* buy, int *sell)
 {
     int max_profit = 0;              
     int min_value = arr[0]; 
-    int i = 0, j = 0, max_value = 0;
+    int i = 0, j = 0;
     
     if (1 >= size)
     {
@@ -21,9 +24,8 @@ int FindMaxProfit(int arr[], int size, int* buy, int *sell)
         if (max_profit <= arr[i] - min_value)
         {
             max_profit = arr[i] - min_value;
-            *sell += i - max_value;
-            max_value = i;  
-            *buy += j;
+            *sell = i; 
+            *buy = j;
         }
         
         else if (min_value > arr[i])
@@ -39,12 +41,12 @@ int FindMaxProfit(int arr[], int size, int* buy, int *sell)
 
 int main()
 {
-    int array[] = {6,6,6,6};
+    int array[] = {5,3,1,10,6,4,1,2};
     int buy = 0;
     int sell = 0;
-    int result = FindMaxProfit(array, 4, &buy, &sell);
+    int result = FindMaxProfit(array, 8, &buy, &sell);
   
-    printf("maxprofit = %d\n buy %d sell %d", result, buy, sell);
+    printf("maxprofit = %d\nbuy index: %d sell index:%d\n", result, buy, sell);
     
     return 0;
 }
