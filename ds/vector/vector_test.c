@@ -7,8 +7,6 @@
 /*			                   	 */
 /*********************************/
 
-
-
 #include <stdio.h>   /* printf */
 #include <string.h>  /* strcpy, strcmp */
 #include <stdlib.h>  /* malloc */

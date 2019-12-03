@@ -32,7 +32,6 @@ int FindMaxProfit(int arr[], int size, int* buy, int *sell)
         {
             min_value = arr[i];
             j = i;
-            
         }    
     }
     
