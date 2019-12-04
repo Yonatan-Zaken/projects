@@ -74,5 +74,5 @@ int SLLHasLoop(const node_t *head);
 /* WARNING: Doesnt get NULL pointer */
 node_t *SLLFindIntersection(const node_t *head1, const node_t *head2);
 
-
 #endif
+

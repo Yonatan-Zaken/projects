@@ -294,4 +294,3 @@ node_t *SLLFindIntersection(const node_t *head1, const node_t *head2)
 	
 	return NULL;
 }
-
