@@ -51,9 +51,3 @@ void* VectorGetItemAddress(const vector_t *myvector, size_t position);
 
 #endif
 
-
-
-
-
-
-
