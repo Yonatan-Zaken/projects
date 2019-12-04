@@ -27,21 +27,19 @@ struct Vector
 vector_t* VectorCreate(size_t element_size, size_t capacity)
 {
     vector_t *myvector = (vector_t*)malloc(sizeof(vector_t));
-    if (NULL == myvector)
-    {
-        return NULL;
+    if (NULL != myvector)
+    {   
+        myvector->start = (void*)malloc(element_size * capacity);    
+        if (NULL == myvector->start)
+        {
+            return NULL;
+        }
+        
+        myvector->capacity = capacity;
+        myvector->element_size = element_size;
+        myvector->size = 0;
     }
-    
-    myvector->start = (void*)malloc(element_size * capacity);
-    if (NULL == myvector->start)
-    {
-        return NULL;
-    }
-    
-    myvector->capacity = capacity;
-    myvector->element_size = element_size;
-    myvector->size = 0;
-    
+   
     return myvector;
 }
 
@@ -107,7 +105,7 @@ int VectorReserve(vector_t *myvector, size_t new_capacity)
     myvector->capacity = new_capacity;
     myvector->start = (void*)realloc(myvector->start, 
                       (myvector->capacity) * (myvector->element_size));
-                      
+                    
     if (NULL == myvector->start)
     {
         return 1;
@@ -137,7 +135,7 @@ size_t VectorSize(const vector_t *myvector)
 /* This function return specific item address to the user */
 /* Warning: the address is valid until using PopBack/PushBack over the limit */
 /* Warning: the function doesn't get NULL pointer */
-void* VectorGetItemAddress(const vector_t *myvector, size_t position)
+void *VectorGetItemAddress(const vector_t *myvector, size_t position)
 {
     assert(NULL != myvector);
     

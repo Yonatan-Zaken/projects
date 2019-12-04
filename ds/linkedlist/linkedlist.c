@@ -227,8 +227,7 @@ int SLLHasLoop(const node_t *head)
 	slow = (node_t *)head;
 	temp = (node_t *)head;
 	fast = (node_t *)head;
-    
-    
+
 	while ((NULL != slow->next) && (NULL != fast->next) && (NULL != temp->next))
 	{
 		slow = slow->next;
