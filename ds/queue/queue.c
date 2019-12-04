@@ -16,13 +16,14 @@
 
 #define FREE(ptr) free(ptr); ptr = NULL;
 
+#define NUM_OF_DUMMIES 2
+
 struct Queue
 {
     node_t *front;
     node_t *rear;
 };
 
-/* Creates new queue */
 queue_t *QCreate()
 {
 	queue_t *new_q = (queue_t *)malloc(sizeof(queue_t)); 
@@ -37,7 +38,7 @@ queue_t *QCreate()
 		new_q->front = SLLCreateNode(new_q->rear, NULL);
 		if (NULL == new_q->front)
 		{
-		    FREE(new_q);
+		    FREE(new_q->rear);
 			return NULL;
 		}
 	}
@@ -45,8 +46,6 @@ queue_t *QCreate()
 	return new_q;  
 }
 
-/* Destroys the data structure */
-/* WARNING: Doesnt get NULL pointer */
 void QDestroy(queue_t *queue)
 {
     assert(NULL != queue);
@@ -55,8 +54,6 @@ void QDestroy(queue_t *queue)
 	FREE(queue);
 }
 
-/* Enter a new item to the queue */
-/* WARNING: Doesnt get NULL pointer */
 int QEnqueue(queue_t *queue, void *data)
 {
     node_t *new_node = NULL;
@@ -77,8 +74,6 @@ int QEnqueue(queue_t *queue, void *data)
 	return 0;
 }
 
-/* Get out the front item */
-/* WARNING: Doesnt get NULL pointer */
 void QDequeue(queue_t *queue)
 {
     assert(NULL != queue);
@@ -86,8 +81,6 @@ void QDequeue(queue_t *queue)
 	SLLRemoveAfter(queue->front);
 }
 
-/* If empty returns 1, otherwise returns 0 */
-/* WARNING: Doesnt get NULL pointer */
 int QIsEmpty(const queue_t *queue)
 {
 	assert(NULL != queue);
@@ -95,8 +88,6 @@ int QIsEmpty(const queue_t *queue)
 	return (queue->front->next == queue->rear);
 }
 
-/* Returns the front item */
-/* WARNING: Doesnt get NULL pointer */
 void *QPeek(const queue_t *queue)
 {
 	assert (NULL != queue);
@@ -104,17 +95,13 @@ void *QPeek(const queue_t *queue)
 	return ((queue->front)->next)->data;
 }
 
-/* Returns the queue size */
-/* WARNING: Doesnt get NULL pointer */
 size_t QSize(const queue_t *queue)
 {
 	assert (NULL != queue);
 
-	return (SLLSize(queue->front->next)-1);
+	return (SLLSize(queue->front) - NUM_OF_DUMMIES);
 }
 
-/* Appends the second queue to the first queue */
-/* WARNING: Doesnt get NULL pointer */
 queue_t *QAppend(queue_t *queue1, queue_t *queue2)
 {
 	assert(NULL != queue2);
