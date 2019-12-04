@@ -93,7 +93,7 @@ void *QPeek(const queue_t *queue)
 {
 	assert (NULL != queue);
 
-	return ((queue->front)->next)->data;
+	return (queue->front->next->data);
 }
 
 size_t QSize(const queue_t *queue)
