@@ -3,7 +3,7 @@
 /*   Header file DS 5            */
 /*   Yonatan Zaken		         */
 /*   Last Updated 4/12/19        */
-/*   Reviewed by:            */   
+/*   Reviewed by: Itai           */   
 /*			                   	 */
 /*********************************/
 
@@ -14,19 +14,30 @@
 
 typedef struct Queue queue_t;
 
-/* Creates new queue */
+/*******************************************/
+/* Gets no paramaters and returns a queue  */
+/* data structure                          */
+/* time complexity O(1)                    */
+/*******************************************/
 queue_t *QCreate();
 
-/* Destroys the data structure */
-/* WARNING: Doesnt get NULL pointer */
+/*************************************************/
+/* Gets a queue data structure Destroys it and   */
+/* frees it from memory. time complexity O(1)    */
+/* WARNING: Doesnt get NULL pointer              */
+/*************************************************/
 void QDestroy(queue_t *queue);
 
-/* Enter a new item to the queue */
-/* WARNING: Doesnt get NULL pointer */
+/***************************************/
+/* Enter a new item to the queue       */
+/* WARNING: Doesnt get NULL pointer    */
+/***************************************/
 int QEnqueue(queue_t *queue, void *data);
 
-/* Get out the front item */
-/* WARNING: Doesnt get NULL pointer */
+/***************************************/
+/* Get out the front item              */
+/* WARNING: Doesnt get NULL pointer    */
+/***************************************/
 void QDequeue(queue_t *queue);
 
 /* If empty returns 1, otherwise returns 0 */

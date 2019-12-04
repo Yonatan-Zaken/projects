@@ -23,8 +23,6 @@ node_t *SLLCreateNode(node_t *next, const void *data)
 {
     node_t *newnode = NULL;
     
-    assert(NULL != data);    
-
     newnode = (node_t *)malloc(sizeof(node_t));
     if (NULL == newnode)
     {
