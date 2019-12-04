@@ -23,7 +23,7 @@ queue_t *QCreate();
 
 /***************************************************/
 /* Gets a queue data structure Destroys it and     */
-/* frees it from memory. complexity O(1)           */
+/* frees it from memory. complexity O(n)           */
 /* WARNING: Undefined if parameter is NULL pointer */
 /***************************************************/
 void QDestroy(queue_t *queue);

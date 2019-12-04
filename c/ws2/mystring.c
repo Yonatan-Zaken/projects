@@ -54,20 +54,17 @@ size_t StrLen(const char *str)
 int StrCmp(const char *s1, const char *s2)
 {
     const char *runner1 = s1;
-    const char *runner2 = s2;
-    int return_val = 0;    
+    const char *runner2 = s2;    
         
     /* Check if s1/s2 point to '\0' in debug mode */    
-    assert(NULL != s1) 
+    assert(NULL != s1);
     assert(NULL != s2);  
-     
             
     while (*runner1 == *runner2 && '\0' != *runner1)
     {
         ++runner1;
         ++runner2;
     }
-    
     
     return (*runner1 - *runner2);
 }
@@ -86,7 +83,6 @@ char *StrCpy(char *dest, const char *src)
     char *runner1 = dest;
     /*char temp[StrLen(src) + 1];*/
     const char *runner2 = src;
-    
     
     /* Check if src/dest point to '\0' in debug mode */
     assert(NULL != src && NULL != dest);
