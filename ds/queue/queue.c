@@ -27,23 +27,24 @@ struct Queue
 queue_t *QCreate()
 {
 	queue_t *new_q = (queue_t *)malloc(sizeof(queue_t)); 
-	if (NULL == new_q)
+	if (NULL != new_q)
 	{
-	    return NULL;
-	}
-
-	new_q->rear = SLLCreateNode(NULL, NULL);
-	if (NULL != new_q->rear)
-	{
-		new_q->front = SLLCreateNode(new_q->rear, NULL);
-		if (NULL == new_q->front)
-		{
+	    new_q->rear = SLLCreateNode(NULL, NULL);
+	    if (NULL != new_q->rear)
+	    {
+		    new_q->front = SLLCreateNode(new_q->rear, NULL);
+		    if (NULL != new_q->front)
+		    {
+			    return new_q;
+		    }
+		    
 		    FREE(new_q->rear);
-			return NULL;
-		}
+	    }    
+	    
+	    FREE(new_q);
 	}
-
-	return new_q;  
+	
+	return NULL;  
 }
 
 void QDestroy(queue_t *queue)
