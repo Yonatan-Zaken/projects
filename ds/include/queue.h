@@ -17,13 +17,13 @@ typedef struct Queue queue_t;
 /*******************************************/
 /* Gets no paramaters and returns a queue  */
 /* data structure with two dummies         */
-/* complexity O(1)                         */
+/* complexity depends on malloc            */
 /*******************************************/
 queue_t *QCreate();
 
 /***************************************************/
 /* Gets a queue data structure Destroys it and     */
-/* frees it from memory. complexity O(1)           */
+/* frees it from memory. complexity of SLLDestroy  */
 /* WARNING: Undefined if parameter is NULL pointer */
 /***************************************************/
 void QDestroy(queue_t *queue);
