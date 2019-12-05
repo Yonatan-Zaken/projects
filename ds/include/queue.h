@@ -23,7 +23,11 @@ queue_t *QCreate();
 
 /***************************************************/
 /* Gets a queue data structure Destroys it and     */
+<<<<<<< HEAD
 /* frees it from memory. complexity of SLLDestroy  */
+=======
+/* frees it from memory. complexity O(n)           */
+>>>>>>> b780124430ce291028453b3a4005925816bcc147
 /* WARNING: Undefined if parameter is NULL pointer */
 /***************************************************/
 void QDestroy(queue_t *queue);
