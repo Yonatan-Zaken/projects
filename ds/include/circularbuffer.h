@@ -27,7 +27,7 @@ void CBufferDestroy(cbuffer_t *cb);
 /* bytes to read.                                                */
 /* Undefined behaviour if count is bigger than user buffer size  */
 /* Not defined for NULL pointer.                                 */
-/* complexity of memcopy                                         */
+/* complexity of memcpy                                         */
 /*****************************************************************/
 ssize_t CBufferRead(cbuffer_t *cb , void *buffer, size_t count);
 
@@ -37,7 +37,7 @@ ssize_t CBufferRead(cbuffer_t *cb , void *buffer, size_t count);
 /* Gets target circular buffer, the source buffer and the number of */
 /* bytes to write.                                                  */
 /* Not defined for NULL pointer.                                    */
-/* complexity of memcopy                                            */  
+/* complexity of memcpy                                            */  
 /********************************************************************/
 ssize_t CBufferWrite(cbuffer_t *cb ,const void *buffer, size_t count);
 

@@ -7,10 +7,10 @@
 /*			                   	 */
 /*********************************/
 
-#include <stddef.h> /* size_t */
-
 #ifndef __LINKED_LIST_H__
 #define __LINKED_LIST_H__
+
+#include <stddef.h> /* size_t */
 
 typedef struct Node
 {

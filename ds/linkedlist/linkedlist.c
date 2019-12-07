@@ -13,7 +13,7 @@
 #include "linkedlist.h" /* linked list functions */
 
 #define FREE(ptr){\
-                 free(ptr); ptr = NULL;\
+                    free(ptr); ptr = NULL;\
                  }
 
 /* Creates a new node */
