@@ -53,10 +53,12 @@ ssize_t CBufferRead(cbuffer_t *cb , void *buffer, size_t count)
 {
     int temp = count;
     char *runner = NULL;
+    size_t to_read_till_end = 0;
     
     assert(NULL != cb);
     assert(NULL != buffer);
     
+    to_read_till_end = cb->capacity - cb->read_index;
     runner = buffer;
     
     if (1 == CBufferIsEmpty(cb))
@@ -73,10 +75,10 @@ ssize_t CBufferRead(cbuffer_t *cb , void *buffer, size_t count)
     
     if (cb->read_index + count > cb->capacity)
     {
-        memcpy(runner, &cb->arr[cb->read_index], cb->capacity - cb->read_index);
-        cb->size -= cb->capacity - cb->read_index;   
-        runner = runner + cb->capacity - cb->read_index;
-        count -= cb->capacity - cb->read_index;
+        memcpy(runner, &cb->arr[cb->read_index], to_read_till_end);
+        cb->size -= to_read_till_end;   
+        runner += to_read_till_end;
+        count -= to_read_till_end;
         cb->read_index = 0;
     } 
     
@@ -92,11 +94,13 @@ ssize_t CBufferWrite(cbuffer_t *cb, const void *buffer, size_t count)
     const char *runner = NULL;
     size_t write_index = 0;
     size_t temp = count;
+    size_t to_write_till_end = 0;
     
     assert(NULL != cb);
     assert(NULL != buffer);
     
     write_index = (cb->read_index + cb->size) % cb->capacity;
+    to_write_till_end = cb->capacity - write_index;
     runner = buffer;
         
     if (count > CBufferFreeSpace(cb))
@@ -107,10 +111,10 @@ ssize_t CBufferWrite(cbuffer_t *cb, const void *buffer, size_t count)
     
     if (write_index + count > cb->capacity)
     {
-        memcpy(&cb->arr[write_index], runner, cb->capacity - write_index);
-        cb->size += cb->capacity - write_index;      
-        runner = runner + (cb->capacity - write_index);
-        count -= cb->capacity - write_index;
+        memcpy(&cb->arr[write_index], runner, to_write_till_end);
+        cb->size += to_write_till_end;      
+        runner += to_write_till_end;
+        count -= to_write_till_end;
         write_index = 0;
     }
     
