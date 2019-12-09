@@ -64,7 +64,7 @@ static void CircularBufferTest1()
     RUN_TEST('g' == buffer4[1], "buffer4 test");
     RUN_TEST('0' == buffer4[5], "buffer4 test");
     RUN_TEST(1 == CBufferIsEmpty(cb1), "is empty test2");
-    RUN_TEST(2 == CBufferRead(cb1, buffer2, 4), "read test2");        
+    RUN_TEST(-1 == CBufferRead(cb1, buffer2, 4), "read test2");        
     
     CBufferDestroy(cb1); 
     

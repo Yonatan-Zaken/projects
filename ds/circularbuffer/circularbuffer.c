@@ -11,10 +11,9 @@
 #include <stdlib.h>    /* malloc */
 #include <string.h>    /* memcpy */
 #include <assert.h>    /* assert */
+#include <stddef.h>    /* offsetof */
 
 #include "circularbuffer.h" /* circular buffer functions */
-
-#define OFFSETOF(TYPE, ELEMENT) ((size_t)&(((TYPE *)0)->ELEMENT))
 
 #define MIN_SIZE 1
 
@@ -28,7 +27,7 @@ struct CBuffer
 
 cbuffer_t *CBufferCreate(size_t capacity)
 {
-    cbuffer_t *newbuffer = (cbuffer_t *)malloc(OFFSETOF(cbuffer_t, arr) 
+    cbuffer_t *newbuffer = (cbuffer_t *)malloc(offsetof(cbuffer_t, arr) 
                                                             + capacity);
     if (NULL != newbuffer)
     {
@@ -63,8 +62,7 @@ ssize_t CBufferRead(cbuffer_t *cb , void *buffer, size_t count)
     
     if (1 == CBufferIsEmpty(cb))
     {
-        count = CBufferIsEmpty(cb);
-        temp = count;
+        return -1;
     }
     
     else if (count > cb->size)
