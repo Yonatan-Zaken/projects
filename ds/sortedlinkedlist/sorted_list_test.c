@@ -98,6 +98,12 @@ static void SortedListTest1()
     it1 = SLLFindBy(sll1, SLLBegin(sll1), SLLEnd(sll1), &MatchFunc, &ap);
     RUN_TEST(66 == *(int*)SLLGetData(it1), "get data test3");
     
+    /* test Pop */
+    RUN_TEST(99 == *(int*)SLLPopBack(sll1), "pop back test3");
+    RUN_TEST(77 == *(int*)SLLPopBack(sll1), "pop back test3");
+    RUN_TEST(66 == *(int*)SLLPopBack(sll1), "pop back test3");
+    RUN_TEST(22 == *(int*)SLLPopBack(sll1), "pop back test3");
+    
     SortLLDestroy(sll1);
     printf("\n");
 }

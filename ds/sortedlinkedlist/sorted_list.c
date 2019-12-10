@@ -141,19 +141,21 @@ int SLLIsSameIter(const sll_iterator_t it1, const sll_iterator_t it2)
 
 void* SLLPopBack(sll_t *sll)
 {
+    assert(NULL != sll);
     
+    return DLLPopBack(sll->list);    
 }
 
 void* SLLPopFront(sll_t *sll)
 {
-
-
+    assert(NULL != sll);
+    
+    return DLLPopFront(sll->list); 
 }
 
 int SLLForEach(sll_iterator_t start, sll_iterator_t end, action_func_ptr a_ptr, void *ap)
 {
-
-
+    return DLLForEach(start.current, end.current, a_ptr, ap);     
 }
 
 sll_iterator_t SLLFind(const sll_t *sll, const void *data, sll_iterator_t start, sll_iterator_t end)

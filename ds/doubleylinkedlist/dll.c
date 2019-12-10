@@ -267,7 +267,6 @@ int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *ap
     assert(NULL != start);
     assert(NULL != end);
     assert(NULL != a_ptr);
-    assert(NULL != ap);
     
     for (i = start; i != end; i = DLLGetNext(i))
     {
