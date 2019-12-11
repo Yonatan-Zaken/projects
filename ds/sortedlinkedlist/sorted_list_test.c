@@ -1,6 +1,6 @@
 /*********************************/
 /*   			             	 */
-/*   Main file DS 9              */
+/*   Main file DS 8              */
 /*   Yonatan Zaken		         */
 /*   Last Updated 10/12/19       */
 /*   Reviewed by:            */   
@@ -11,6 +11,8 @@
 
 #include "sortedlist.h" /* sorted linked list functions */
 #include "dllist.h" /* doubley linked list functions */
+
+#define UNUSED(x) (void)(x)
 
 #define NORMAL "\033[0m"
 #define RED "\033[;031m"
@@ -33,6 +35,7 @@
 
 static int IsBefore(const void *node_data,const void *user_data, void *param)
 {
+    UNUSED(param);
     return (*(int*)user_data < *(int*)node_data);
 }
 

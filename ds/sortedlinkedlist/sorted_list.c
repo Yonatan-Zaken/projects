@@ -3,7 +3,7 @@
 /*   Implementing file DS 8      */
 /*   Yonatan Zaken		         */
 /*   Last Updated 10/12/19       */
-/*   Reviewed by:            */   
+/*   Reviewed by: Guy            */   
 /*			                   	 */
 /*********************************/
 
@@ -218,10 +218,5 @@ sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start , sll_iterator_t
 
 void SLLMerge(sll_t *dest, sll_t *src)
 {
-    sll_iterator_t s;
-    sll_iterator_t e;
-    sll_iterator_t d;
-    
+
 }
-
-
