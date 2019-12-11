@@ -25,6 +25,13 @@ struct SLL
     void *param;
 };
 
+typedef struct my_struct
+{
+    void *user_data;
+    void *param;
+    is_before func;
+}my_struct_t;
+
 sll_t *SortLLCreate(is_before func, void *param)
 {
     sll_t *new_sll = NULL;
@@ -62,7 +69,7 @@ sll_iterator_t SortLLInsert(sll_t *sll, void *data)
     assert(NULL != data);
     
     end = SLLEnd(sll);
-     
+    
     for (i = SLLBegin(sll); 1 != SLLIsSameIter(i, end); i = SLLNext(i))
     {
         if (1 == sll->func(SLLGetData(i), data, sll->param))
@@ -158,16 +165,42 @@ int SLLForEach(sll_iterator_t start, sll_iterator_t end, action_func_ptr a_ptr, 
     return DLLForEach(start.current, end.current, a_ptr, ap);     
 }
 
+static int MyIsBefore(void *data, void* data_struct)
+{
+    return ((my_struct_t *)data_struct)->func(data, ((my_struct_t *)data_struct)->user_data, ((my_struct_t *)data_struct)->param);
+}
+
 sll_iterator_t SLLFind(const sll_t *sll, const void *data, sll_iterator_t start, sll_iterator_t end)
 {
     sll_iterator_t it;
+    my_struct_t *data_struct = NULL;
     
     assert(NULL != sll);
     
-    it.current = DLLFind(start.current, end.current, (match_func_ptr)sll->func, 
-                                                                  (void*)data);
+    data_struct = (my_struct_t *)malloc(sizeof(my_struct_t));
+    if (NULL == data_struct)
+    {
+        return SLLEnd((sll_t *)sll);
+    }
     
-    return it;                                                
+    data_struct->user_data = (void*)data;
+    data_struct->param = sll->param;
+    data_struct->func = sll->func;
+    
+    it.current = DLLFind(start.current, end.current, 
+                 &MyIsBefore, data_struct); 
+                                                                  
+    
+    it = SLLPrev(it);
+    
+    if (0 == (sll->func(data, SLLGetData(it), sll->param)))
+    {
+        FREE(data_struct);
+        return it;
+    }
+    
+    FREE(data_struct);
+    return end;                                         
 }
 
 sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start , sll_iterator_t end, match_func_ptr m_ptr, const void *data)
@@ -185,6 +218,10 @@ sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start , sll_iterator_t
 
 void SLLMerge(sll_t *dest, sll_t *src)
 {
-
+    sll_iterator_t s;
+    sll_iterator_t e;
+    sll_iterator_t d;
+    
 }
+
 

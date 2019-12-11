@@ -43,6 +43,15 @@ static int MatchFunc(void* node_data, void* user_data)
     return (*(int*)n == *(int*)user_data);
 }
 
+static int AdditionFunc(void* node, void* ap)
+{
+    void* n = node;
+    
+    *(int*)n += *(int*)ap;
+    
+    return 0;
+}
+
 static void SortedListTest1()
 {
     
@@ -50,12 +59,15 @@ static void SortedListTest1()
     int data2 = 22;
     int data3 = 66;
     int data4 = 99;
+    int data5 = 44;
     int ap = 66;
+    int ap2 = 75;
     
     sll_iterator_t it1;
     sll_iterator_t it2;
     sll_iterator_t it3;
     sll_iterator_t it4;
+    sll_iterator_t it5;
     sll_t *sll1 = NULL;
     
     printf("Sorted list test1:\n");
@@ -94,7 +106,9 @@ static void SortedListTest1()
     RUN_TEST(4 == SLLSize(sll1), "size tes3");
     
     it1 = SLLFind(sll1, &ap, SLLBegin(sll1), SLLEnd(sll1));
-    RUN_TEST(77 == *(int*)SLLGetData(it1), "get data test3");
+    RUN_TEST(66 == *(int*)SLLGetData(it1), "get data test3");
+    it1 = SLLFind(sll1, &ap2, SLLBegin(sll1), SLLEnd(sll1));
+    RUN_TEST(1 == SLLIsSameIter(it1, SLLEnd(sll1)), "is same iter");
     it1 = SLLFindBy(sll1, SLLBegin(sll1), SLLEnd(sll1), &MatchFunc, &ap);
     RUN_TEST(66 == *(int*)SLLGetData(it1), "get data test3");
     
@@ -104,7 +118,42 @@ static void SortedListTest1()
     RUN_TEST(66 == *(int*)SLLPopBack(sll1), "pop back test3");
     RUN_TEST(22 == *(int*)SLLPopBack(sll1), "pop back test3");
     
+    it2 = SortLLInsert(sll1, &data2);
+    it1 = SortLLInsert(sll1, &data);
+    it4 = SortLLInsert(sll1, &data4);
+    it5 = SortLLInsert(sll1, &data5);
+    it3 = SortLLInsert(sll1, &data3);
+    
+    RUN_TEST(22 == *(int*)SLLPopFront(sll1), "pop front test3");
+    RUN_TEST(44 == *(int*)SLLPopFront(sll1), "pop front test3");
+    RUN_TEST(66 == *(int*)SLLPopFront(sll1), "pop front test3");
+    RUN_TEST(77 == *(int*)SLLPopFront(sll1), "pop front test3");    
+    RUN_TEST(99 == *(int*)SLLPopFront(sll1), "pop front test3");
+            
     SortLLDestroy(sll1);
+    
+    printf("\nSorted list test4:\n");
+    
+    /* for each test */
+    sll1 = SortLLCreate(&IsBefore, NULL);
+    RUN_TEST(1 == SLLIsEmpty(sll1), "is empty test4");
+    it2 = SortLLInsert(sll1, &data2);
+    it1 = SortLLInsert(sll1, &data);
+    it4 = SortLLInsert(sll1, &data4);
+    it5 = SortLLInsert(sll1, &data5);
+    it3 = SortLLInsert(sll1, &data3);
+    RUN_TEST(5 == SLLSize(sll1), "size tes4");
+    
+    SLLForEach(SLLBegin(sll1), SLLEnd(sll1), &AdditionFunc, &ap);
+    
+    printf("after addition: %d\n", *(int*)SLLGetData(it2));
+    printf("after addition: %d\n", *(int*)SLLGetData(it5));
+    printf("after addition: %d\n", *(int*)SLLGetData(it3));
+    printf("after addition: %d\n", *(int*)SLLGetData(it1));
+    printf("after addition: %d\n", *(int*)SLLGetData(it4));    
+    
+    SortLLDestroy(sll1);
+    
     printf("\n");
 }
 
