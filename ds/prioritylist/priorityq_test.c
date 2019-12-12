@@ -33,6 +33,13 @@
     }\
 }
 
+int UserCompare (void *node_data, void *user_data, void *param)
+{
+    UNUSED(param);
+    
+    return (*(int*)node_data - *(int*)user_data);
+}
+
 int main()
 {
     return 0;

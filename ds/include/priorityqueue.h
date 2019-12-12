@@ -2,11 +2,11 @@
 #define __PRIORITYQUEUE_H__
 
 #include <stddef.h> 
-#include "sortedlist.h"
 
 typedef struct PQueue pq_t;
 
-typedef int (*compare_func_ptr)(void*, void*, void*);
+typedef int (*match_func_pq)(void*, void*);
+typedef int (*compare_func_ptr)(const void*, const void*, void*);
 
 /**********************************************/
 /* Returns pointer to the PQ  data structure  */
@@ -34,7 +34,7 @@ void *PQDequeue(pq_t *pq);
 /* Returns the pervious iterator         */
 /* complexity O(1)                       */
 /*****************************************/
-int PQEnqueue(pq_t *pq);
+int PQEnqueue(pq_t *pq, void *data);
 
 /*********************************************************************/
 /* gets the data structure and returns the data wof the highest      */
@@ -68,6 +68,6 @@ void PQClear(pq_t *pq);
 /* once the element is found, its removed       */
 /* complexity O(1)                              */
 /************************************************/
-void *PQErase(pq_t *pq, match_func_ptr m_ptr, void *param);
+void *PQErase(pq_t *pq, match_func_pq m_ptr, void *data);
 
 #endif

@@ -224,5 +224,48 @@ sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start , sll_iterator_t
 
 void SLLMerge(sll_t *dest, sll_t *src)
 {
-  
+    sll_iterator_t src_start = SLLBegin(src);
+	sll_iterator_t src_end = SLLBegin(src);
+	sll_iterator_t dest_current = SLLBegin(dest);
+
+	assert(NULL != dest);
+	assert(NULL != src);
+
+	while (!(SLLIsSameIter(dest_current, SLLEnd(dest)))
+	         && !(SLLIsSameIter(src_end, SLLEnd(src))))
+	{
+		while (!(dest->func(SLLGetData(src_end), 
+		      SLLGetData(dest_current), dest->param)))
+		{
+			if(!(SLLIsSameIter(dest_current, SLLEnd(dest))))
+			{
+				dest_current = SLLNext(dest_current);
+			}
+			
+		}
+		if((SLLIsSameIter(dest_current, SLLEnd(dest))))
+		{
+			break;
+		}
+		while (dest->func(SLLGetData(src_end),
+		      SLLGetData(dest_current), dest->param))
+		{
+			if(!(SLLIsSameIter(src_end, SLLEnd(src))))
+			{
+				src_end = SLLNext(src_end);
+			}	
+		}
+
+		DLLSplice(src_start.current, src_end.current,
+		           DLLGetPrev(dest_current.current));
+		dest_current = SLLNext(dest_current);
+		src_start = src_end;
+	}
+
+	if(SLLIsSameIter(dest_current, SLLEnd(dest)))
+	{
+		src_end = SLLEnd(src);
+		DLLSplice(src_start.current, src_end.current,
+		           DLLGetPrev(dest_current.current));
+	}  
 }
