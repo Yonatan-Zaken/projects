@@ -63,6 +63,9 @@ static void SortedListTest1()
     int data3 = 66;
     int data4 = 99;
     int data5 = 44;
+    
+    int x1 = 1, x2 = 3, x3 = 6, x4 = 6, x5 = 8, x6 = 1, x7 = 4;
+        
     int ap = 66;
     int ap2 = 75;
     
@@ -71,7 +74,11 @@ static void SortedListTest1()
     sll_iterator_t it3;
     sll_iterator_t it4;
     sll_iterator_t it5;
+    sll_iterator_t it6;
+    sll_iterator_t it7;
+    
     sll_t *sll1 = NULL;
+    sll_t *sll2 = NULL;
     
     printf("Sorted list test1:\n");
     
@@ -156,6 +163,25 @@ static void SortedListTest1()
     printf("after addition: %d\n", *(int*)SLLGetData(it4));    
     
     SortLLDestroy(sll1);
+    
+    printf("\nSorted list test5:\n");
+    
+    sll1 = SortLLCreate(&IsBefore, NULL);
+    sll2 = SortLLCreate(&IsBefore, NULL);
+    
+    it6 = SortLLInsert(sll1, &x1);
+    it6 = SortLLInsert(sll1, &x2);
+    it6 = SortLLInsert(sll1, &x3);
+    it6 = SortLLInsert(sll1, &x4);
+    it6 = SortLLInsert(sll1, &x5);
+    
+    it7 = SortLLInsert(sll2, &x6);
+    it7 = SortLLInsert(sll2, &x7);
+    
+    SLLMerge(sll2, sll1);
+    
+    SortLLDestroy(sll1);
+    SortLLDestroy(sll2);
     
     printf("\n");
 }
