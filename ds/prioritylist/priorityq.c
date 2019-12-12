@@ -1,18 +1,26 @@
 /*********************************/
 /*   			             	 */
-/*   Implementing file DS 8      */
+/*   Implementing file DS 9      */
 /*   Yonatan Zaken		         */
-/*   Last Updated 10/12/19       */
-/*   Reviewed by: Guy            */   
+/*   Last Updated 11/12/19       */
+/*   Reviewed by:             */   
 /*			                   	 */
 /*********************************/
 
 #include <stddef.h>    /* size_t */
+#include "sortedlist.h" /* sorted list functions */
 #include "priorityqueue.h" /* priority list functions */
+
+struct PQueue
+{
+    sll_t *queue;
+    compare_func_ptr cmp_ptr;
+    void *param;    
+};
 
 pq_t *PQCreate(compare_func_ptr cmp_ptr, void *param)
 {
-
+    
 }
 
 void PQDestroy(pq_t *pq)

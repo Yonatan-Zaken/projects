@@ -39,12 +39,17 @@ sll_t *SortLLCreate(is_before func, void *param)
     assert(NULL != func);
     
     new_sll = (sll_t *)malloc(sizeof(sll_t));
-    if (NULL == new_sll)
+    if (NULL != new_sll)
     {
-        return NULL;
+        new_sll->list = DLLCreate();
+        if (NULL == new_sll->list)
+        {
+            FREE(new_sll);
+            return NULL;
+        }
     }
+    else return NULL;
     
-    new_sll->list = DLLCreate();
     new_sll->func = func;
     new_sll->param = param;
     
@@ -66,7 +71,6 @@ sll_iterator_t SortLLInsert(sll_t *sll, void *data)
     sll_iterator_t end;
     
     assert(NULL != sll);
-    assert(NULL != data);
     
     end = SLLEnd(sll);
     
@@ -85,6 +89,7 @@ sll_iterator_t SortLLInsert(sll_t *sll, void *data)
 sll_iterator_t SortLLRemove(sll_iterator_t it)
 {
     it.current = DLLRemove(it.current);
+    
     return (it);     
 }
 
@@ -127,12 +132,14 @@ sll_iterator_t SLLEnd(sll_t *sll)
 sll_iterator_t SLLNext(sll_iterator_t it)
 {
     it.current = DLLGetNext(it.current);
+    
     return it;
 }
 
 sll_iterator_t SLLPrev(sll_iterator_t it)
 {
     it.current = DLLGetPrev(it.current);
+    
     return it;    
 }
 
@@ -190,7 +197,6 @@ sll_iterator_t SLLFind(const sll_t *sll, const void *data, sll_iterator_t start,
     it.current = DLLFind(start.current, end.current, 
                  &MyIsBefore, data_struct); 
                                                                   
-    
     it = SLLPrev(it);
     
     if (0 == (sll->func(data, SLLGetData(it), sll->param)))
@@ -218,5 +224,5 @@ sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start , sll_iterator_t
 
 void SLLMerge(sll_t *dest, sll_t *src)
 {
-
+  
 }

@@ -1,14 +1,15 @@
 /*********************************/
 /*   			             	 */
-/*   Main file DS 8              */
+/*   Main file DS 9              */
 /*   Yonatan Zaken		         */
-/*   Last Updated 10/12/19       */
+/*   Last Updated 11/12/19       */
 /*   Reviewed by:            */   
 /*			                   	 */
 /*********************************/
 
 #include <stdio.h> /* printf */
 
+#include "sortedlist.h" /* sorted list functions */
 #include "priorityqueue.h" /* priority list functions */
 
 #define UNUSED(x) (void)(x)
