@@ -68,7 +68,7 @@ static void TestDLL1()
     
     dll1 = DLLCreate();
     it1 = DLLEnd(dll1);
-   
+    
     RUN_TEST(1 == DLLIsEmpty(dll1), "is empty test1");
     it1 = DLLInsert(dll1, it1, &data);
     RUN_TEST(1 == DLLSize(dll1), "size test1");

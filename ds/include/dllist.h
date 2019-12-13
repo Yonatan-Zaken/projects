@@ -131,7 +131,7 @@ iterator_t DLLSplice(iterator_t start, iterator_t end, iterator_t where);
 /* return 0 if succeeds or 1 if fails                               */
 /* complexity O(n)                                                  */
 /********************************************************************/
-int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *ap);
+int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *user_data);
 
 /********************************************************************/
 /* Traverse the list and returns the first iterator that matchs     */
@@ -139,6 +139,6 @@ int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *ap
 /* including end.                                                   */
 /* complexity O(n)                                                  */
 /********************************************************************/
-iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr m_ptr, void *ap);
+iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr m_ptr, void *user_data);
 
 #endif

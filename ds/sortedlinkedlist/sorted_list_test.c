@@ -33,7 +33,7 @@
     }\
 }
 
-static int IsBefore(const void *node_data,const void *user_data, void *param)
+static int IsBefore(const void *node_data, const void *user_data, void *param)
 {
     UNUSED(param);
     return (*(int*)user_data < *(int*)node_data);

@@ -259,7 +259,7 @@ iterator_t DLLSplice(iterator_t start, iterator_t end, iterator_t where)
     return where;   
 }
 
-int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *ap)
+int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *user_data)
 {
     iterator_t i = NULL;
     int return_val = 0;
@@ -270,7 +270,7 @@ int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *ap
     
     for (i = start; i != end; i = DLLGetNext(i))
     {
-        if (0 != (return_val = a_ptr(i->data, ap)))
+        if (0 != (return_val = a_ptr(i->data, user_data)))
         {
             return return_val;
         }
@@ -279,18 +279,18 @@ int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *ap
     return return_val;
 }
 
-iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr m_ptr, void *ap)
+iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr m_ptr, void *user_data)
 {
     iterator_t i = NULL;
     
     assert(NULL != start);
     assert(NULL != end);
     assert(NULL != m_ptr);
-    assert(NULL != ap);
+    assert(NULL != user_data);
     
     for (i = start; i != end; i = DLLGetNext(i))
     {
-        if (1 == m_ptr(i->data, ap))
+        if (1 == m_ptr(i->data, user_data))
         {
             return i;
         }

@@ -18,19 +18,18 @@
 
 #define UNUSED(x) (void)(x)
 
-struct SLL
-{
-    dll_t *list;
-    is_before func;
-    void *param;
-};
-
 typedef struct my_struct
 {
     void *user_data;
     void *param;
     is_before func;
 }my_struct_t;
+
+struct SLL
+{
+    dll_t *list;
+    my_struct_t my_struct;
+};
 
 sll_t *SortLLCreate(is_before func, void *param)
 {
@@ -50,8 +49,8 @@ sll_t *SortLLCreate(is_before func, void *param)
     }
     else return NULL;
     
-    new_sll->func = func;
-    new_sll->param = param;
+    new_sll->my_struct.func = func;
+    new_sll->my_struct.param = param;
     
     return new_sll;
 }
@@ -76,7 +75,7 @@ sll_iterator_t SortLLInsert(sll_t *sll, void *data)
     
     for (i = SLLBegin(sll); 1 != SLLIsSameIter(i, end); i = SLLNext(i))
     {
-        if (1 == sll->func(SLLGetData(i), data, sll->param))
+        if (1 == sll->my_struct.func(SLLGetData(i), data, sll->my_struct.param))
         {
             break;
         }
@@ -180,32 +179,23 @@ static int MyIsBefore(void *data, void* data_struct)
 sll_iterator_t SLLFind(const sll_t *sll, const void *data, sll_iterator_t start, sll_iterator_t end)
 {
     sll_iterator_t it;
-    my_struct_t *data_struct = NULL;
+    sll_t *sll1 = NULL;
     
     assert(NULL != sll);
     
-    data_struct = (my_struct_t *)malloc(sizeof(my_struct_t));
-    if (NULL == data_struct)
-    {
-        return SLLEnd((sll_t *)sll);
-    }
-    
-    data_struct->user_data = (void*)data;
-    data_struct->param = sll->param;
-    data_struct->func = sll->func;
+    sll1 = (sll_t *)sll;
+    sll1->my_struct.user_data = (void*)data;
     
     it.current = DLLFind(start.current, end.current, 
-                 &MyIsBefore, data_struct); 
+                 &MyIsBefore, &sll1->my_struct); 
                                                                   
     it = SLLPrev(it);
     
-    if (0 == (sll->func(data, SLLGetData(it), sll->param)))
+    if (0 == (sll1->my_struct.func(data, SLLGetData(it), sll1->my_struct.param)))
     {
-        FREE(data_struct);
         return it;
     }
     
-    FREE(data_struct);
     return end;                                         
 }
 
@@ -224,6 +214,7 @@ sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start , sll_iterator_t
 
 void SLLMerge(sll_t *dest, sll_t *src)
 {
+/*
     sll_iterator_t src_start = SLLBegin(src);
 	sll_iterator_t src_end = SLLBegin(src);
 	sll_iterator_t dest_current = SLLBegin(dest);
@@ -267,5 +258,7 @@ void SLLMerge(sll_t *dest, sll_t *src)
 		src_end = SLLEnd(src);
 		DLLSplice(src_start.current, src_end.current,
 		           DLLGetPrev(dest_current.current));
-	}  
+	}
+	*/  
 }
+
