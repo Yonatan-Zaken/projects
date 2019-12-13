@@ -13,27 +13,26 @@
 
 #include "sortedlist.h" /* sorted list functions */
 #include "priorityqueue.h" /* priority list functions */
-
+ 
 #define FREE(ptr) free(ptr); ptr = NULL;
 
 typedef struct Wrapper
 {
-    compare_func_ptr cmp_fun;
+    compare_func_ptr cmp_func;
     void *param;
 }wrap_t;
 
 struct PQueue
 {
     sll_t *queue;
-    compare_func_ptr cmp_fun;
-    void *param;
-    wrap_t *wrap_ptr;    
+    wrap_t wrap;    
 };
 
 int MyCompare(const void *node_data, const void *user_data, void *param)
 {
-    return (0 <= ((wrap_t *)param)->cmp_fun(node_data, user_data, 
-                                     ((wrap_t *)param)->param));
+    return (0 <= ((wrap_t *)param)->cmp_func(node_data, 
+                                             user_data, 
+                                             ((wrap_t *)param)->param));
 } 
 
 pq_t *PQCreate(compare_func_ptr cmp_func, void *param)
@@ -41,16 +40,11 @@ pq_t *PQCreate(compare_func_ptr cmp_func, void *param)
     pq_t *new_pq = (pq_t *)malloc(sizeof(pq_t));
     if(NULL != new_pq)
     {
-        wrap_t *new_wrap = (wrap_t *)malloc(sizeof(wrap_t));
-        if (NULL != new_wrap)
+        new_pq->queue = SortLLCreate(&MyCompare, &new_pq->wrap);
+        if (NULL != new_pq->queue)
         {
-            new_wrap->cmp_fun = cmp_func;
-            new_wrap->param = param;
-            
-            new_pq->queue = SortLLCreate(&MyCompare, new_wrap);
-            new_pq->cmp_fun = cmp_func;
-            new_pq->param = param;
-            new_pq->wrap_ptr = new_wrap;
+            new_pq->wrap.cmp_func = cmp_func;
+            new_pq->wrap.param = param;
             
             return new_pq;
         }
@@ -66,7 +60,6 @@ void PQDestroy(pq_t *pq)
 {
     assert(NULL != pq);
        
-    FREE(pq->wrap_ptr);
     SortLLDestroy(pq->queue);
     FREE(pq);
 }
