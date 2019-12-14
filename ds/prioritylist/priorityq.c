@@ -14,7 +14,7 @@
 #include "sortedlist.h" /* sorted list functions */
 #include "priorityqueue.h" /* priority list functions */
  
-#define FREE(ptr) free(ptr); ptr = NULL;
+#define {FREE(ptr) free(ptr); ptr = NULL;}
 
 typedef struct Wrapper
 {
@@ -100,17 +100,12 @@ int PQIsEmpty(const pq_t *pq)
 }
 
 void PQClear(pq_t *pq)
-{
-    size_t size = 0;
-    
+{ 
     assert(NULL != pq);
-    
-    size = PQSize(pq);
-    
-    while (0 < size)
+   
+    while (!PQIsEmpty(pq))
     {
         PQDequeue(pq);
-        --size;
     }
 }
 
