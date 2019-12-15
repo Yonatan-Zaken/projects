@@ -270,7 +270,7 @@ int DLLForEach(iterator_t start, iterator_t end, action_func_ptr action, void *u
     
     assert(NULL != start);
     assert(NULL != end);
-    assert(NULL != a_ptr);
+    assert(NULL != action);
     
     for (i = start; i != end; i = DLLGetNext(i))
     {
@@ -289,7 +289,7 @@ iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr match, void 
     
     assert(NULL != start);
     assert(NULL != end);
-    assert(NULL != m_ptr);
+    assert(NULL != match);
     assert(NULL != user_data);
     
     for (i = start; i != end; i = DLLGetNext(i))

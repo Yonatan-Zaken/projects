@@ -211,40 +211,40 @@ sll_iterator_t SLLFindBy(const sll_t *sll, sll_iterator_t start , sll_iterator_t
    
     return it;
 }
-/*
+
 void SLLMerge(sll_t *dest, sll_t *src)
 {
 
     sll_iterator_t src_start = SLLBegin(src);
 	sll_iterator_t src_end = SLLBegin(src);
 	sll_iterator_t dest_current = SLLBegin(dest);
+	
+	sll_iterator_t src_tail = SLLEnd(src);
+	sll_iterator_t dest_tail = SLLEnd(dest);
 
 	assert(NULL != dest);
 	assert(NULL != src);
 
-	while (!(SLLIsSameIter(dest_current, SLLEnd(dest)))
-	         && !(SLLIsSameIter(src_end, SLLEnd(src))))
+	while (!(SLLIsSameIter(dest_current, dest_tail))
+	         && !(SLLIsSameIter(src_end, src_tail)))
 	{
-		while (!(dest->func(SLLGetData(src_end), 
-		      SLLGetData(dest_current), dest->param)))
-		{
-			if(!(SLLIsSameIter(dest_current, SLLEnd(dest))))
-			{
-				dest_current = SLLNext(dest_current);
-			}
-			
+		while (!(SLLIsSameIter(dest_current, dest_tail)) &&
+		       !(dest->my_struct.func(SLLGetData(dest_current), 
+		       SLLGetData(src_end), dest->my_struct.param)))
+		{	
+				dest_current = SLLNext(dest_current);	
 		}
-		if((SLLIsSameIter(dest_current, SLLEnd(dest))))
+		
+		if((SLLIsSameIter(dest_current, dest_tail)))
 		{
 			break;
 		}
-		while (dest->func(SLLGetData(src_end),
-		      SLLGetData(dest_current), dest->param))
-		{
-			if(!(SLLIsSameIter(src_end, SLLEnd(src))))
-			{
-				src_end = SLLNext(src_end);
-			}	
+		
+		while (!(SLLIsSameIter(src_end, src_tail)) &&
+		       !(dest->my_struct.func(SLLGetData(src_end),
+		       SLLGetData(dest_current), dest->my_struct.param)))
+		{	
+				src_end = SLLNext(src_end);		
 		}
 
 		DLLSplice(src_start.current, src_end.current,
@@ -253,100 +253,10 @@ void SLLMerge(sll_t *dest, sll_t *src)
 		src_start = src_end;
 	}
 
-	if(SLLIsSameIter(dest_current, SLLEnd(dest)))
+	if(SLLIsSameIter(dest_current, dest_tail))
 	{
-		src_end = SLLEnd(src);
+		src_end = src_tail;
 		DLLSplice(src_start.current, src_end.current,
 		           DLLGetPrev(dest_current.current));
 	}
-	
 }
-*/
-/*
-static sll_iterator_t WhereNode(const sll_t *sll, sll_iterator_t start, 
-                                sll_iterator_t end, const void *data)
-{
-    sll_iterator_t runner = start;
-    
-    assert(NULL !=  sll);
-    
-    while ((!SLLIsSameIter(runner, end)))
-    {
-        if (0 != sll->my_struct.func(SLLGetData(runner), data, sll->my_struct.param))
-        {
-            break;
-        }
-        runner = SLLNext(runner);
-    }
-    
-    return runner;
-}
-*/
-/*
-void SLLMerge(sll_t *dest, sll_t *src)
-{
-    sll_iterator_t start_dest = SLLBegin(dest);
-    sll_iterator_t end_dest = SLLEnd(dest);
-    
-    sll_iterator_t start_src = SLLBegin(src);
-    sll_iterator_t end_src = SLLEnd(src);  
-    
-    sll_iterator_t tmp_end_src;
-    sll_iterator_t next;
-    
-    while (!SLLIsSameIter(start_src, end_src))
-    {
-        tmp_end_src = SLLNext(start_src);  
-        start_dest = SLLPrev(WhereNode(dest, start_dest, end_dest,
-                                                        SLLGetData(start_src)));
-        next = SLLNext(start_dest);
-        
-        tmp_end_src = WhereNode(dest, tmp_end_src, end_src,
-                                                         SLLGetData(start_dest));
-        start_dest.current = DLLSplice(start_src.current, tmp_end_src.current,
-                                                            start_dest.current);
-        start_dest = next;
-        start_src = tmp_end_src;
-    }
-}
-*/ 
-
-void SLLMerge(sll_t *dest, sll_t *src)
-{
-    sll_iterator_t start_src = SLLBegin(src);
-    sll_iterator_t end_src = SLLEnd(src);
-
-    sll_iterator_t start_dest = SLLBegin(dest);
-    sll_iterator_t end_dest = SLLEnd(dest);
-
-    sll_iterator_t where;
-    sll_iterator_t start;
-    sll_iterator_t end;
-
-    while (0 == SLLIsSameIter(start_src, SLLEnd(src)))
-    {
-
-        while (!(SLLIsSameIter(start_dest, end_dest)) &&
-                             (1 != src->my_struct.func(SLLGetData(start_dest),
-                                               SLLGetData(start_src), src->my_struct.param)))
-        {
-            start_dest = SLLNext(start_dest);
-        }
-
-        start = start_src;
-        where = SLLPrev(start_dest);
-        start_src = SLLNext(start_src);
-
-        while (!(SLLIsSameIter(start_src, end_src)) &&
-                         (1 != src->my_struct.func(SLLGetData(start_src)
-                              ,SLLGetData(start_dest), src->my_struct.param)))
-        {
-            start_src = SLLNext(start_src);
-        }
-
-            end = start_src;
-            start_dest = SLLNext(start_dest);
-
-            DLLSplice(start.current, end.current, where.current);
-        }
-    }

@@ -36,7 +36,7 @@
 static int IsBefore(const void *node_data, const void *user_data, void *param)
 {
     UNUSED(param);
-    return (*(int*)user_data < *(int*)node_data);
+    return (*(int*)node_data > *(int*)user_data);
 }
 
 static int MatchFunc(void* node_data, void* user_data)
@@ -64,7 +64,7 @@ static void SortedListTest1()
     int data4 = 99;
     int data5 = 44;
     
-    int x1 = 1, x2 = 3, x3 = 6, x4 = 6, x5 = 8, x6 = 1, x7 = 4;
+    int x1 = 7, x2 = 8, x3 = 1, x4 = 1, x5 = 3, x6 = 3, x7 = 4;
         
     int ap = 66;
     int ap2 = 75;
@@ -76,7 +76,7 @@ static void SortedListTest1()
     sll_iterator_t it5;
     sll_iterator_t it6;
     sll_iterator_t it7;
-    
+    sll_iterator_t i;
     sll_t *sll1 = NULL;
     sll_t *sll2 = NULL;
     
@@ -171,9 +171,9 @@ static void SortedListTest1()
     
     it6 = SortLLInsert(sll1, &x1);
     it6 = SortLLInsert(sll1, &x2);
-    it6 = SortLLInsert(sll1, &x3);
-    it6 = SortLLInsert(sll1, &x4);
-    it6 = SortLLInsert(sll1, &x5);
+    it6 = SortLLInsert(sll2, &x3);
+    it6 = SortLLInsert(sll2, &x4);
+    it6 = SortLLInsert(sll2, &x5);
     
     it7 = SortLLInsert(sll2, &x6);
     it7 = SortLLInsert(sll2, &x7);
@@ -181,6 +181,11 @@ static void SortedListTest1()
     SLLMerge(sll2, sll1);
     RUN_TEST(7 == SLLSize(sll2), "size tes5");
     
+    for (i = SLLBegin(sll2); !SLLIsSameIter(i, SLLEnd(sll2)) ; i = SLLNext(i))
+    {
+        printf("%d ", *(int*)SLLGetData(i));
+    }
+                                                                                              
     SortLLDestroy(sll1);
     SortLLDestroy(sll2);
     
