@@ -179,6 +179,7 @@ static void SortedListTest1()
     it7 = SortLLInsert(sll2, &x7);
     
     SLLMerge(sll2, sll1);
+    RUN_TEST(7 == SLLSize(sll2), "size tes5");
     
     SortLLDestroy(sll1);
     SortLLDestroy(sll2);

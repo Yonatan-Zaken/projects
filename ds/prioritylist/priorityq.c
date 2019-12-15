@@ -14,7 +14,7 @@
 #include "sortedlist.h" /* sorted list functions */
 #include "priorityqueue.h" /* priority list functions */
  
-#define {FREE(ptr) free(ptr); ptr = NULL;}
+#define FREE(ptr) {free(ptr); ptr = NULL;}
 
 typedef struct Wrapper
 {

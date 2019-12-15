@@ -3,8 +3,8 @@
 /*   System Programming          */
 /*   UID                         */
 /*   Author: Yonatan Zaken       */
-/*   Last Updated 11/12/19       */
-/*   Reviewed by:                */   
+/*   Last Updated 15/12/19       */
+/*   Reviewed by: Guy            */   
 /*			                   	 */
 /*********************************/
 
@@ -33,22 +33,12 @@ ilrd_uid_t UIDCreate()
 
 int UIDIsBad(ilrd_uid_t uid)
 {
-    if (0 == uid.time_stamp)
-    {
-        return 1;
-    }
-    
-    return 0;
+    return (0 == uid.time_stamp);
 }
 
 int UIDIsSame(ilrd_uid_t uid1, ilrd_uid_t uid2)
 {
-    if (uid1.time_stamp == uid1.time_stamp &&
+    return (uid1.time_stamp == uid1.time_stamp &&
         uid1.counter    == uid2.counter    &&
-        uid1.pid        == uid2.pid)
-    {
-        return 1;       
-    }
-    
-    return 0;   
+        uid1.pid        == uid2.pid);
 }

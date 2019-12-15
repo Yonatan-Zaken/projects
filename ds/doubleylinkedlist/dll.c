@@ -13,7 +13,7 @@
 
 #include "dllist.h" /* doubley linked list functions */
 
-#define FREE(ptr) free(ptr); ptr = NULL;
+#define FREE(ptr) {free(ptr); ptr = NULL;}
 
 struct DLLNode
 {
@@ -159,6 +159,7 @@ size_t DLLSize(const dll_t *dll)
     return counter;
 }
 
+/* const dll */
 iterator_t DLLBegin(dll_t *dll)
 {
     iterator_t it = NULL;
@@ -170,6 +171,7 @@ iterator_t DLLBegin(dll_t *dll)
     return it;  
 }
 
+/* const dll */
 iterator_t DLLEnd(dll_t *dll)
 {
     iterator_t it;
@@ -196,6 +198,7 @@ int DLLIsSameIter(const iterator_t it1, const iterator_t it2)
     return (it1 == it2);
 }
 
+/* dll->t instead of call for DLLEnd */ 
 iterator_t DLLPushBack(dll_t *dll, void *data)
 {
     assert(NULL != dll);
@@ -204,6 +207,7 @@ iterator_t DLLPushBack(dll_t *dll, void *data)
     return DLLInsert(dll, DLLEnd(dll), data);
 }
 
+/* dll->tail->prev instead of call to functions */
 void *DLLPopBack(dll_t *dll)
 {
     iterator_t it = NULL;
@@ -259,7 +263,7 @@ iterator_t DLLSplice(iterator_t start, iterator_t end, iterator_t where)
     return where;   
 }
 
-int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *user_data)
+int DLLForEach(iterator_t start, iterator_t end, action_func_ptr action, void *user_data)
 {
     iterator_t i = NULL;
     int return_val = 0;
@@ -270,7 +274,7 @@ int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *us
     
     for (i = start; i != end; i = DLLGetNext(i))
     {
-        if (0 != (return_val = a_ptr(i->data, user_data)))
+        if (0 != (return_val = action(i->data, user_data)))
         {
             return return_val;
         }
@@ -279,7 +283,7 @@ int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *us
     return return_val;
 }
 
-iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr m_ptr, void *user_data)
+iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr match, void *user_data)
 {
     iterator_t i = NULL;
     
@@ -290,7 +294,7 @@ iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr m_ptr, void 
     
     for (i = start; i != end; i = DLLGetNext(i))
     {
-        if (1 == m_ptr(i->data, user_data))
+        if (1 == match(i->data, user_data))
         {
             return i;
         }

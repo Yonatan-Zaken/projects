@@ -6,8 +6,9 @@
 typedef struct DLLNode *iterator_t;
 typedef struct DLL dll_t;
 
-typedef int (*action_func_ptr)(void*, void*);
-typedef int (*match_func_ptr)(void*, void*);
+
+typedef int (*action_func_ptr)(void *node_data, void *user_data);
+typedef int (*match_func_ptr)(void *node_data, void *user_data);
 
 /**********************************************/
 /* Returns pointer to the DLL data structure  */
@@ -125,13 +126,15 @@ void *DLLPopFront(dll_t *dll);
 /***************************************************************************/    
 iterator_t DLLSplice(iterator_t start, iterator_t end, iterator_t where);
 
+/* what is behaviour when start = end */
+/* a_ptr m_ptr names */
 /********************************************************************/
 /* Performs an action defined by a pointer to a function on all the */ 
 /* iterators from the start to end not including the end.           */
 /* return 0 if succeeds or 1 if fails                               */
 /* complexity O(n)                                                  */
 /********************************************************************/
-int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *user_data);
+int DLLForEach(iterator_t start, iterator_t end, action_func_ptr action, void *user_data);
 
 /********************************************************************/
 /* Traverse the list and returns the first iterator that matchs     */
@@ -139,6 +142,6 @@ int DLLForEach(iterator_t start, iterator_t end, action_func_ptr a_ptr, void *us
 /* including end.                                                   */
 /* complexity O(n)                                                  */
 /********************************************************************/
-iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr m_ptr, void *user_data);
+iterator_t DLLFind(iterator_t start, iterator_t end, match_func_ptr match, void *user_data);
 
 #endif
