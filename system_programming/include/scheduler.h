@@ -29,7 +29,7 @@ void SchedulerDestroy(scheduler_t *s);
 * Returns: 0 - Success | ~0 - Failure
 * complexity of malloc();               
 */
-int SchedulerAddTask(scheduler_t *s, task_func to_do, time_t interval, void *param);
+ilrd_uid_t SchedulerAddTask(scheduler_t *s, task_func to_do, time_t interval, void *param);
 
 /*
 * SchedulerRemoveTask()-
@@ -45,14 +45,14 @@ void SchedulerRemoveTask(scheduler_t *s, ilrd_uid_t uid);
 * Active the Scheduler and start the tasks functions Scheduling
 * complexity of O(infinite);              
 */
-void SchedulerRun(const scheduler_t *s);
+void SchedulerRun(scheduler_t *s);
 
 /*
 * SchedulerStop() - 
 * Stop the Scheduler and stop all tasks functions Scheduling
 * complexity of O(1);              
 */
-void SchedulerStop(const scheduler_t *s);
+void SchedulerStop(scheduler_t *s);
 
 /*
 * SchedulerSize() - 

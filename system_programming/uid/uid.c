@@ -12,13 +12,6 @@
 
 #include "uid.h"
 
-struct Uid
-{
-    time_t time_stamp;
-    size_t counter;
-    pid_t pid;
-};
-
 ilrd_uid_t UIDCreate()
 {
     ilrd_uid_t new_uid;

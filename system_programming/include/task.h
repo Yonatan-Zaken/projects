@@ -5,8 +5,16 @@
 
 #include "uid.h" /*UID Functions*/
 
-typedef struct Task task_t;
 typedef int (*task_func)(void *param);
+
+typedef struct Task
+{
+    ilrd_uid_t uid;
+    task_func task_func;
+    void *param;
+    time_t run_time;
+    time_t interval;
+}task_t;
 
 /*
 * TaskCreate() - 

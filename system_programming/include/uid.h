@@ -5,6 +5,13 @@
 #include <stddef.h>
 #include <sys/types.h>
 
+struct Uid
+{
+    time_t time_stamp;
+    size_t counter;
+    pid_t pid;
+};
+
 typedef struct Uid ilrd_uid_t;
 
 /*****************************************/
