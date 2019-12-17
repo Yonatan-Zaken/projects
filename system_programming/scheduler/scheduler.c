@@ -3,8 +3,8 @@
 /*   System Programming          */
 /*   Scheduler                   */
 /*   Author: Yonatan Zaken       */
-/*   Last Updated 15/12/19       */
-/*   Reviewed by:             */   
+/*   Last Updated 17/12/19       */
+/*   Reviewed by:                */   
 /*			                   	 */
 /*********************************/
 
@@ -14,9 +14,8 @@
 #include <assert.h> /* assert */
 #include <unistd.h> /* sleep */
 
-#include "priorityqueue.h"
-#include "task.h"
-#include "scheduler.h"	/*Task Functions*/
+#include "priorityqueue.h" /*priority functions*/
+#include "task.h" /*task functions*/
 
 #define FREE(ptr) {free(ptr); ptr = NULL;}
 
@@ -96,13 +95,31 @@ int CompareUid(void *task1, void *task2)
 
 void SchedulerRemoveTask(scheduler_t *s, ilrd_uid_t uid)
 {
-    PQErase(s->q, &CompareUid, &uid);        
+    void *temp = NULL;
+    
+    assert(NULL != s);    
+    
+    if (NULL != s->current_task && 1 == UIDIsSame(s->current_task->uid, uid))
+    {
+        s->remove_current = 1;
+        return;
+    }
+    
+    temp = PQErase(s->q, &CompareUid, &uid);
+    if (NULL != temp)
+    {
+        TaskDestroy(temp);
+    }
+          
 }
 
 void SchedulerRun(scheduler_t *s)
 {
     task_t *new_task = NULL;    
+    
     assert(NULL != s);
+    
+    s->stop_flag = 1;
     
     while (1 == s->stop_flag)
     {
@@ -113,15 +130,17 @@ void SchedulerRun(scheduler_t *s)
         {
             while (sleep(TaskGetTimeToRun(new_task) - time(NULL)));
         }
-    
-        if (0 == TaskRun(new_task))
+        
+        if ((0 == TaskRun(new_task)) && (0 == s->remove_current))
         {
             TaskUpdateTimeToRun(new_task);
             PQEnqueue(s->q, new_task);
         }   
+
         else
         {
             TaskDestroy(new_task);
+            s->remove_current = 0;
         }
     }
 }
@@ -149,5 +168,17 @@ int SchedulerIsEmpty(const scheduler_t *s)
 
 void SchedulerClear(scheduler_t *s)
 {
+    size_t size = 0;
+    void *temp = NULL;
     
+    assert(NULL != s);
+    
+    size = SchedulerSize(s);
+    
+    while (0 < size)
+    {
+        temp = PQDequeue(s->q);
+        TaskDestroy(temp);
+        --size;
+    }
 }

@@ -3,17 +3,14 @@
 /*   System Programming          */
 /*   Task                        */
 /*   Author: Yonatan Zaken       */
-/*   Last Updated 15/12/19       */
-/*   Reviewed by:             */   
+/*   Last Updated 17/12/19       */
+/*   Reviewed by: Israel         */   
 /*			                   	 */
 /*********************************/
 #include <time.h> /* time_t */
 #include <assert.h> /*assert */
 #include <stdlib.h> /* malloc */
-/*
-#include "sortedlist.h"
-#include "priorityqueue.h"
-*/
+
 #include "task.h" /* Task Functions */
 #include "uid.h" /*UID Functions*/
 
