@@ -93,7 +93,7 @@ static void SchedulerTest1()
 
 static void SchedulerTest2()
 {
-    int x1 = 1, x2 = 3, x3 = 7;
+    int x1 = 1, x2 = 2, x3 = 3;
     ilrd_uid_t uid1;
     scheduler_t *sch1 = NULL;
     remove_t remove;

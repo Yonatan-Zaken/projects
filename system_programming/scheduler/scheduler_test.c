@@ -1,204 +1,184 @@
-/*********************************/
-/*    System Programming         */
-/*    Scheduler                  */       
-/*    Author: Guy Cohen Zedek    */
-/*    Date: 16/12/2019           */
-/*                               */
-/*********************************/
+/************************************************
+*
+* File: scheduler_test.c
+* Ex: system programing, scheduler
+* writer: Israel Drayfus
+* Description: run and test functions of scheduler.
+*
+*************************************************/
 
-#include <stdio.h>
-#include <unistd.h> /* sleep */
+#include <stdio.h> /*printf()*/
 
-#include "scheduler.h"
+#include "scheduler.h" /*API header*/
 
-#define MAX_SIZE 20
-#define GREEN "\033[;032m"
-#define RED   "\033[;031m"
-#define RESET "\033[0m"
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define WHITE "\033[0m"
 
-#define UNUSED(x) (void)(x)
+#define TEST(test, errMsg) if (test)\
+						   {\
+						      printf(GREEN);\
+						      printf("%s\n", "SUCCESS");\
+						   }\
+						   else\
+						   {\
+						      printf(RED);\
+						      printf("%s, %s\n", "FAILURE", errMsg);\
+						   }\
+						   printf(WHITE);
 
-#define RUN_TEST(test)\
-{\
-  if(test)\
-  {\
-    printf(GREEN);\
-    printf("SUCCESS\n");\
-    printf(RESET);\
-  }\
-  else\
-  {\
-    printf(RED);\
-    printf("FAIL \n");\
-    printf(RESET);\
-  }\
+#define UNUSED(param) (void)param
+
+#define DELAY_2 2
+#define DELAY_10 10
+
+typedef void (*stop_func)(scheduler_t *s);
+typedef void (*remove_func)(scheduler_t *s, ilrd_uid_t uid);
+
+int one = 1, two = 2;
+
+typedef struct StopPack
+{
+	stop_func func;
+	scheduler_t *s;
+}stop_pack_t;
+
+typedef struct RemovePack
+{
+	remove_func func;
+	scheduler_t *s;
+	ilrd_uid_t uid;
+}remove_pack_t;
+
+int PrintTest(void *param)
+{
+	UNUSED(param);
+	
+	printf("\033[36m");
+	printf("Test\n");
+	printf(WHITE);
+	
+	return 0;
 }
 
-int g_arr_test[MAX_SIZE];
-
-struct Wrap
+int PrintTest2(void *param)
 {
-    scheduler_t *s;
-    ilrd_uid_t uid;
-};
-
-int Print(void *data)
-{
-    printf("%d\n", *(int *)data);
-    
-    return 0;
+	printf("\033[36m");
+	printf("Test%d\n", *(int*)param);
+	printf(WHITE);
+	
+	return 0;
 }
 
-int Stop(void *packet)
+int Stop(void *param)
 {
-    SchedulerStop(packet);
-    
-    return 0;
+	((stop_pack_t *)param)->func(((stop_pack_t *)param)->s);
+	
+	return 0;
 }
 
-int Remove(void *packet)
+int Remove(void *param)
 {
-    struct Wrap *w = (struct Wrap *)packet;
-    printf("remove\n");
-    SchedulerRemoveTask(w->s, w->uid);
-    
-    return 0;         
+	printf("\033[36m");
+	printf("Remove\n");
+	printf(WHITE);
+	((remove_pack_t *)param)->func(((remove_pack_t *)param)->s,
+	                               ((remove_pack_t *)param)->uid
+	                              );
+	return 0;
 }
 
-static void TestSchedulerCreate()
+void TestTask()
 {
-    scheduler_t *s = NULL;
-
-    printf("Scheduler Create:\n");    
-    s = SchedulerCreate();
-
-    RUN_TEST(0 == SchedulerSize(s));
-    RUN_TEST(1 == SchedulerIsEmpty(s));
-    
-    SchedulerDestroy(s);    
+	char buff[100];
+	ilrd_uid_t uid;
+	time_t time = 0;
+	
+	task_t *task = TaskCreate(PrintTest, (time_t)10, NULL);
+	
+	uid = TaskGetUid(task);
+	strftime (buff, 100, "%Y-%m-%d %H:%M:%S", localtime(&uid.time_stamp));
+	printf("Task uid: time: %s, counter: %lu, pid: %d\n", buff, uid.counter, uid.pid);
+	
+	time = TaskGetTimeToRun(task);
+	strftime (buff, 100, "%Y-%m-%d %H:%M:%S",
+	          localtime(&time)
+	         );
+	printf("Task begin_time: %s\n", buff);
+	TaskRun(task);
+	TaskUpdateTimeToRun(task);
+	printf("\n");
+	
+	TaskDestroy(task);
 }
 
-static void TestSchedulerAddTask()
+void Test1(scheduler_t *scduler)
 {
-    scheduler_t *s = NULL;
-    int x = 1;
-    
-    printf("\nScheduler Add Task:\n");    
-    s = SchedulerCreate();
-
-    SchedulerAddTask(s, &Print, 6, &x);
-    SchedulerAddTask(s, &Print, 5, &x);
-    SchedulerAddTask(s, &Print, 4, &x);
-    SchedulerAddTask(s, &Print, 3, &x);
-    SchedulerAddTask(s, &Print, 2, &x);
-    SchedulerAddTask(s, &Print, 1, &x);
-    
-    RUN_TEST(6 == SchedulerSize(s));
-        
-    SchedulerDestroy(s);
+	stop_pack_t pack = {0};
+	ilrd_uid_t uid = {0};
+	
+	TEST(1 == SchedulerIsEmpty(scduler), "IsEmpty(), True");
+	TEST(0 == SchedulerSize(scduler), "Size(), empty list");
+	SchedulerAddTask(scduler, PrintTest, DELAY_2, NULL);
+	
+	pack.func = SchedulerStop;
+	pack.s = scduler;
+	SchedulerAddTask(scduler, Stop, DELAY_2, &pack);
+	TEST(0 == SchedulerIsEmpty(scduler), "IsEmpty(), False");
+	TEST(2 == SchedulerSize(scduler), "Size(), two items list");
+	printf("run1:");
+	SchedulerRun(scduler);
+	printf("run2:");
+	SchedulerRun(scduler);
+	SchedulerClear(scduler);
+	TEST(0 == SchedulerSize(scduler), "Size after Clear, empty list");
+	
+	uid = SchedulerAddTask(scduler, PrintTest2, DELAY_2, &one);
+	SchedulerAddTask(scduler, PrintTest2, DELAY_2, &two);
+	SchedulerAddTask(scduler, Stop, DELAY_2, &pack);
+	printf("\nrun two tasks:\n");
+	SchedulerRun(scduler);
+	
+	SchedulerRemoveTask(scduler, uid);
+	printf("\nrun after remove one:\n");
+	SchedulerRun(scduler);
 }
 
-static void TestSchedulerClear()
+void Test2(scheduler_t *scduler)
 {
-    scheduler_t *s = NULL;
-    int x = 1;
-    
-    printf("\nScheduler Clear:\n");    
-    s = SchedulerCreate();
-
-    SchedulerAddTask(s, &Print, 6, &x);
-    SchedulerAddTask(s, &Print, 5, &x);
-    SchedulerAddTask(s, &Print, 4, &x);
-    SchedulerAddTask(s, &Print, 3, &x);
-    SchedulerAddTask(s, &Print, 2, &x);
-    SchedulerAddTask(s, &Print, 1, &x);
-    
-    RUN_TEST(6 == SchedulerSize(s));
-    
-    SchedulerClear(s);
-    RUN_TEST(0 == SchedulerSize(s));
-        
-    SchedulerDestroy(s);
-}
-
-static void TestSchedulerRemove()
-{
-    scheduler_t *s = NULL;
-    int x = 1;
-    ilrd_uid_t uid1 = {0};
-    ilrd_uid_t uid2 = {0};
-    ilrd_uid_t uid3 = {0};
-    
-    printf("\nScheduler Remove:\n");    
-    s = SchedulerCreate();
-
-    SchedulerAddTask(s, &Print, 1, &x);
-    SchedulerAddTask(s, &Print, 5, &x);
-    SchedulerAddTask(s, &Print, 3, &x);
-    uid3 = SchedulerAddTask(s, &Print, 6, &x);
-    uid1 = SchedulerAddTask(s, &Print, 4, &x);
-    uid2 = SchedulerAddTask(s, &Print, 2, &x);
-    
-    RUN_TEST(6 == SchedulerSize(s));
-    
-    SchedulerRemoveTask(s, uid1);
-    RUN_TEST(5 == SchedulerSize(s));
-    
-    SchedulerRemoveTask(s, uid2);
-    RUN_TEST(4 == SchedulerSize(s));
-    
-    SchedulerRemoveTask(s, uid3);
-    RUN_TEST(3 == SchedulerSize(s));
-        
-    SchedulerDestroy(s);
-}
-
-static void TestSchedulerRun()
-{
-    scheduler_t *s = NULL;
-    struct Wrap w = {0};
-    
-    printf("\nScheduler Run:\n"); 
-    
-    s = SchedulerCreate();
-    w.s = s;
-    
-    SchedulerAddTask(s, &Print, 6, &g_arr_test[6]);
-    SchedulerAddTask(s, &Print, 5, &g_arr_test[5]);
-    SchedulerAddTask(s, &Print, 4, &g_arr_test[4]);
-    SchedulerAddTask(s, &Stop, 10, s);
-    SchedulerAddTask(s, &Print, 2, &g_arr_test[2]);
-    SchedulerAddTask(s, &Print, 1, &g_arr_test[1]);
-    w.uid = SchedulerAddTask(s, &Remove, 7, &w);
-
-    RUN_TEST(7 == SchedulerSize(s));
-    
-    SchedulerRun(s);
-    printf("stop\n");
-    SchedulerRun(s);
-    RUN_TEST(6 == SchedulerSize(s)); 
-    SchedulerDestroy(s);
-}
-
-void Initialize()
-{
-    int i = 0;
-    
-    for (; i < MAX_SIZE; ++i)
-    {
-        g_arr_test[i] = i;
-    }
+	stop_pack_t pack = {0};
+	remove_pack_t pack2 = {0};
+	
+	SchedulerAddTask(scduler, PrintTest, DELAY_2, NULL);
+	
+	pack2.func = SchedulerRemoveTask;
+	pack2.s = scduler;
+	pack2.uid = SchedulerAddTask(scduler, Remove, DELAY_2, &pack2);
+	
+	pack.func = SchedulerStop;
+	pack.s = scduler;
+	SchedulerAddTask(scduler, Stop, DELAY_10, &pack);
+	printf("\nprint delay < stop delay:\n");
+	SchedulerRun(scduler);
+	printf("\nrun after remove remove itself:\n");
+	SchedulerRun(scduler);
+	
+	printf("\n");
 }
 
 int main()
 {
-    Initialize();
-    TestSchedulerCreate();
-    TestSchedulerAddTask();
-    TestSchedulerClear();
-    TestSchedulerRemove();
-    TestSchedulerRun();
-    
-    return 0;
+	scheduler_t *scduler = {0};
+	
+	TestTask();
+	
+	scduler = SchedulerCreate();
+	Test1(scduler);
+	SchedulerDestroy(scduler);
+	
+	scduler = SchedulerCreate();
+	Test2(scduler);
+	SchedulerDestroy(scduler);
+	
+	return 0;
 }
-

@@ -4,6 +4,7 @@
 #include <time.h>
 #include <stddef.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 struct Uid
 {

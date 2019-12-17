@@ -14,10 +14,9 @@
 #include <assert.h> /* assert */
 #include <unistd.h> /* sleep */
 
-#include "priorityqueue.h" /*priority functions*/
-#include "task.h" /*task functions*/
-#include "uid.h"
-#include "scheduler.h"
+#include "priorityqueue.h" /* priority functions */
+#include "task.h" /* task functions */
+#include "scheduler.h" /* scheduler functions */
 
 #define FREE(ptr) {free(ptr); ptr = NULL;}
 
@@ -90,9 +89,9 @@ ilrd_uid_t SchedulerAddTask(scheduler_t *s, task_func to_do, time_t interval, vo
     return new_task->uid;
 }
 
-int CompareUid(void *task1, void *task2)
+int CompareUid(void *task1, void *uid)
 {
-    return (UIDIsSame(((task_t*)task1)->uid,((task_t*)task2)->uid));
+    return (UIDIsSame(((task_t*)task1)->uid,(*(ilrd_uid_t*)uid)));
 }
 
 void SchedulerRemoveTask(scheduler_t *s, ilrd_uid_t uid)
@@ -101,7 +100,7 @@ void SchedulerRemoveTask(scheduler_t *s, ilrd_uid_t uid)
     
     assert(NULL != s);    
     
-    if (NULL != s->current_task && 1 == UIDIsSame(s->current_task->uid, uid))
+    if ((NULL != s->current_task) && (1 == UIDIsSame(s->current_task->uid, uid)))
     {
         s->remove_current = 1;
         return;
