@@ -4,7 +4,7 @@
 /*   Scheduler                   */
 /*   Author: Yonatan Zaken       */
 /*   Last Updated 17/12/19       */
-/*   Reviewed by:                */   
+/*   Reviewed by: Israel         */   
 /*			                   	 */
 /*********************************/
 
@@ -16,6 +16,8 @@
 
 #include "priorityqueue.h" /*priority functions*/
 #include "task.h" /*task functions*/
+#include "uid.h"
+#include "scheduler.h"
 
 #define FREE(ptr) {free(ptr); ptr = NULL;}
 

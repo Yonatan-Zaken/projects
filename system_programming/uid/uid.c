@@ -31,7 +31,7 @@ int UIDIsBad(ilrd_uid_t uid)
 
 int UIDIsSame(ilrd_uid_t uid1, ilrd_uid_t uid2)
 {
-    return (uid1.time_stamp == uid1.time_stamp &&
-        uid1.counter    == uid2.counter    &&
-        uid1.pid        == uid2.pid);
+    return ((uid1.time_stamp == uid1.time_stamp) &&
+            (uid1.counter == uid2.counter) &&
+            (uid1.pid == uid2.pid));
 }
