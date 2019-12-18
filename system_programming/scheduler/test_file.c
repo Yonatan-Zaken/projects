@@ -52,7 +52,6 @@ int RemoveTask(void *param)
     return 0; 
 }
 
-
 int StopTask(void *param)
 {
     SchedulerStop(param);

@@ -7,7 +7,7 @@
 /*   Reviewed by: Israel         */   
 /*			                   	 */
 /*********************************/
-#include <time.h> /* time_t */
+
 #include <assert.h> /*assert */
 #include <stdlib.h> /* malloc */
 
@@ -18,7 +18,7 @@
 
 task_t *TaskCreate(task_func to_do, time_t interval, void *param)
 {
-    task_t * new_task = (task_t*)malloc(sizeof(task_t));
+    task_t *new_task = (task_t *)malloc(sizeof(task_t));
     if (NULL == new_task)
     {
         return NULL;
@@ -41,12 +41,15 @@ task_t *TaskCreate(task_func to_do, time_t interval, void *param)
 
 void TaskDestroy(task_t *t)
 {
+    assert(NULL != t);
+    
     FREE(t);
 }
 
 ilrd_uid_t TaskGetUid(task_t *t)
 {   
     assert (NULL != t);
+    
     return t->uid;
 }
 

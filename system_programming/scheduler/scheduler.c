@@ -8,8 +8,6 @@
 /*			                   	 */
 /*********************************/
 
-#include <stddef.h>	/*size_t*/
-#include <time.h>	/*time_t*/
 #include <stdlib.h> /* malloc */
 #include <assert.h> /* assert */
 #include <unistd.h> /* sleep */
@@ -19,6 +17,9 @@
 #include "scheduler.h" /* scheduler functions */
 
 #define FREE(ptr) {free(ptr); ptr = NULL;}
+
+#define ON 1
+#define OFF 0
 
 struct Scheduler
 {
@@ -30,8 +31,11 @@ struct Scheduler
 
 int PriorityFunc(const void *node_data, const void *user_data, void *param)
 {
+    
     task_t *t1 = (task_t *)node_data;
     task_t *t2 = (task_t *)user_data;
+    (void)param;
+    
     return (TaskGetTimeToRun(t1) - TaskGetTimeToRun(t2));
 }
 
@@ -43,29 +47,20 @@ scheduler_t *SchedulerCreate()
         new_sch->q = PQCreate(&PriorityFunc, NULL);
         if (NULL != new_sch->q)
         {
-            new_sch->remove_current = 0;
-            new_sch->stop_flag = 1;
+            new_sch->remove_current = OFF;
+            new_sch->stop_flag = OFF;
             new_sch->current_task = NULL; 
             return new_sch;
         }
-        
         FREE(new_sch->q);
         return NULL;
     }
-    
     return NULL;  
 }
 
 void SchedulerDestroy(scheduler_t *s)
 {
-    size_t size = SchedulerSize(s);
-    
-    while (0 < size)
-    {
-        TaskDestroy(PQDequeue(s->q));
-        --size;
-    }
-    
+    SchedulerClear(s);
     PQDestroy(s->q);
     FREE(s);
 }
@@ -83,9 +78,8 @@ ilrd_uid_t SchedulerAddTask(scheduler_t *s, task_func to_do, time_t interval, vo
     {
         return bad_uid;
     }
-    
-    PQEnqueue(s->q, new_task);    
-    
+    PQEnqueue(s->q, new_task);
+        
     return new_task->uid;
 }
 
@@ -102,7 +96,7 @@ void SchedulerRemoveTask(scheduler_t *s, ilrd_uid_t uid)
     
     if ((NULL != s->current_task) && (1 == UIDIsSame(s->current_task->uid, uid)))
     {
-        s->remove_current = 1;
+        s->remove_current = ON;
         return;
     }
     
@@ -120,9 +114,9 @@ void SchedulerRun(scheduler_t *s)
     
     assert(NULL != s);
     
-    s->stop_flag = 1;
+    s->stop_flag = OFF;
     
-    while (1 == s->stop_flag)
+    while (OFF == s->stop_flag)
     {
         new_task = PQDequeue(s->q);
         s->current_task = new_task;
@@ -132,7 +126,7 @@ void SchedulerRun(scheduler_t *s)
             while (sleep(TaskGetTimeToRun(new_task) - time(NULL)));
         }
         
-        if ((0 == TaskRun(new_task)) && (0 == s->remove_current))
+        if ((0 == TaskRun(new_task)) && (OFF == s->remove_current))
         {
             TaskUpdateTimeToRun(new_task);
             PQEnqueue(s->q, new_task);
@@ -141,7 +135,7 @@ void SchedulerRun(scheduler_t *s)
         else
         {
             TaskDestroy(new_task);
-            s->remove_current = 0;
+            s->remove_current = OFF;
         }
     }
 }
@@ -150,7 +144,7 @@ void SchedulerStop(scheduler_t *s)
 {
     assert(NULL != s);
     
-    s->stop_flag = 0;
+    s->stop_flag = ON;
 }
 
 size_t SchedulerSize(const scheduler_t *s)
@@ -170,7 +164,6 @@ int SchedulerIsEmpty(const scheduler_t *s)
 void SchedulerClear(scheduler_t *s)
 {
     size_t size = 0;
-    void *temp = NULL;
     
     assert(NULL != s);
     
@@ -178,8 +171,7 @@ void SchedulerClear(scheduler_t *s)
     
     while (0 < size)
     {
-        temp = PQDequeue(s->q);
-        TaskDestroy(temp);
+        TaskDestroy(PQDequeue(s->q));
         --size;
     }
 }
