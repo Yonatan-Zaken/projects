@@ -9,7 +9,7 @@
 #include <stdio.h> /*printf()*/
 #include <stdlib.h> /*malloc()*/
 
-#include "../include/fsa.h"
+#include "fsa.h"
 
 #define RUN_TEST(test, errmsg)\
 							{\
@@ -42,7 +42,7 @@ struct BlockHeader
 
 void TestFSASuggestSize()
 {
-	RUN_TEST(40 == FSASuggestSize(1, 8), "FAIL: WRONG SIZE");
+	RUN_TEST(47 == FSASuggestSize(1, 8), "FAIL: WRONG SIZE");
 
 	printf("\n");
 }
@@ -79,8 +79,8 @@ void TestFSAAlloc()
 	block1_header_value = *(struct BlockHeader *)block1;
 	block2_header_value = *(struct BlockHeader *)block2;
 
-	RUN_TEST(24 == block1_header_value.next_free_index, "FAIL: WRONG RETURNED VALUE (24)");
-	RUN_TEST(40 == block2_header_value.next_free_index, "FAIL: WRONG RETURNED VALUE (40)");
+	RUN_TEST(32 == block1_header_value.next_free_index, "FAIL: WRONG RETURNED VALUE (24)");
+	RUN_TEST(48 == block2_header_value.next_free_index, "FAIL: WRONG RETURNED VALUE (40)");
 
 	FREE(allocation);
 

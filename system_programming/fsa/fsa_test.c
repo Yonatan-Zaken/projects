@@ -95,8 +95,8 @@ static void FSATest2()
     struct FixedSizeAllocator fsa = {0};
     
     void *ptr = NULL;
-    size_t block_size = 3;
-    size_t blocks_count = 4;
+    size_t block_size = 21;
+    size_t blocks_count = 6;
     size_t suggest = FSASuggestSize(blocks_count, block_size);
     void *alloc = (void *)malloc(suggest);
 
@@ -104,12 +104,21 @@ static void FSATest2()
     
     new_fsa = FSAInit(alloc, suggest, block_size);
 
-    RUN_TEST(95 == suggest, "suggeest test");    
+    RUN_TEST(223 == suggest, "suggeest test");    
+    RUN_TEST(6 == FSACountFree(new_fsa), "size count test");
+    
+    ptr = FSAAlloc(new_fsa);
+    RUN_TEST(5 == FSACountFree(new_fsa), "size count test");
+    ptr = FSAAlloc(new_fsa);
     RUN_TEST(4 == FSACountFree(new_fsa), "size count test");
+    ptr = FSAAlloc(new_fsa);    
+    RUN_TEST(3 == FSACountFree(new_fsa), "size count test");
+    ptr = FSAAlloc(new_fsa);    
+    RUN_TEST(2 == FSACountFree(new_fsa), "size count test");
     
+    FSAFree(ptr);
+    RUN_TEST(3 == FSACountFree(new_fsa), "size count test");
     
-    
-        
     free(alloc);
 }
 

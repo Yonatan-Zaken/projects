@@ -3,16 +3,15 @@
 /*   System Programming          */
 /*   FSA                         */
 /*   Author: Yonatan Zaken       */
-/*   Last Updated 17/12/19       */
-/*   Reviewed by: Israel         */   
+/*   Last Updated 19/12/19       */
+/*   Reviewed by: shye           */   
 /*			                   	 */
 /*********************************/
 
 #include <stddef.h> /* size_t */
-#include <stdio.h>  /* printf */
 #include <assert.h> /*assert */
 
-#include "fsa.h"
+#include "fsa.h" /* fixed sized allocator functions */ 
 
 #define WORD_IN_BYTES sizeof(size_t)
 #define ALIGNMENT_FACTOR 7  
@@ -27,9 +26,9 @@ struct FixedSizeAllocator
 typedef struct BlockHeader
 {
     size_t next_free_index;
-}block_header_t;
+} block_header_t;
 
-size_t BlockSize(const size_t block_size)
+static size_t BlockSize(const size_t block_size)
 {
     size_t total = block_size;
     
@@ -48,6 +47,7 @@ static char *AlignAddress(void *allocated)
     {
         ++runner;
     }
+    
     return runner;
 }
 
@@ -73,35 +73,23 @@ fsa_t *FSAInit(void *allocated, const size_t segment_size, const size_t block_si
     address_holder =  new_fsa->next_available_index;
     header += sizeof(fsa_t) / sizeof(block_header_t);
 
-    printf("%ld\n", header); 
-    
     while (address_holder < 
           (segment_size - (new_fsa->block_size + sizeof(block_header_t))))
     {
         address_holder += new_fsa->block_size + sizeof(block_header_t);
         header->next_free_index = address_holder;
-        
-        printf("%ld\n", header->next_free_index);
-        
         header += (new_fsa->block_size + sizeof(block_header_t)) / 
-                                           sizeof(block_header_t);
-       
-        printf("%ld\n", header);
-
+                                           sizeof(block_header_t);   
     }
     
     header->next_free_index = 0UL;
-    
-    printf("%ld\n", header->next_free_index);
-    
-    printf("fsa address %ld\n", (size_t)new_fsa);
     return new_fsa;
 }
 
 void *FSAAlloc(fsa_t *fsa)
 {
-    char *runner = NULL;
-    size_t temp_next_available = 0;
+    block_header_t *runner = NULL;
+    size_t temp_next_available = 0UL;
     
     assert(NULL != fsa);
     
@@ -109,56 +97,46 @@ void *FSAAlloc(fsa_t *fsa)
     {
         return NULL;
     }
-    printf("next_available_index%ld\n",fsa->next_available_index);
+    runner = (block_header_t *)fsa + 
+    (fsa->next_available_index - sizeof(block_header_t)) /
+                                   sizeof(block_header_t);
     
-    runner = (char *)fsa + fsa->next_available_index - sizeof(block_header_t);
-    printf("runner%ld\n",*runner);
     temp_next_available = fsa->next_available_index;
-    
-    fsa->next_available_index = *runner;
-    printf("next_available_index%ld\n",fsa->next_available_index);
-    
-    *runner = temp_next_available; 
-    printf("next_free_index%ld\n\n",*runner);
-
+    fsa->next_available_index = ((block_header_t *)runner)->next_free_index;
+    runner->next_free_index = temp_next_available; 
+   
     return ((char *)fsa + temp_next_available);
 }
 
 void FSAFree(void *block)
 {
     block_header_t *header = NULL;
-    size_t temp1 = 0;
-    size_t temp2 = 0;
-    char *runner = NULL;
+    size_t swap_index1 = 0UL;
+    size_t swap_index2 = 0UL;
     fsa_t *fsa_free = NULL;
     
     assert(NULL != block);
     
-    printf("free:\n\n");
-    header = (block_header_t *)block - 1; 
-    printf("%ld\n", header);
- 
-    printf("next_free_index before%ld\n", header->next_free_index);
-   
-    temp1 = header->next_free_index;
+    header = (block_header_t *)block;
+    --header; 
     
-    header -= ((temp1-1) / sizeof(block_header_t)); 
+    swap_index1 = header->next_free_index;
+    
+    header -= ((swap_index1 - sizeof(block_header_t)) / sizeof(block_header_t)); 
     fsa_free = (fsa_t *)header;
-    printf("%ld\n", header);
-    temp2 = fsa_free->next_available_index;
+    
+    swap_index2 = fsa_free->next_available_index;
    
-    fsa_free->next_available_index = temp1;
-    header += ((temp1-1) / sizeof(block_header_t)); 
-    header->next_free_index = temp2;
-    printf("next_free_index after%ld\n", header->next_free_index);
-    printf("%ld\n", header);
+    fsa_free->next_available_index = swap_index1;
+    header += ((swap_index1 - sizeof(block_header_t)) / sizeof(block_header_t)); 
+    header->next_free_index = swap_index2; 
 }
 
 size_t FSACountFree(const fsa_t *fsa)
 {
     const char *runner = NULL;
-    size_t header_value = 0;
-    size_t counter = 0;
+    size_t header_value = 0UL;
+    size_t counter = 0UL;
     
     assert(NULL != fsa);
     
@@ -167,7 +145,7 @@ size_t FSACountFree(const fsa_t *fsa)
     
     while (0 != header_value)
     {
-        runner += header_value;
+        runner += header_value - sizeof(block_header_t);
         header_value = ((block_header_t *)runner)->next_free_index;
         ++counter;
         runner = (char *)fsa;
@@ -178,6 +156,6 @@ size_t FSACountFree(const fsa_t *fsa)
 
 size_t FSASuggestSize(const size_t blocks_count, const size_t block_size)
 {
-    return (BlockSize(block_size) + sizeof(block_header_t))
-            * blocks_count + sizeof(fsa_t) + ALIGNMENT_FACTOR; 
+    return (BlockSize(block_size) + sizeof(block_header_t)) * blocks_count +
+             sizeof(fsa_t) + ALIGNMENT_FACTOR; 
 }
