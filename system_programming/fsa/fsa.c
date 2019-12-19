@@ -41,6 +41,16 @@ size_t BlockSize(const size_t block_size)
     return total;
 }
 
+static char *AlignAddress(void *allocated)
+{
+    char *runner = allocated;
+    while (0 != (size_t)runner % WORD_IN_BYTES)
+    {
+        ++runner;
+    }
+    return runner;
+}
+
 fsa_t *FSAInit(void *allocated, const size_t segment_size, const size_t block_size)
 {
     block_header_t *header = NULL;
@@ -54,11 +64,7 @@ fsa_t *FSAInit(void *allocated, const size_t segment_size, const size_t block_si
     new_fsa->block_size = BlockSize(block_size);
     new_fsa->segment_size = segment_size;
     
-    runner = allocated;
-    while (0 != (size_t)runner % WORD_IN_BYTES)
-    {
-        ++runner;
-    }
+    runner = AlignAddress(allocated);
 
     new_fsa = (fsa_t *)runner;
     header = (block_header_t *)new_fsa;
@@ -95,7 +101,7 @@ fsa_t *FSAInit(void *allocated, const size_t segment_size, const size_t block_si
 void *FSAAlloc(fsa_t *fsa)
 {
     char *runner = NULL;
-    size_t temp_next_av = 0;
+    size_t temp_next_available = 0;
     
     assert(NULL != fsa);
     
@@ -105,17 +111,17 @@ void *FSAAlloc(fsa_t *fsa)
     }
     printf("next_available_index%ld\n",fsa->next_available_index);
     
-    runner = (char *)fsa + fsa->next_available_index - WORD_IN_BYTES;
+    runner = (char *)fsa + fsa->next_available_index - sizeof(block_header_t);
     printf("runner%ld\n",*runner);
-    temp_next_av = fsa->next_available_index;
+    temp_next_available = fsa->next_available_index;
     
     fsa->next_available_index = *runner;
     printf("next_available_index%ld\n",fsa->next_available_index);
     
-    *runner = temp_next_av; 
+    *runner = temp_next_available; 
     printf("next_free_index%ld\n\n",*runner);
 
-    return ((char *)fsa + temp_next_av);
+    return ((char *)fsa + temp_next_available);
 }
 
 void FSAFree(void *block)
@@ -150,20 +156,21 @@ void FSAFree(void *block)
 
 size_t FSACountFree(const fsa_t *fsa)
 {
-    const fsa_t *runner = NULL;
+    const char *runner = NULL;
     size_t header_value = 0;
     size_t counter = 0;
     
     assert(NULL != fsa);
     
     header_value = fsa->next_available_index; 
-    runner = fsa;
+    runner = (char *)fsa;
     
     while (0 != header_value)
     {
         runner += header_value;
-        header_value = *(size_t *)runner;
+        header_value = ((block_header_t *)runner)->next_free_index;
         ++counter;
+        runner = (char *)fsa;
     }
     
     return counter;
