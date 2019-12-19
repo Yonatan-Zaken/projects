@@ -8,9 +8,21 @@
 /*			                   	 */
 /*********************************/
 
-#include <stddef.h>
+#include <stddef.h> /* size_t */
+#include <assert.h> /* assert */
 
-#include "vsa.h"
+#include "vsa.h" /* vsa functions */
+
+struct BlockHeader
+{
+    long block_size;
+    
+    #ifndef DEBUG
+    long magic_num
+    #endif
+}
+
+typedef vsa_t block_header_t;
 
 vsa_t *VSAInit(void *allocated, size_t segment_size)
 {
