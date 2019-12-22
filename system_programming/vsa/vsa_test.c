@@ -33,6 +33,7 @@ struct BlockHeader
     #endif
 };
 
+typedef vsa_t block_header_t;
 static void VSATestInit()
 {
     vsa_t *vsa = NULL;
@@ -53,7 +54,50 @@ static void VSATestLargestSize()
     vsa = VSAInit(alloc, 1000);
     
     RUN_TEST(968 == vsa->block_size, "block size");
-    RUN_TEST(968 == VSALargestChunkSize(vsa), "largest size");
+    RUN_TEST(952 == VSALargestChunkSize(vsa), "largest size");
+    
+    free(alloc);
+}
+
+static void VSATestAlloc()
+{
+    vsa_t *vsa = NULL;
+    block_header_t *header = NULL;
+    void *alloc = (void *)malloc(1000);
+    void *ptr = NULL;
+    void *hold_address = NULL;
+    
+    vsa = VSAInit(alloc, 1000);    
+    header = vsa;
+    
+    ptr = VSAAlloc(vsa, 200);
+    ptr = (block_header_t *)((char *)ptr - sizeof(struct BlockHeader));
+    printf("%ld\n", ((block_header_t *)(ptr))->block_size);
+    RUN_TEST(-200 == ((block_header_t *)(ptr))->block_size, "block size");
+    ptr = (block_header_t *)((char *)ptr + sizeof(struct BlockHeader) + 200);
+    printf("%ld\n", ((block_header_t *)(ptr))->block_size);
+    RUN_TEST(752 == ((block_header_t *)(ptr))->block_size, "block size");
+    printf("%ld\n", VSALargestChunkSize(vsa));
+    RUN_TEST(736 == VSALargestChunkSize(vsa), "largest size");  
+    
+    ptr = VSAAlloc(vsa, 500);
+    hold_address = ptr;
+    ptr = (block_header_t *)((char *)ptr - sizeof(struct BlockHeader));
+    printf("%ld\n", ((block_header_t *)(ptr))->block_size);
+    RUN_TEST(-500 == ((block_header_t *)(ptr))->block_size, "block size");
+    ptr = (block_header_t *)((char *)ptr + sizeof(struct BlockHeader) + 500);
+    printf("%ld\n", ((block_header_t *)(ptr))->block_size);
+    RUN_TEST(236 == ((block_header_t *)(ptr))->block_size, "block size");
+    printf("%ld\n", VSALargestChunkSize(vsa));
+    RUN_TEST(220 == VSALargestChunkSize(vsa), "largest size");
+    
+    VSAFree(hold_address);
+    hold_address = (char*)hold_address - sizeof(struct BlockHeader);
+    printf("%ld\n", ((block_header_t *)hold_address)->block_size);
+    RUN_TEST(500 == ((block_header_t *)hold_address)->block_size, "block size");
+    
+    RUN_TEST(736 == VSALargestChunkSize(vsa), "largest size");
+    
     
     free(alloc);
 }
@@ -62,6 +106,7 @@ int main()
 {
     VSATestInit();
     VSATestLargestSize();
+    VSATestAlloc();
     
     return 0;
 }

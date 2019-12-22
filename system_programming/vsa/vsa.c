@@ -3,22 +3,20 @@
 /*   System Programming          */
 /*   VSA                         */
 /*   Author: Yonatan Zaken       */
-/*   Last Updated 19/12/19       */
-/*   Reviewed by:            */   
+/*   Last Updated 22/12/19       */
+/*   Reviewed by: Daniel         */   
 /*			                   	 */
 /*********************************/
 
 #include <stddef.h> /* size_t */
 #include <assert.h> /* assert */
-#include <stdlib.h> /* abs */
 
-#include "vsa.h" /* vsa functions */
+#include "vsa.h" 
 
 #define SIZE_OF_VSA sizeof(vsa_t)
 #define SIZE_OF_BLOCKHEADER sizeof(block_header_t) 
 #define END_OF_SEGMENT 0x1000000000000000
 #define DEADBEEF 0xDEADBEEF
-#define MAKE_POSITIVE(x) (~(x) + 1)
 
 struct BlockHeader
 {
@@ -31,6 +29,16 @@ struct BlockHeader
 
 typedef vsa_t block_header_t;
 typedef char* byte_t;
+
+static  long Abs(long block_size)
+{
+    if (0 > block_size)
+    {
+        return -block_size;
+    }
+    
+    else return block_size;
+}
 
 vsa_t *VSAInit(void *allocated, size_t segment_size)
 {
@@ -63,32 +71,45 @@ static vsa_t *FusionFunction(vsa_t *vsa)
     
     while (END_OF_SEGMENT != header->block_size)
     {
-        if (0 <= header->block_size)
+        if (0 < header->block_size)
         {
             free_memory_holder += header->block_size + SIZE_OF_BLOCKHEADER;
             header = (block_header_t *)((byte_t)header + header->block_size +
                                                          SIZE_OF_BLOCKHEADER);
         }
         
-        else if((0 > header->block_size) && (0 != free_memory_holder)) 
+        else if (0 != free_memory_holder) 
         {
+        
             address_holder = header;
             header = (block_header_t *)((byte_t)header - free_memory_holder);
             header->block_size = free_memory_holder - SIZE_OF_BLOCKHEADER;
             free_memory_holder = 0;
-            header = (block_header_t *)((byte_t)address_holder + 
-                     MAKE_POSITIVE(address_holder->block_size) + 
-                                          SIZE_OF_BLOCKHEADER);
+            header = (block_header_t *)((byte_t)address_holder - 
+                                    address_holder->block_size + 
+                                           SIZE_OF_BLOCKHEADER);   
         }
         
         else
         {
-            header = (block_header_t *)((byte_t)header + 
-                     MAKE_POSITIVE(header->block_size) +
-                                  SIZE_OF_BLOCKHEADER); 
-        }    
+            header = (block_header_t *)((byte_t)header - 
+                                    header->block_size +
+                                   SIZE_OF_BLOCKHEADER); 
+        }
+                                                           
     }
     
+    if (0 != free_memory_holder)
+    {
+        address_holder = header;
+        header = (block_header_t *)((byte_t)header - free_memory_holder);
+        header->block_size = free_memory_holder - SIZE_OF_BLOCKHEADER;
+        free_memory_holder = 0;
+        header = (block_header_t *)((byte_t)address_holder - 
+                                address_holder->block_size + 
+                                       SIZE_OF_BLOCKHEADER);
+    }
+   
     header = vsa;
     return header;
 }
@@ -103,9 +124,10 @@ void *VSAAlloc(vsa_t *vsa, size_t block_size)
     
     header = FusionFunction(vsa);
     
-    while (block_size > header->block_size)
+    while ((long)block_size >= (header->block_size + (long)SIZE_OF_BLOCKHEADER))
     {
-        header = (block_header_t *)((byte_t)header + abs(header->block_size)+ 
+        
+        header = (block_header_t *)((byte_t)header + Abs(header->block_size)+ 
                                                         SIZE_OF_BLOCKHEADER);
     }    
     
@@ -117,7 +139,10 @@ void *VSAAlloc(vsa_t *vsa, size_t block_size)
     {
         address_holder = (block_header_t *)((byte_t)header + SIZE_OF_BLOCKHEADER);
         size_holder = header->block_size;
-        header->block_size = block_size;    
+        header->block_size = -block_size ;
+        #ifndef NDEBUG
+        header->magic_num = DEADBEEF;    
+        #endif
         header = (block_header_t *)((byte_t)header + block_size +
                                             SIZE_OF_BLOCKHEADER);
         header->block_size = size_holder - block_size - SIZE_OF_BLOCKHEADER;      
@@ -140,11 +165,16 @@ size_t VSALargestChunkSize(vsa_t *vsa)
         {
             largest_size = header->block_size;
         }
-        header = (block_header_t *)((byte_t)header + abs(header->block_size) +
+        header = (block_header_t *)((byte_t)header + Abs(header->block_size) +
                                                         SIZE_OF_BLOCKHEADER);
     }
     
-    return largest_size;
+    if (largest_size < (long)SIZE_OF_BLOCKHEADER)
+    {
+        return 0;
+    }
+    
+    return (largest_size - (long)SIZE_OF_BLOCKHEADER);
 }
 
 void VSAFree(void *block)
@@ -152,10 +182,13 @@ void VSAFree(void *block)
     block_header_t *header = NULL;
     
     assert(NULL != block);
-        
-    header = (block_header_t *)((byte_t)block - SIZE_OF_BLOCKHEADER);
+
+    header = block;
+    --header;    
+    assert(DEADBEEF == header->magic_num);
+    
     if (0 > header->block_size)
     {
-        header->block_size = MAKE_POSITIVE(header->block_size);
+        header->block_size = -(header->block_size);
     }
 }
