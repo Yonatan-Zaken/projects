@@ -8,7 +8,6 @@
 /*			                   	 */
 /*********************************/
 
-#include <stddef.h> /* size_t */
 #include <assert.h> /* assert */
 
 #include "vsa.h" 
@@ -101,58 +100,6 @@ static vsa_t *FusionFunction(vsa_t *vsa)
     return vsa;
 }
 
-/*
-static vsa_t *FusionFunction(vsa_t *vsa)
-{
-    block_header_t *header = vsa;
-    block_header_t *address_holder = NULL;
-    long free_memory_holder = 0;
-    
-    while (END_OF_SEGMENT != header->block_size)
-    {
-        if (0 < header->block_size)
-        {
-            free_memory_holder += header->block_size + SIZE_OF_BLOCKHEADER;
-            header = (block_header_t *)((byte_t)header + header->block_size +
-                                                         SIZE_OF_BLOCKHEADER);
-        }
-        
-        else if (0 != free_memory_holder) 
-        {
-        
-            address_holder = header;
-            header = (block_header_t *)((byte_t)header - free_memory_holder);
-            header->block_size = free_memory_holder - SIZE_OF_BLOCKHEADER;
-            free_memory_holder = 0;
-            header = (block_header_t *)((byte_t)address_holder - 
-                                    address_holder->block_size + 
-                                           SIZE_OF_BLOCKHEADER);   
-        }
-        
-        else
-        {
-            header = (block_header_t *)((byte_t)header - 
-                                    header->block_size +
-                                   SIZE_OF_BLOCKHEADER); 
-        }
-                                                           
-    }
-    
-    if (0 != free_memory_holder)
-    {
-        address_holder = header;
-        header = (block_header_t *)((byte_t)header - free_memory_holder);
-        header->block_size = free_memory_holder - SIZE_OF_BLOCKHEADER;
-        free_memory_holder = 0;
-        header = (block_header_t *)((byte_t)address_holder - 
-                                address_holder->block_size + 
-                                       SIZE_OF_BLOCKHEADER);
-    }
-    
-    header = vsa;
-    return header;
-}
-*/
 void *VSAAlloc(vsa_t *vsa, size_t block_size)
 {
     block_header_t *header = NULL;
