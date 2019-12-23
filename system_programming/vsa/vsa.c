@@ -63,6 +63,45 @@ vsa_t *VSAInit(void *allocated, size_t segment_size)
     return first_header;
 }
 
+
+static vsa_t *FusionFunction(vsa_t *vsa)
+{
+    block_header_t *header_runner = vsa;
+    block_header_t *header_base = vsa;
+    block_header_t *address_holder = NULL;
+    long free_memory_holder = 0;
+    
+    while (END_OF_SEGMENT != header_runner->block_size)
+    {
+        header_base = header_runner;
+        
+        while (0 <= header_runner->block_size && END_OF_SEGMENT != 
+                                 header_runner->block_size)
+        {
+            free_memory_holder += header_runner->block_size + SIZE_OF_BLOCKHEADER;
+            header_runner = (block_header_t *)((byte_t)header_runner + 
+                     header_runner->block_size + SIZE_OF_BLOCKHEADER);
+        }
+        
+        if (0 != free_memory_holder)
+        {
+            header_base->block_size = free_memory_holder - SIZE_OF_BLOCKHEADER;
+        }
+        
+        while (0 > header_runner->block_size && (END_OF_SEGMENT != 
+                                       header_runner->block_size))
+        {
+            header_runner = (block_header_t *)((byte_t)header_runner - 
+                                    header_runner->block_size +
+                                   SIZE_OF_BLOCKHEADER); 
+        }
+                                                           
+    }
+    
+    return vsa;
+}
+
+/*
 static vsa_t *FusionFunction(vsa_t *vsa)
 {
     block_header_t *header = vsa;
@@ -109,11 +148,11 @@ static vsa_t *FusionFunction(vsa_t *vsa)
                                 address_holder->block_size + 
                                        SIZE_OF_BLOCKHEADER);
     }
-   
+    
     header = vsa;
     return header;
 }
-
+*/
 void *VSAAlloc(vsa_t *vsa, size_t block_size)
 {
     block_header_t *header = NULL;
