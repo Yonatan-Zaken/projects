@@ -63,7 +63,6 @@ static void SchedulerTest1()
 {
     int x1 = 1, x2 = 3, x3 = 7;
     ilrd_uid_t uid1;
-    ilrd_uid_t uid2;
     scheduler_t *sch1 = NULL;
     remove_t remove;
     
@@ -76,7 +75,7 @@ static void SchedulerTest1()
     SchedulerAddTask(sch1, &PrintTask1, 10, &x3);
     SchedulerAddTask(sch1, &PrintTask1, 1, &x1);
     uid1 = SchedulerAddTask(sch1, &PrintTask1, 3, &x2);
-    uid2 = SchedulerAddTask(sch1, &StopTask, 13, sch1);
+    SchedulerAddTask(sch1, &StopTask, 13, sch1);
     RUN_TEST(4 == SchedulerSize(sch1), "sched size test1");
     SchedulerRun(sch1);
     
