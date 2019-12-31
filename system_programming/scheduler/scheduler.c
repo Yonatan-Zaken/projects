@@ -78,7 +78,13 @@ ilrd_uid_t SchedulerAddTask(scheduler_t *s, task_func to_do, time_t interval, vo
     {
         return bad_uid;
     }
-    PQEnqueue(s->q, new_task);
+    
+    if (1 == PQEnqueue(s->q, new_task))
+    {
+        TaskDestroy(new_task);
+        new_task = NULL;
+        return bad_uid;
+    }
         
     return new_task->uid;
 }
@@ -135,6 +141,7 @@ void SchedulerRun(scheduler_t *s)
         else
         {
             TaskDestroy(new_task);
+            new_task = NULL;
             s->remove_current = OFF;
         }
     }

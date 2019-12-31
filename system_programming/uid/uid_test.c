@@ -34,14 +34,14 @@
 }
 
 #define MAX_UID 10
-
+/*
 struct Uid
 {
     time_t time_stamp;
     size_t counter;
-    pid_t process_id;
+    pid_t pid;
 };
-
+*/
 static ilrd_uid_t g_arr[MAX_UID];
 
 static void PrintUID()
@@ -50,7 +50,7 @@ static void PrintUID()
     
     for (; i < MAX_UID; ++i)
     {
-        printf("UID: %d\nCounter: %lu\nTime Stamp: %ld\n\n", g_arr[i].process_id,
+        printf("UID: %d\nCounter: %lu\nTime Stamp: %ld\n\n", g_arr[i].pid,
                                                              g_arr[i].counter,
                                                              g_arr[i].time_stamp);
     } 
@@ -102,10 +102,10 @@ static void TestIsSame()
     if (1 == flag)
     {
         printf("Same UID:\n");
-        printf("UID %d: %d\nCounter: %lu\nTime Stamp: %ld\n\n", i, g_arr[i].process_id,
+        printf("UID %d: %d\nCounter: %lu\nTime Stamp: %ld\n\n", i, g_arr[i].pid,
                                                                    g_arr[i].counter,
                                                                    g_arr[i].time_stamp);
-        printf("UID %d: %d\nCounter: %lu\nTime Stamp: %ld\n\n", j, g_arr[i].process_id,
+        printf("UID %d: %d\nCounter: %lu\nTime Stamp: %ld\n\n", j, g_arr[i].pid,
                                                                    g_arr[i].counter,
                                                                    g_arr[i].time_stamp);
     } 

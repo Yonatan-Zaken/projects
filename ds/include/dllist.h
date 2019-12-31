@@ -6,7 +6,6 @@
 typedef struct DLLNode *iterator_t;
 typedef struct DLL dll_t;
 
-
 typedef int (*action_func_ptr)(void *node_data, void *user_data);
 typedef int (*match_func_ptr)(void *node_data, void *user_data);
 

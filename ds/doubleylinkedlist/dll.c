@@ -37,7 +37,7 @@ dll_t *DLLCreate()
     {
         return NULL;
     }           
-    
+   
     new_dll->head.next = &new_dll->tail;
     new_dll->head.prev = NULL;
     new_dll->tail.next = NULL;
