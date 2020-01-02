@@ -1,80 +1,154 @@
 /*********************************/
-/*   			             	 */
-/*   Main file DS 4              */
-/*   Yonatan Zaken		         */
-/*   Last Updated 2/12/19        */
-/*   Reviewed by: Guy            */   
-/*			                   	 */
+/*    Data Structures            */
+/*    Single Linked List         */       
+/*    Author :Guy Cohen Zedek    */
+/*    Reviewed By:               */
+/*    Date:    2/12/2019         */
+/*                               */
 /*********************************/
 
 #include <stdio.h> /* printf */
 
-#include "linkedlist.h" /* linked list functions */
+#include "linkedlist.h"
 
-#define NORMAL "\033[0m"
-#define RED "\033[;031m"
+#define UNUSED(x) (void)(x)
 #define GREEN "\033[;032m"
-
-#define RUN_TEST(test, error_message){\
-    if (test)\
-    {\
-        printf(GREEN);\
-        printf("SUCCESS\n");\
-        printf(NORMAL);\
-    }\
-    else\
-    {\
-        printf(RED);\
-        printf("FAIL %s\n", error_message);\
-        printf(NORMAL);\
-    }\
+#define RED   "\033[;031m"
+#define RESET "\033[0m"
+#define RUN_TEST(test)\
+{\
+  if(test)\
+  {\
+    printf(GREEN);\
+    printf("SUCCESS\n");\
+    printf(RESET);\
+  }\
+  else\
+  {\
+    printf(RED);\
+    printf("FAIL \n");\
+    printf(RESET);\
+  }\
 }
 
-static void TestLinkedList1()
+int PrintNode(void *node, void *additional) 
 {
-    int data1 = 77;
-    float data2 = 2.5;
-    char data3 = 'Q';
-    int data4 = 99;
-    node_t *node1 = NULL;
-    node_t *node2 = NULL;
-    node_t *node3 = NULL;
-    node_t *node4 = NULL;
+    node_t *n = (node_t*)node;
     
-    printf("Test Linked List 1:\n");
-    node1 = SLLCreateNode(NULL, &data1);
-    node2 = SLLCreateNode(NULL, &data2);
-    node3 = SLLCreateNode(NULL, &data3);
+    UNUSED(additional);
     
-    RUN_TEST(77 == *(int*)node1->data, "Check data test 1");
-    RUN_TEST(0 == SLLInsertAfter(node1, node2), "Check Insert test1");
-    RUN_TEST(0 == SLLInsertAfter(node2, node3), "Check Insert test1");
-    RUN_TEST(3 == SLLSize(node1), "Size of list before remove test1");
+    printf("data: %d\n", *(int*)n->data);
     
-    printf("%d\n", *(int*)node1->data);
-    printf("%f\n", *(float*)node2->data);
-    printf("%c\n", *(char*)node3->data);
+    return 0;
+}
+
+int IsMatch(void *node, void *additional)
+{
+    node_t *n = (node_t*)node;
     
-    SLLRemove(node2);
-    RUN_TEST(2 == SLLSize(node1), "Size of list after remove test1");
+    return (*(int*)n->data == *(int*)additional);
+}
+
+static void TestLinkedList()
+{
+    int x1 = 1, x2 = 2, x3 = 3, x4 = 4, x5 = 5;
+    node_t *head = NULL, *node1 = NULL, *node2 = NULL, *node3 = NULL, *node4 =NULL;
     
-    node4 = SLLCreateNode(NULL, &data4);
-    RUN_TEST(0 == SLLInsert(node4, node2), "Check Insert test1");
-    RUN_TEST(3 == SLLSize(node1), "Size of list after remove test1");
-    printf("%d\n", *(int*)node1->data);
-    printf("%d\n", *(int*)node2->data);
-    printf("%c\n", *(char*)node4->data);
+    printf("Linked List 1:\n");
+    node1 = LLCreateNode(NULL, &x1);
+    node2 = LLCreateNode(NULL, &x2);
+    node3 = LLCreateNode(NULL, &x3);
+    node4 = LLCreateNode(NULL, &x4);
+    head = node1;
     
-    SLLRemoveAfter(node1);
-    RUN_TEST(2 == SLLSize(node1), "Size of list after remove test1");
+    RUN_TEST(0 == LLInsertAfter(node2, node1));
+    RUN_TEST(0 == LLInsertAfter(node3, node2));
+    RUN_TEST(0 == LLInsertAfter(node4, node3));
     
-    SLLDestroy(node1);
-    printf("\n");
+    RUN_TEST(4 == LLSize(node1));
+    head = LLFlip(head);
+    RUN_TEST(node4 == head);
+    LLDestroy(node4);
+    
+    printf("\nLinked List 2:\n");
+    node1 = LLCreateNode(NULL, &x1);
+    node2 = LLCreateNode(NULL, &x2);
+    node3 = LLCreateNode(NULL, &x3);
+    node4 = LLCreateNode(NULL, &x4);
+    
+    RUN_TEST(0 == LLInsertAfter(node2, node1));
+    RUN_TEST(0 == LLInsertAfter(node3, node2));
+    RUN_TEST(0 == LLInsertAfter(node4, node3));
+    
+    RUN_TEST(4 == LLSize(node1));
+    LLFlip(node2);
+    RUN_TEST(3 == LLSize(node4));
+    RUN_TEST(2 == LLSize(node1));
+    RUN_TEST(node3 == node4->next);
+    RUN_TEST(node2 == LLFindIntersection(node1, node4));
+    LLFlip(node4);
+    LLDestroy(node1);
+    
+    printf("\nLinked List 3:\n");
+    node1 = LLCreateNode(NULL, &x1);
+    node2 = LLCreateNode(NULL, &x2);
+    node3 = LLCreateNode(NULL, &x3);
+    node4 = LLCreateNode(NULL, &x4);
+    
+    head = node1;
+    
+    RUN_TEST(0 == LLInsert(node2, node1));
+    RUN_TEST(0 == LLInsert(node3, node1));
+    RUN_TEST(0 == LLInsert(node4, node1));
+    
+    RUN_TEST(4 == *(int*)node1->data);  
+    RUN_TEST(1 == *(int*)node2->data);
+    RUN_TEST(2 == *(int*)node3->data);
+    RUN_TEST(3 == *(int*)node4->data);
+    RUN_TEST(4 == LLSize(node1));
+    
+    RUN_TEST(0 == LLForEach(head, &PrintNode, 0));
+    LLRemove(node3);
+    RUN_TEST(3 == LLSize(node1));
+    LLRemoveAfter(node1);
+    RUN_TEST(2 == LLSize(node1));
+    LLRemove(node1);
+    RUN_TEST(1 == LLSize(node1));
+    LLDestroy(node1);
+    
+    printf("\nLinked List 4:\n");
+    node1 = LLCreateNode(NULL, &x1);
+    node2 = LLCreateNode(NULL, &x2);
+    node3 = LLCreateNode(NULL, &x3);
+    node4 = LLCreateNode(NULL, &x4);
+    head = node1;
+    
+    RUN_TEST(0 == LLInsertAfter(node2, node1));
+    RUN_TEST(0 == LLInsertAfter(node3, node2));
+    RUN_TEST(0 == LLInsertAfter(node4, node3));
+    
+    RUN_TEST(node3 == LLGetNode(head, &IsMatch, &x3));
+    RUN_TEST(NULL == LLGetNode(head, &IsMatch, &x5));
+    RUN_TEST(4 == LLSize(node1));
+    
+    LLDestroy(node1);
+    
+    printf("\nLinked List 5:\n");
+    node4 = LLCreateNode(NULL, &x4);
+    node3 = LLCreateNode(node4, &x3);
+    node2 = LLCreateNode(node3, &x2);
+    node1 = LLCreateNode(node2, &x1);
+    
+    node4->next = node1;
+    
+    RUN_TEST(1 == LLHasLoop(node1));
+    
+    node4->next = NULL;
+    LLDestroy(node1);
 }
 
 int main()
 {
-    TestLinkedList1();
-    
+    TestLinkedList();
     return 0;
 }
