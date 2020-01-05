@@ -1,25 +1,27 @@
 /*********************************/
 /*   Sorting Algorithms          */
-/*   Sort                 */
+/*   Sort                        */
 /*   Author: Yonatan Zaken       */
-/*   Last Updated        */
-/*   Reviewed by:          */
+/*   Last Updated: 5/1/2020      */
+/*   Reviewed by: Daniel         */
 /*********************************/
 
-#include "sort.h"
+#include <stdlib.h>
+
+#include "sorts.h"
 
 #define ON 1
 #define OFF 0
 
 void BubbleSort(int arr[], size_t n)
 {
-    size_t i = 0, j = 0;
+    size_t j = 0;
     size_t new_size = n - 1;
     size_t size = 0;
-    int temp = 0;
-    int flag = 0;
+    int swap_temp = 0;
+    int flag = ON;
     
-    for (i = 0; i < (n - 1); ++i)
+    while (ON == flag)
     {
         flag = OFF;
         
@@ -27,43 +29,37 @@ void BubbleSort(int arr[], size_t n)
         {
             if (arr[j] > arr[j + 1])
             {
-                temp = arr[j];
+                swap_temp = arr[j];
                 arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
+                arr[j + 1] = swap_temp;
                 
                 size = j;
                 flag = ON;
             }
         }
-        
         new_size = size;
-        if (OFF == flag)
-        {
-            break;
-        }
     }
 }
 
 void InsertionSort(int arr[], size_t n)
 {
     int i = 0, j = 0;
-    int temp = 0;
+    int max_temp = 0;
     
     for (i = 1; i < n; ++i)
     {   
-        temp = arr[i];
+        max_temp = arr[i];
         j = i - 1;
-        while (0 <= j && arr[j] > temp)
+        while (0 <= j && arr[j] > max_temp)
         {
             arr[j + 1] = arr[j];
             --j;
         }
-        
-        arr[j + 1] = temp;       
+        arr[j + 1] = max_temp;       
     }
 }
 
-void Swap(int *x, int *y)
+static void Swap(int *x, int *y)
 {
     int temp = *y;
     *y = *x;
@@ -91,8 +87,36 @@ void SelectionSort(int arr[], size_t n)
     }
 }
 
-
-
-
-
-
+int CountingSort(const int *arr, size_t size, int min, int max, int *res)
+{
+    int *count = NULL;
+    size_t range = (size_t)(max - min + 1);
+    size_t i = 0;
+    
+    count = (int *)calloc(range, sizeof(int));
+    if (NULL == count)
+    {
+        return 1;
+    }
+       
+    for (i = 0; i < size; ++i)
+    {
+        count[arr[i] - min] += 1;
+    }
+    
+    for (i = 1; i < range; ++i)
+    {
+        count[i] += count[i - 1];
+    }       
+    
+    for (i = size - 1; i > 0; --i)
+    {
+        res[count[arr[i] - min] - 1] = arr[i];
+        --count[arr[i] - min];
+    }
+    
+    res[count[arr[i] - min] - 1] = arr[i];
+    
+    free(count); count = NULL;
+    return 0;
+}

@@ -3,7 +3,7 @@
 #flags
 CC=gcc   
 CFLAGS=-ansi -pedantic-errors -Wall -Wextra -g -I../include -I../../ds/include
-RFLAGS=-ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3 -I../include\
+RFLAGS=-ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3 -I../include \
 -I../../ds/include  
 LDFLAGS_DEBUG=-L../libdebug -Wl,-rpath=../../libdebug
 LDFLAGS_RELEASE=-L../librelease -Wl,-rpath=../../librelease

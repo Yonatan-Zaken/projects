@@ -18,4 +18,7 @@ void InsertionSort(int arr[], size_t n);
 /* worst case O(n^2)                                */ 
 void SelectionSort(int arr[], size_t n);
 
+int CountingSort(const int arr[], size_t size, int min, int max, int res[]);
+
+
 #endif
