@@ -20,5 +20,6 @@ void SelectionSort(int arr[], size_t n);
 
 int CountingSort(const int arr[], size_t size, int min, int max, int res[]);
 
+int RadixSort(unsigned int *arr, size_t size, unsigned int num_of_bits);
 
 #endif
