@@ -186,7 +186,7 @@ int RadixSort(unsigned int *arr, size_t size, unsigned int num_of_bits)
     res = (unsigned int *)malloc(size * sizeof(unsigned int));
     if (NULL == res)
     {
-        free(histogram); histogram = NULL;
+        FREE(histogram);
         return 1;
     }
     
@@ -202,9 +202,3 @@ int RadixSort(unsigned int *arr, size_t size, unsigned int num_of_bits)
     
     return 0;
 }
-
-
-
-
-
-
