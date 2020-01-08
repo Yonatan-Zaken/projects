@@ -17,6 +17,7 @@
 #define RIGHT 1
 #define DEADBEEF ((void *)0xDEADBEEF)
 
+#define UNUSED(x) (void)(x)
 #define FREE(ptr) {free(ptr); ptr = NULL;}
 
 typedef struct BSTNode
@@ -194,8 +195,21 @@ bst_itr_t BSTFind(const bst_t *tree, const void *data)
 
 int BSTForeach(bst_itr_t start, bst_itr_t end, action_func_t action, void *param)
 {
-        
+    int result = 0;
+    bst_itr_t runner = start;
+    
+    UNUSED(param);
 
+    assert(NULL != start);
+    assert(NULL != end);            
+        
+    while ((0 == result) && !BSTIsSameItr(runner, end))
+    {
+        result = action(param, runner->node_data);
+        runner = BSTNext(runner);
+    }
+
+    return result;
 }
 
 size_t BSTSize(const bst_t *tree)
@@ -271,7 +285,6 @@ bst_itr_t BSTEnd(const bst_t *tree)
     
     return &(((bst_t *)tree)->dummy);           
 }
-
 
 bst_itr_t BSTNext(bst_itr_t it)
 {

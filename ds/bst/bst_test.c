@@ -50,13 +50,17 @@ struct BSTree
 
 static int CompareFunc(const void *user_data, const void *tree_data, void *param)
 {
+    UNUSED(param);
     return (*(int *)user_data > *(int *)tree_data);
 }
 
-static int ActionFunc(const void *user_data, const void *tree_data, void *param)
+static int ActionFunc(void *user_data, void *tree_data)
 {
-    *(int *)tree_data += 1;
-    return 
+    UNUSED(user_data);
+    /**(int *)tree_data += *(int *)user_data;*/
+    printf("%d \n", *(int*)tree_data);
+    
+    return 0;  
 }
 
 static void BSTTest1()
@@ -108,7 +112,7 @@ static void BSTTest2()
     void *param = NULL;
     bst_t *tree = BSTCreate(&CompareFunc, param);
     int x1 = 20, x2 = 10, x3 = 30, x4 = 3, x5 = 15, x6 = 25, x7 = 35;
-    bst_itr_t it1, it2, it3;
+    bst_itr_t it1, it2;
     
     printf("BSTTest 2:\n");
     RUN_TEST(1 == BSTIsEmpty(tree), "is empty1");
@@ -127,22 +131,22 @@ static void BSTTest2()
     it1 = BSTPrev(it1);
     it1 = BSTPrev(it1);
     
-    RUN_TEST(3 == *(int*)((BSTBegin(tree))->node_data), "begin1");
+    RUN_TEST(3 == *(int*)((BSTBegin(tree))->node_data), "begin2");
     BSTRemove(BSTBegin(tree));
     
-    RUN_TEST(10 == *(int*)((BSTBegin(tree))->node_data), "begin1");
+    RUN_TEST(10 == *(int*)((BSTBegin(tree))->node_data), "begin2");
     BSTRemove(BSTBegin(tree));
 
-    RUN_TEST(15 == *(int*)((BSTBegin(tree))->node_data), "begin1");  
+    RUN_TEST(15 == *(int*)((BSTBegin(tree))->node_data), "begin2");  
     
-    RUN_TEST(35 == *(int*)(BSTEnd(tree))->node_data, "end1");
-    BSTRemove(BSTEnd(tree));
+    RUN_TEST(35 == *(int*)(BSTPrev(BSTEnd(tree)))->node_data, "end2");
+    BSTRemove(BSTPrev(BSTEnd(tree)));
     
-    RUN_TEST(30 == *(int*)(BSTEnd(tree))->node_data, "end1");
+    RUN_TEST(30 == *(int*)(BSTPrev(BSTEnd(tree)))->node_data, "end2");
     BSTRemove(it2);
     
-    RUN_TEST(30 == *(int*)(BSTEnd(tree))->node_data, "end1");
-    RUN_TEST(15 == *(int*)(BSTBegin(tree))->node_data, "end1");
+    RUN_TEST(30 == *(int*)(BSTPrev(BSTEnd(tree)))->node_data, "end2");
+    RUN_TEST(15 == *(int*)(BSTBegin(tree))->node_data, "end2");
     BSTDestroy(tree);
     
     printf("\n\n");  
@@ -152,23 +156,29 @@ static void BSTTest3()
 {
     void *param = NULL;
     bst_t *tree = BSTCreate(&CompareFunc, param);
-    int x1 = 20, x2 = 10, x3 = 30, x4 = 3, x5 = 15, x6 = 25, x7 = 35;
-    bst_itr_t it1, it2, it3;
+    int x1 = 20, x2 = 10, x3 = 30, x4 = 3, x5 = 15, x6 = 25, x7 = 35, x8 = 11;
+    bst_itr_t it1, it2;
     
     printf("BSTTest 3:\n");
-    RUN_TEST(1 == BSTIsEmpty(tree), "is empty1");
+    RUN_TEST(1 == BSTIsEmpty(tree), "is empty3");
     
-    RUN_TEST(0 == BSTInsert(tree, &x1), "insert1");
-    RUN_TEST(0 == BSTInsert(tree, &x2), "insert1");
-    RUN_TEST(0 == BSTInsert(tree, &x3), "insert1");
-    RUN_TEST(0 == BSTInsert(tree, &x4), "insert1");
-    RUN_TEST(0 == BSTInsert(tree, &x5), "insert1");
-    RUN_TEST(0 == BSTInsert(tree, &x6), "insert1");
-    RUN_TEST(0 == BSTInsert(tree, &x7), "insert1");
+    RUN_TEST(0 == BSTInsert(tree, &x1), "insert3");
+    RUN_TEST(0 == BSTInsert(tree, &x2), "insert3");
+    RUN_TEST(0 == BSTInsert(tree, &x3), "insert3");
+    RUN_TEST(0 == BSTInsert(tree, &x4), "insert3");
+    RUN_TEST(0 == BSTInsert(tree, &x5), "insert3");
+    RUN_TEST(0 == BSTInsert(tree, &x6), "insert3");
+    RUN_TEST(0 == BSTInsert(tree, &x7), "insert3");
     
-    RUN_TEST(7 == BSTSize(tree), "size1");
+    RUN_TEST(7 == BSTSize(tree), "size3");
     
-    it1 = tree->dummy.child[0];
+    it1 = BSTBegin(tree);
+    it1 = BSTNext(it1);
+    RUN_TEST(10 == *(int*)(it1->node_data), "next3");
+    it2 = BSTFind(tree, &x3);
+    RUN_TEST(30 == *(int*)(it2->node_data), "next3");
+    printf("For Each:\n"); 
+    BSTForeach(it1, it2, &ActionFunc, &x8);
     
     BSTDestroy(tree);
     
@@ -210,7 +220,7 @@ static void BSTTest4()
 int main()
 {
     BSTTest1();
-    /*BSTTest2();*/
+    BSTTest2();
     BSTTest3();
     BSTTest4();
     
