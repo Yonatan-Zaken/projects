@@ -85,6 +85,7 @@ static void BSTTest1()
     
     it1 = tree->dummy.child[0];
     
+    
     it1 = BSTNext(it1);
     RUN_TEST(25 == *(int *)(it1->node_data), "next1");
     it1 = BSTPrev(it1);

@@ -3,13 +3,13 @@
 /*   Data Structures             */
 /*   Binary Search Tree          */
 /*   Author: Yonatan Zaken       */
-/*   Last Updated 7/1/20         */
-/*   Reviewed by:          */   
+/*   Last Updated 9/1/20         */
+/*   Reviewed by: Eliya          */   
 /*			                   	 */
 /*********************************/
 
-#include <stdlib.h>
-#include <assert.h>
+#include <stdlib.h> /* malloc */
+#include <assert.h> /* assert */
 
 #include "bst.h"
 
@@ -54,6 +54,7 @@ bst_t *BSTCreate(compare_func_t cmp, void *param)
     bst->dummy.node_data = DEADBEEF;
     bst->cmp = cmp;
     bst->param = param;
+    bst->dummy.parent = NULL;
     
     return bst;
 }
@@ -102,7 +103,7 @@ int BSTInsert(bst_t *tree, void *data)
     {
         return 1;
     }
-    
+    /* this block maybe not necessary */
     runner = &tree->dummy;
     if (NULL == runner->child[LEFT])
     {
@@ -141,8 +142,8 @@ void BSTRemove(bst_itr_t it)
         successor->child[RIGHT] = it->child[RIGHT];
         successor->child[LEFT] = it->child[LEFT];
         successor->parent = it->parent;
-        
         it->parent->child[WhichChildSide(it)] = successor;
+        
         if (NULL != successor->child[RIGHT])
         {
             successor->child[RIGHT]->parent = successor;
@@ -261,23 +262,6 @@ bst_itr_t BSTBegin(const bst_t *tree)
     
     return it;   
 }
-/*
-bst_itr_t BSTEnd(const bst_t *tree)
-{
-    bst_itr_t it = NULL;
-     
-    assert(NULL != tree);    
-    
-    it = tree->dummy.child[0];
-    
-    while (DEADBEEF != (BSTNext(it))->node_data)
-    {
-        it = BSTNext(it);
-    }
-    
-    return it;           
-}
-*/
 
 bst_itr_t BSTEnd(const bst_t *tree)
 {
@@ -348,4 +332,3 @@ int BSTIsSameItr(bst_itr_t it1, bst_itr_t it2)
     
     return (it1 == it2);
 }
-
