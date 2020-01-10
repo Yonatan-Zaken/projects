@@ -202,7 +202,7 @@ int BSTForeach(bst_itr_t start, bst_itr_t end, action_func_t action, void *param
         
     while ((0 == result) && !BSTIsSameItr(runner, end))
     {
-        result = action(param, runner->node_data);
+        result = action(runner->node_data, param);
         runner = BSTNext(runner);
     }
 

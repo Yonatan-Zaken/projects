@@ -54,10 +54,10 @@ static int CompareFunc(const void *user_data, const void *tree_data, void *param
     return (*(int *)user_data > *(int *)tree_data);
 }
 
-static int ActionFunc(void *user_data, void *tree_data)
+static int ActionFunc(void *tree_data, void *param)
 {
-    UNUSED(user_data);
-    /**(int *)tree_data += *(int *)user_data;*/
+    UNUSED(param);
+    
     printf("%d \n", *(int*)tree_data);
     
     return 0;  
