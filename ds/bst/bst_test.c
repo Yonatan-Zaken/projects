@@ -191,22 +191,20 @@ static void BSTTest4()
     void *param = NULL;
     bst_t *tree = BSTCreate(&CompareFunc, param);
     int x1 = 20, x2 = 10, x3 = 30, x4 = 3, x5 = 15, x6 = 25, x7 = 35, x8 = 99;
-    bst_itr_t it1, it2, it3;
     
     printf("BSTTest 4:\n");
-    RUN_TEST(1 == BSTIsEmpty(tree), "is empty1");
+    RUN_TEST(1 == BSTIsEmpty(tree), "is empty4");
+    RUN_TEST(0 == BSTSize(tree), "size4");
     
-    RUN_TEST(0 == BSTInsert(tree, &x1), "insert1");
-    RUN_TEST(0 == BSTInsert(tree, &x2), "insert1");
-    RUN_TEST(0 == BSTInsert(tree, &x3), "insert1");
-    RUN_TEST(0 == BSTInsert(tree, &x4), "insert1");
-    RUN_TEST(0 == BSTInsert(tree, &x5), "insert1");
-    RUN_TEST(0 == BSTInsert(tree, &x6), "insert1");
-    RUN_TEST(0 == BSTInsert(tree, &x7), "insert1");
+    RUN_TEST(0 == BSTInsert(tree, &x1), "insert4");
+    RUN_TEST(0 == BSTInsert(tree, &x2), "insert4");
+    RUN_TEST(0 == BSTInsert(tree, &x3), "insert4");
+    RUN_TEST(0 == BSTInsert(tree, &x4), "insert4");
+    RUN_TEST(0 == BSTInsert(tree, &x5), "insert4");
+    RUN_TEST(0 == BSTInsert(tree, &x6), "insert4");
+    RUN_TEST(0 == BSTInsert(tree, &x7), "insert4");
     
-    RUN_TEST(7 == BSTSize(tree), "size1");
-    
-    it1 = tree->dummy.child[0];
+    RUN_TEST(7 == BSTSize(tree), "size4");
     
     RUN_TEST(15 == *(int*)BSTGetData(BSTFind(tree, &x5)), "find4");
     RUN_TEST(25 == *(int*)BSTGetData(BSTFind(tree, &x6)), "find4");
