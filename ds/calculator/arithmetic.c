@@ -352,6 +352,3 @@ state_t CalcRun(const char *expression, calc_t *calc)
         expression = runner;    
     }
 }
-
-
-
