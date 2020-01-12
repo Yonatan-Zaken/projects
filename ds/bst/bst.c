@@ -103,7 +103,7 @@ int BSTInsert(bst_t *tree, void *data)
     {
         return 1;
     }
-    /* this block maybe not necessary */
+    
     runner = &tree->dummy;
     if (NULL == runner->child[LEFT])
     {
@@ -130,7 +130,6 @@ void BSTRemove(bst_itr_t it)
     if (NULL == it->child[LEFT] && NULL == it->child[RIGHT])
     {
         it->parent->child[WhichChildSide(it)] = NULL;
-        FREE(it);
     }
     
     else if (NULL != it->child[LEFT] && NULL != it->child[RIGHT])
@@ -152,22 +151,21 @@ void BSTRemove(bst_itr_t it)
         {
             successor->child[LEFT]->parent = successor;    
         }
-        FREE(it);
     }
     
     else if (NULL == it->child[RIGHT])
     {
         it->parent->child[WhichChildSide(it)] = it->child[LEFT];
         it->child[LEFT]->parent = it->parent;
-        FREE(it);
     }
     
     else
     {
         it->parent->child[WhichChildSide(it)] = it->child[RIGHT];
         it->child[RIGHT]->parent = it->parent;
-        FREE(it);
     }
+    
+    FREE(it);
 }
 
 bst_itr_t BSTFind(const bst_t *tree, const void *data)
@@ -199,14 +197,12 @@ int BSTForeach(bst_itr_t start, bst_itr_t end, action_func_t action, void *param
     int result = 0;
     bst_itr_t runner = start;
     
-    UNUSED(param);
-
     assert(NULL != start);
     assert(NULL != end);            
         
     while ((0 == result) && !BSTIsSameItr(runner, end))
     {
-        result = action(param, runner->node_data);
+        result = action(runner->node_data, param);
         runner = BSTNext(runner);
     }
 
@@ -283,12 +279,7 @@ bst_itr_t BSTNext(bst_itr_t it)
         
         return it;
     }
-    
-    if (LEFT == WhichChildSide(it))
-    {
-        return it->parent;
-    }
-    
+       
     while (RIGHT == WhichChildSide(it))
     {
         it = it->parent;
@@ -299,7 +290,6 @@ bst_itr_t BSTNext(bst_itr_t it)
 
 bst_itr_t BSTPrev(bst_itr_t it)
 {
-
     if (NULL != it->child[LEFT])
     {
         it = it->child[LEFT];
@@ -311,12 +301,7 @@ bst_itr_t BSTPrev(bst_itr_t it)
 
         return it;
     }
-        
-    if (RIGHT == WhichChildSide(it))
-    {
-        return it->parent;
-    }
-    
+            
     while ((LEFT == WhichChildSide(it)) && (DEADBEEF != it->parent->node_data))
     {
         it = it->parent;
