@@ -2,8 +2,8 @@
 
 #flags
 CC=gcc   
-CFLAGS=-ansi -pedantic-errors -Wall -Wextra -g -lm -I../include 
-RFLAGS=-ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3 -lm -I../include 
+CFLAGS=-ansi -pedantic-errors -Wall -Wextra -g -I../include 
+RFLAGS=-ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3 -I../include 
 LDFLAGS_DEBUG=-L../libdebug -Wl,-rpath=../../libdebug
 LDFLAGS_RELEASE=-L../librelease -Wl,-rpath=../../librelease
 
@@ -13,7 +13,7 @@ TARGET_RELEASE=./outrelease/arithmetic
 SRC=arithmetic.c
 OBJ_DEBUG=./objdebug/arithmetic.o
 OBJ_RELEASE=./objrelease/arithmetic.o
-SRC_TEST=calculator_test.c
+SRC_TEST=calculator_test.c calculator.c
 DIR_DEBUG=../libdebug/
 DIR_RELEASE=../librelease/
 INC=../include/arithmetic.h
@@ -30,7 +30,7 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(DIR_DEBUG)libarithmetic.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) $(LDFLAGS_DEBUG) -o $@ $(SRC_TEST) -larithmetic
+	$(CC) $(CFLAGS) $(LDFLAGS_DEBUG) -o $@ $(SRC_TEST) -larithmetic  
 
 #Release Out	
 $(TARGET_RELEASE): $(DIR_RELEASE)libarithmetic.so $(SRC_TEST) 
@@ -39,12 +39,12 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libarithmetic.so $(SRC_TEST)
 #Debug SO
 $(DIR_DEBUG)libarithmetic.so: $(OBJ_DEBUG)
 	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug -Wl,-rpath,'$$ORIGIN' \
-	 -lstack 
+	 -lstack -lm
 
 #Release SO
 $(DIR_RELEASE)libarithmetic.so: $(OBJ_RELEASE)
 	$(CC) $(RFLAGS) -shared -o $@ $< -L../librelease -Wl,-rpath,'$$ORIGIN' \
-	-lstack
+	-lstack 
 
 #Debug Object
 $(OBJ_DEBUG): $(SRC) $(INC)    

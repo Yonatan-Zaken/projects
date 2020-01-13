@@ -15,7 +15,7 @@ typedef char* (*func_state_t)(const char *expression, calc_t *calculator);
 
 /* Initiates LUT of all ASCII table 
 	pointer to calculator struct or NULL for memory fail */
-calc_t *CalcInit(const char *expression);
+calc_t *CalcInit(const char *expression, double *result);
 
 /* free all resorces in use */ 
 void CalcDestroy(calc_t *calc);
