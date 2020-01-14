@@ -1,7 +1,7 @@
 /*********************************/
 /*   			             	 */
 /*   Data Structures             */
-/*   Caclculator          */
+/*   Caclculator                 */
 /*   Author: Yonatan Zaken       */
 /*   Last Updated 12/1/20         */
 /*   Reviewed by:           */   
@@ -115,6 +115,7 @@ static void CalcTest3()
     char str2[] = "3 / 2 * 3 / 4 + 5";
     char str3[] = "3/2 + 5 * 2.5 - 2 ^ 3 ^ 2 ";
     char str4[] = "2^^2";
+    char str5[] = "2^3+5";
     double result = 0;
     
     printf ("Mult, div, add, sub and pow Test\n");
@@ -130,30 +131,40 @@ static void CalcTest3()
     
     RUN_TEST(1 == Calculator(str4, &result), "calculator1");
     
+    RUN_TEST(0 == Calculator(str5, &result), "calculator1");
+    printf("%f\n", result);
+    RUN_TEST(13 == result, "result1");
+    
     printf("\n\n");
     
 }
 
 static void CalcTest4()
 {
-    char str[] = "3 * 2 - 4";
-    /*
-    char str2[] = "3 / 2 * 3 / 4 + 5";
-    char str3[] = "3/2 + 5 * 2.5 - 2 ^ 3 ^ 2 ";
-    */
+    char str[] = "(3 + 2)";
+    char str2[] = "2 + 3 - (5 - 2)";
+    char str3[] = "(5 + 2)^2^2";
+    char str4[] = "0.2 * ((5 + 3) * 4)";
+    char str5[] = "(((3 + 2)";
     double result = 0;
     
     printf ("Parentheses Test\n");
     
     RUN_TEST(0 == Calculator(str, &result), "calculator1");
-    RUN_TEST(2 == result, "result1");
-    /*
+    RUN_TEST(5 == result, "result1");
+    
     RUN_TEST(0 == Calculator(str2, &result), "calculator1");
-    RUN_TEST(6.125 == result, "result1");
+    RUN_TEST(2 == result, "result1");
     
     RUN_TEST(0 == Calculator(str3, &result), "calculator1");
-    RUN_TEST(-498 == result, "result1");
-    */
+    RUN_TEST(2401 == result, "result1");
+    
+    RUN_TEST(0 == Calculator(str4, &result), "calculator1");
+    RUN_TEST(6.4 == result, "result1");
+    
+    RUN_TEST(0 == Calculator(str5, &result), "calculator1");
+    RUN_TEST(5)
+    
     printf("\n\n");
 }
 

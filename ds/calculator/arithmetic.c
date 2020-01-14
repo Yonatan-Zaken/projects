@@ -16,13 +16,15 @@
 #include "arithmetic.h"
 
 #define NUM_OF_STATES 3
-#define ASCII_SIZE 255
+#define ASCII_SIZE 255 /* RAZ - NEED TO BE 256*/
 
 #define UNUSED(x) (void)(x)
 #define FREE(ptr) {free(ptr); ptr = NULL;} 
 
 typedef enum Precedence
 {
+    OPEN_PARENTHESES,
+    CLOSE_PARENTHESES,
 	ADD_AND_SUB,
 	MULT_AND_DIV,
 	POW
@@ -68,11 +70,6 @@ char *CalcHandleNum(const char *expression, calc_t *calc)
     return runner;
 }
 
-static precedence_t PrecedenceFunc(calc_t *calc, char *expression)
-{
-    return calc->op_lut[(int)(*expression)].precedence;
-}
-
 char *CalcHandleOp(const char *expression, calc_t *calc)
 {
     char *runner = NULL;
@@ -84,7 +81,7 @@ char *CalcHandleOp(const char *expression, calc_t *calc)
     assert(NULL != expression);
     
     runner = (char *)expression;
-    
+    /*                              /*RAZ - REMOVE
     if (StackIsEmpty(calc->ops))
     {
         if(0 == StackPush(calc->ops, expression))
@@ -94,24 +91,54 @@ char *CalcHandleOp(const char *expression, calc_t *calc)
         return (++runner);
     }
     
+    
     top_of_stack = *(char *)StackPeek(calc->ops);
+    
     exp_operator = calc->op_lut[(int)(*runner)].precedence;
     stack_operator = calc->op_lut[(int)top_of_stack].precedence;
-    
-    while ((exp_operator <= stack_operator) && !StackIsEmpty(calc->ops))
+    */
+    while (!StackIsEmpty(calc->ops) && 
+          (calc->op_lut[(int)(*runner)].precedence <= 
+           calc->op_lut[*(char *)StackPeek(calc->ops)].precedence))
     {
+        /*
         top_of_stack = *(char *)StackPeek(calc->ops);
-        if ('^' == top_of_stack)
+        */
+        if (('^' == *(char *)StackPeek(calc->ops)) && ('^' == *runner))
         {
             break;
         }
-        stack_operator = calc->op_lut[(int)top_of_stack].precedence;    
-        calc->op_lut[(int)top_of_stack].op_handler(calc);
+        stack_operator =  
+                    calc->op_lut[*(char *)StackPeek(calc->ops)].precedence;       
+        calc->op_lut[*(char *)StackPeek(calc->ops)].op_handler(calc);  
     }
     
-    StackPush(calc->ops, (void *)runner);    
+    StackPush(calc->ops, (void *)runner);    /*RAZ - NO NEED CAST VOID MAKE IT EXPLICIT TO CHAR*/
     
     return (++runner);  
+}
+
+static char *ParenthesesHandle(const char *expression, calc_t *calc)
+{
+    char *runner = NULL;
+    
+    assert(NULL != calc);
+    
+    runner = (char *)expression;
+    
+    if ('(' == *runner)
+    {
+        StackPush(calc->ops, (void *)runner); /*RAZ - WHY YOU NEED THE VOID CASTING?*/
+    }
+    
+    else 
+    {
+        CalcHandleOp(expression, calc);
+        StackPop(calc->ops);
+        StackPop(calc->ops);
+    }
+    
+    return (++runner);
 }
 
 static char *EmptyFunc(const char *expression, calc_t *calc)
@@ -127,7 +154,7 @@ static char *EmptyFunc(const char *expression, calc_t *calc)
 
 static int EmptyAritFunc(calc_t *calc)
 {
-    
+    return 0;
 }
 
 static int AddFunc(calc_t *calc)
@@ -197,7 +224,7 @@ static int DivisionFunc(calc_t *calc)
 static int PowFunc(calc_t *calc)
 {
 
-    double a, b, c = 0;
+    double a, b, c = 0; 
     
     assert(NULL != calc);
     
@@ -239,10 +266,7 @@ static void InitCalcLut(calc_state_t *lut)
     
     lut[' '].next_state = WAIT_FOR_NUM;
     lut[' '].action = &EmptyFunc;
-    
-    lut['('].next_state = WAIT_FOR_NUM;
-    lut['('].action = &EmptyFunc;
-       
+           
     lut['*'].next_state = ERROR;
     lut['*'].action = &EmptyFunc;
     
@@ -252,10 +276,12 @@ static void InitCalcLut(calc_state_t *lut)
     lut['^'].next_state = ERROR;
     lut['^'].action = &EmptyFunc;
 
+    lut['('].next_state = WAIT_FOR_NUM;
+    lut['('].action = &ParenthesesHandle;
+
     lut[')'].next_state = ERROR;
     lut[')'].action = &EmptyFunc;
-    
-    
+     
     lut['*' + ASCII_SIZE].next_state = WAIT_FOR_NUM;
     lut['*' + ASCII_SIZE].action = &CalcHandleOp;
     
@@ -274,9 +300,12 @@ static void InitCalcLut(calc_state_t *lut)
     lut[' ' + ASCII_SIZE].next_state = WAIT_FOR_OP;
     lut[' ' + ASCII_SIZE].action = &EmptyFunc;
     
-    lut[')' + ASCII_SIZE].next_state = WAIT_FOR_OP;
-    /*lut[')' + ASCII_SIZE].action = &;  WHAT TO DO HERE? */
+    lut['(' + ASCII_SIZE].next_state = ERROR;
+    lut['(' + ASCII_SIZE].action = &EmptyFunc;
     
+    lut[')' + ASCII_SIZE].next_state = WAIT_FOR_OP;
+    lut[')' + ASCII_SIZE].action = &ParenthesesHandle;
+       
 }
 
 static void InitOpLut(calc_op_t *op_lut)
@@ -303,15 +332,16 @@ static void InitOpLut(calc_op_t *op_lut)
     op_lut['^'].op_handler = &PowFunc;
     op_lut['^'].precedence = POW;
     
-    /*
-    op_lut[')'].op_handler = 
-    op_lut[')'].op_handler = 
-    */
+    op_lut['('].op_handler = &EmptyAritFunc;
+    op_lut['('].precedence = OPEN_PARENTHESES;
+    
+    op_lut[')'].op_handler = &EmptyAritFunc;
+    op_lut[')'].precedence = CLOSE_PARENTHESES;
 }
 
 calc_t *CalcInit(const char *expression , double *result)
 {
-    calc_t *calculator = NULL;
+    calc_t *calculator = NULL; /*RAZ - U NEED TO INITIALIZE/MALLOC STRUCT FOR CALC_T STRUCT AND NOT INITIALIZE BY HAND*/
     calc_state_t *calc_lut = NULL;
     calc_op_t *op_lut = NULL;
     stack_t *num = NULL;
@@ -323,7 +353,7 @@ calc_t *CalcInit(const char *expression , double *result)
                                         * sizeof(calc_state_t));
     if (NULL != calc_lut)
     {
-        InitCalcLut(calc_lut);
+        InitCalcLut(calc_lut); /*RAZ - CONSIDER MAKE THE MALLOC INSIDE THE INITE WHEN*/
         op_lut = (calc_op_t *)malloc(ASCII_SIZE * sizeof(calc_op_t));
         if (NULL != op_lut)
         {
@@ -334,7 +364,7 @@ calc_t *CalcInit(const char *expression , double *result)
                 ops = StackCreate(sizeof(char), strlen(expression));
                 if (NULL != ops)
                 {
-                    calculator = (calc_t *)malloc(sizeof(calc_t));
+                    calculator = (calc_t *)malloc(sizeof(calc_t)); /*RAZ - NEED TO BE THE FIRST MALLOC !*/
                     if (NULL != calculator)
                     {
                         calculator->num = num;
@@ -353,7 +383,7 @@ calc_t *CalcInit(const char *expression , double *result)
         }
         FREE(calc_lut);
     }
-    return NULL;
+    return NULL; /*RAZ - AFTER INIT THE CALC_T U WILL BE ABLE TO SEND IT ALSO IF IT NULL AS NULL*/
 }
 
 void CalcDestroy(calc_t *calc)
@@ -365,6 +395,38 @@ void CalcDestroy(calc_t *calc)
     FREE(calc);
 }
 
+static state_t ParenthesesCheck(const char *expression)
+{
+    size_t counter = 0;
+    char *runner = NULL;
+
+    assert(NULL != expression);
+    
+    runner = (char *)expression;
+    
+    while ('\0' != *runner)
+    {
+        if ('(' == *runner)
+        {
+            ++counter;
+        }
+        
+        else if(')' == *runner)
+        {
+            --counter;
+        }
+        
+        ++runner;
+    }            
+    
+    if (0 != counter)
+    {
+        return ERROR;
+    }
+    
+    return WAIT_FOR_NUM;
+}
+
 state_t CalcRun(const char *expression, calc_t *calc)
 {
     state_t status = WAIT_FOR_NUM;
@@ -373,7 +435,7 @@ state_t CalcRun(const char *expression, calc_t *calc)
     assert(NULL != calc);
     assert(NULL != expression);
     
-    status = WAIT_FOR_NUM;
+    /*status = ParenthesesCheck(expression);*/ /*RAZ - REMOVE*/
     runner = (char *)expression;
     
     while ((ERROR != status) && ('\0' != *expression))
@@ -386,7 +448,7 @@ state_t CalcRun(const char *expression, calc_t *calc)
       
     if (WAIT_FOR_OP == status)
     {
-        while (!StackIsEmpty(calc->ops))
+        while (1 < StackSize(calc->num))
         {
             calc->op_lut[*(char*)StackPeek(calc->ops)].op_handler(calc);    
         }
