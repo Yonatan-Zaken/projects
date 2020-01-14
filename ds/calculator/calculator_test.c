@@ -3,8 +3,8 @@
 /*   Data Structures             */
 /*   Caclculator                 */
 /*   Author: Yonatan Zaken       */
-/*   Last Updated 12/1/20         */
-/*   Reviewed by:           */   
+/*   Last Updated 12/1/20        */
+/*   Reviewed by:                */   
 /*			                   	 */
 /*********************************/
 
@@ -163,7 +163,7 @@ static void CalcTest4()
     RUN_TEST(6.4 == result, "result1");
     
     RUN_TEST(0 == Calculator(str5, &result), "calculator1");
-    RUN_TEST(5)
+    RUN_TEST(5 == result, "result1");
     
     printf("\n\n");
 }
