@@ -9,15 +9,16 @@
 #include <string.h> /* strlen */
 #include <assert.h> /* assert */
 
+#include "stack.h"
 #include "linkedlist.h"
 #include "recursion.h"
 
 size_t IterFib(size_t position)
 {
     size_t res = 1, prev = 0, next = 1;
-    int i = 0;
+    size_t i = 0;
     
-    for (i = 1; i < position; i += 1)
+    for (i = 1; i < position; ++i)
     {
         res += prev;
         prev = next;
@@ -107,31 +108,46 @@ char *RecStrstr(const char *haystack, const char *needle)
 
 node_t *RecFlip(node_t *head)
 {
-    node_t *current = head, *prev = NULL;
     node_t *new_head = NULL;
-    /*
-    assert(NULL != head);
-    */
-    if (NULL == head->next->next)
-    {
-        current = current->next;
-        head->next->next = head;       
-        head->next = NULL;   
-        return current;
+    
+    if (NULL == head->next)
+    {   
+        return head;
     }    
     
     new_head = RecFlip(head->next);    
-    head->next->next = current;       
+    head->next->next = head;       
     head->next = NULL;
 
     return new_head;
 }
 
-/*
-stack_t *RecSortStack(stack_t *stack)
+
+stack_t *RecSortStack(stack_t *stack, void *data)
 {
-
-
-
+    int top_stack = 0;
+    
+    assert(NULL != stack);
+    
+    if (1 < StackSize(stack))
+    {
+        top_stack = *(int*)StackPeek(stack);
+        StackPop(stack);
+        RecSortStack(stack, &top_stack);
+    }
+    
+    if (*(int *)data >= *(int *)StackPeek(stack))
+    {
+        StackPush(stack, data);
+    }
+    else
+    {
+        top_stack = *(int*)StackPeek(stack);
+        StackPop(stack);
+        StackPush(stack, data);
+        StackPush(stack, &top_stack);
+    }
+    
+    return stack;
 }
-*/
+

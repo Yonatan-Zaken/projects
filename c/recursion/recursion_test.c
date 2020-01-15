@@ -10,6 +10,7 @@
 #include <time.h>  /* clock */
 #include <string.h> /*strlen */
 
+#include "stack.h"
 #include "linkedlist.h"
 #include "recursion.h"
 
@@ -45,7 +46,7 @@ static void FibTest()
     printf("RecFib: %f[sec]\n", (double)(end - begin) / CLOCKS_PER_SEC); 
     
     /*printf("rec fib: %lu\n\n", result);*/
-    printf("iter fib: %lu\n\n", IterFib(2));  
+    printf("iter fib: %lu\n\n", IterFib(51));  
 }
 
 static void StrlenTest()
@@ -140,6 +141,42 @@ static void FlipTest()
     printf("\n");
 }
 
+static void StackSortTest()
+{
+    
+    size_t element_size = sizeof(int);
+    size_t capacity = 4;
+    int data1 = 12;
+    int data2 = 1;
+    int data3 = 6;
+    int data4 = 3;
+    stack_t* stack2 = StackCreate(element_size, capacity);
+        
+    printf("stack sort test:\n");
+    
+    RUN_TEST(1 == StackPush(stack2, &data1), "push 1 stack2");
+    RUN_TEST(1 == StackPush(stack2, &data2), "push 2 stack2");
+    RUN_TEST(1 == StackPush(stack2, &data3), "push 3 stack2");
+    RUN_TEST(1 == StackPush(stack2, &data4), "push 4 stack2");
+    RUN_TEST(4 == StackSize(stack2), "check stack 2 size when full");
+    
+    RecSortStack(stack2, NULL);
+    
+    RUN_TEST(12 == *(int*)StackPeek(stack2), "peek value stack2");
+    printf("%d\n",*(int*)StackPeek(stack2));
+    StackPop(stack2);
+    RUN_TEST(6 == *(int*)StackPeek(stack2), "peek value stack2");
+    printf("%d\n",*(int*)StackPeek(stack2));
+    StackPop(stack2);
+    RUN_TEST(3 == *(int*)StackPeek(stack2), "peek value stack2");
+    printf("%d\n",*(int*)StackPeek(stack2));
+    StackPop(stack2);
+    RUN_TEST(1 == *(int*)StackPeek(stack2), "peek value stack2");
+    printf("%d\n",*(int*)StackPeek(stack2));
+    StackDestroy(stack2);
+    printf("\n");
+}
+
 int main()
 {
     FibTest();
@@ -149,5 +186,6 @@ int main()
     StrcatTest();
     /*StrstrTest();    */
     FlipTest();
+    StackSortTest();
     return 0;
 }
