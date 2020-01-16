@@ -37,9 +37,9 @@ struct AVLTree
 	avl_node_t *root;
 };
 
-static int ChildSide(const void *wrapper, const void *tree_data)
+static int ChildSide(const void *isbefore, const void *tree_data)
 {
-    return (0 < ((isbefore_t*)wrapper)->cmp(((isbefore_t*)wrapper)->user_data, tree_data));
+    return (0 < ((isbefore_t*)isbefore)->cmp(((isbefore_t*)isbefore)->user_data, tree_data));
 }
 
 avl_t *AVLCreate(compare_func_t cmp)
@@ -98,7 +98,7 @@ static int RecInsert(isbefore_t isbefore, avl_node_t *node, void *data)
     if (NULL == node->child[ChildSide(&isbefore, node->data)])
     {
         if (NULL == (node->child[ChildSide(&isbefore, node->data)] =
-                                               CreateNode(data)))
+                                                CreateNode(data)))
         {
             return 1;
         }
