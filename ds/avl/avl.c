@@ -16,6 +16,9 @@
 #define LEFT 0
 #define RIGHT 1
 
+#define FAIL 1
+#define SUCCESS 0
+
 #define UNUSED(x) (void)(x)
 
 typedef struct WrapperCompare
@@ -100,9 +103,9 @@ static int RecInsert(isbefore_t isbefore, avl_node_t *node, void *data)
         if (NULL == (node->child[ChildSide(&isbefore, node->data)] =
                                                 CreateNode(data)))
         {
-            return 1;
+            return FAIL;
         }
-        return 0;
+        return SUCCESS;
     }
     
     RecInsert(isbefore, node->child[ChildSide(&isbefore, node->data)], data);
@@ -118,9 +121,9 @@ int AVLInsert(avl_t *tree, void *data)
     {
         if (NULL == (tree->root = CreateNode(data)))
         {
-            return 1;
+            return FAIL;
         }
-        return 0;        
+        return SUCCESS;        
     }
     
     return RecInsert(tree->isbefore, tree->root, data);
