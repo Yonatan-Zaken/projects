@@ -35,9 +35,47 @@
     }\
 }
 
+static int ActionFunc(void *tree_data, void *param)
+{
+    UNUSED(param);
+    
+    printf("%d \n", *(int*)tree_data);
+    
+    return 0;  
+}
+
+static int CompareFun(const void *user_data, const void *tree_data)
+{
+    return (*(int *)user_data - *(int *)tree_data);
+}
+
+static void AvlTest1()
+{
+    avl_t *tree = AVLCreate(&CompareFun);
+    int x1 = 20, x2 = 10, x3 = 30, x4 = 3, x5 = 15, x6 = 25, x7 = 35;
+    
+    printf("AVLTest 1:\n");
+    RUN_TEST(1 == AVLIsEmpty(tree), "is empty1");
+    
+    RUN_TEST(0 == AVLInsert(tree, &x1), "insert1");
+    RUN_TEST(0 == AVLInsert(tree, &x2), "insert1");
+    RUN_TEST(0 == AVLInsert(tree, &x3), "insert1");
+    RUN_TEST(0 == AVLInsert(tree, &x4), "insert1");
+    RUN_TEST(0 == AVLInsert(tree, &x5), "insert1");
+    RUN_TEST(0 == AVLInsert(tree, &x6), "insert1");
+    RUN_TEST(0 == AVLInsert(tree, &x7), "insert1");
+    
+    RUN_TEST(7 == AVLSize(tree), "size1");
+    RUN_TEST(25 == *(int*)AVLFind(tree, &x6), "find1");
+    AVLForeach(tree, &ActionFunc, NULL);
+    
+    AVLDestroy(tree);
+    printf("\n\n");
+}
+
 int main()
 {
-    
+    AvlTest1();   
 
     return 0;
 }
