@@ -52,7 +52,7 @@ static int CompareFun(const void *user_data, const void *tree_data)
 static void AvlTest1()
 {
     avl_t *tree = AVLCreate(&CompareFun);
-    int x1 = 20, x2 = 10, x3 = 30, x4 = 3, x5 = 15, x6 = 25, x7 = 35;
+    int x1 = 20, x2 = 10, x3 = 30, x4 = 3, x5 = 15, x6 = 25, x7 = 35, x8 = 40;
     
     printf("AVLTest 1:\n");
     RUN_TEST(1 == AVLIsEmpty(tree), "is empty1");
@@ -66,8 +66,10 @@ static void AvlTest1()
     RUN_TEST(0 == AVLInsert(tree, &x7), "insert1");
     
     RUN_TEST(7 == AVLSize(tree), "size1");
-    RUN_TEST(25 == *(int*)AVLFind(tree, &x6), "find1");
+    RUN_TEST(NULL == AVLFind(tree, &x8), "find1");
     AVLForeach(tree, &ActionFunc, NULL);
+    
+    RUN_TEST(2 == AVLGetHeight(tree), "get height1");
     
     AVLDestroy(tree);
     printf("\n\n");

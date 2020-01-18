@@ -129,9 +129,16 @@ int AVLInsert(avl_t *tree, void *data)
     return RecInsert(tree->isbefore, tree->root, data);
 }
 
+static void RecRemove()
+{
+    
+}
+
 void AVLRemove(avl_t *tree, const void *data)
 {
-
+    assert(NULL != tree);
+    
+    
 }
 
 static void *RecFind(avl_node_t *node, isbefore_t isbefore)
@@ -146,7 +153,7 @@ static void *RecFind(avl_node_t *node, isbefore_t isbefore)
         return node->data;
     }
     
-    RecFind(node->child[ChildSide(&isbefore, node->data)], isbefore);
+    return RecFind(node->child[ChildSide(&isbefore, node->data)], isbefore);
 }
 
 void *AVLFind(const avl_t *tree, const void *data)
@@ -205,7 +212,30 @@ int AVLIsEmpty(const avl_t *tree)
     return (NULL == tree->root );
 }
 
-size_t GetHeight(const avl_t *tree)
+static size_t RecGetHeight(avl_node_t *node)
 {
+    int left = 0, right = 0;
+    
+    if (NULL == node)
+    {
+        return -1;
+    }
+    left = RecGetHeight(node->child[LEFT]);
+    right = RecGetHeight(node->child[RIGHT]);
+    
+    if (left > right)
+    {
+        return (left + 1);
+    }
+    else
+    {
+        return (right + 1);
+    }
+}
 
+size_t AVLGetHeight(const avl_t *tree)
+{
+    assert(NULL != tree);
+    
+    return RecGetHeight(tree->root);
 }
