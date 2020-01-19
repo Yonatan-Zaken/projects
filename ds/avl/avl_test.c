@@ -13,7 +13,6 @@
 
 #include "avl.h"
 
-
 #define UNUSED(x) (void)(x)
 
 #define NORMAL "\033[0m"
@@ -67,6 +66,18 @@ static void AvlTest1()
     
     RUN_TEST(7 == AVLSize(tree), "size1");
     RUN_TEST(NULL == AVLFind(tree, &x8), "find1");
+    AVLForeach(tree, &ActionFunc, NULL);
+    
+    AVLRemove(tree, &x1);
+    RUN_TEST(6 == AVLSize(tree), "size1");
+    AVLForeach(tree, &ActionFunc, NULL);
+    
+    AVLRemove(tree, &x3);
+    RUN_TEST(5 == AVLSize(tree), "size1");
+    AVLForeach(tree, &ActionFunc, NULL);
+    
+    AVLRemove(tree, &x4);
+    RUN_TEST(4 == AVLSize(tree), "size1");
     AVLForeach(tree, &ActionFunc, NULL);
     
     RUN_TEST(2 == AVLGetHeight(tree), "get height1");
