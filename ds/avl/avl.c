@@ -3,8 +3,8 @@
 /*   Data Structures             */
 /*   AVL Tree                    */
 /*   Author: Yonatan Zaken       */
-/*   Last Updated 16/1/20        */
-/*   Reviewed by:                */   
+/*   Last Updated 20/1/20        */
+/*   Reviewed by: Israel         */   
 /*			                   	 */
 /*********************************/
 
@@ -20,6 +20,8 @@
 #define SUCCESS 0
 
 #define UNUSED(x) (void)(x)
+
+#define MaxSubtree(a, b) ((a > b) ? a : b) 
 
 typedef struct WrapperCompare
 {
@@ -96,19 +98,101 @@ static avl_node_t *CreateNode(void *data)
     return node;
 }
 
-static int RecInsert(isbefore_t isbefore, avl_node_t *node, void *data)
+static void UpdateHeight(avl_node_t *node)
 {
-    if (NULL == node->child[ChildSide(&isbefore, node->data)])
+    long left_height = -1;
+    long right_height = -1;
+    
+    if (NULL == node)
     {
-        if (NULL == (node->child[ChildSide(&isbefore, node->data)] =
-                                                CreateNode(data)))
-        {
-            return FAIL;
-        }
-        return SUCCESS;
+        return;
     }
     
-    RecInsert(isbefore, node->child[ChildSide(&isbefore, node->data)], data);
+    if (NULL != node->child[LEFT])
+    {
+        left_height = node->child[LEFT]->height; 
+    }
+
+    if (NULL != node->child[RIGHT])
+    {
+        right_height = node->child[RIGHT]->height;
+    }
+    
+    node->height = (1 + MaxSubtree(left_height, right_height));  
+}
+
+static avl_node_t *Rotate(avl_node_t *node, int side)
+{
+    avl_node_t *holder = node->child[side];
+    node->child[side] = holder->child[!side];
+    holder->child[!side] = node;
+    UpdateHeight(node);
+    UpdateHeight(holder);
+    
+    return holder;    
+}
+
+static int Height(avl_node_t *node)
+{
+    if (NULL == node)
+    {
+        return -1;
+    }
+    
+    return node->height;
+}
+
+static int BalanceFactor(avl_node_t *node)
+{
+    if (NULL == node)
+    {
+        return -1;
+    }
+    return (Height(node->child[LEFT]) - Height(node->child[RIGHT]));
+}
+
+static avl_node_t* BalanceTree(avl_node_t *node)
+{
+    int b_factor = BalanceFactor(node);
+    
+    if (2 <= b_factor)
+    {
+        if (1 < BalanceFactor(node->child[LEFT]))
+        {
+            node->child[LEFT] = Rotate(node->child[LEFT], RIGHT);
+        }
+        
+        node = Rotate(node, LEFT);
+    }
+    
+    if (-2 >= b_factor)
+    {
+        if (-1 >= BalanceFactor(node->child[RIGHT]))
+        {
+            node->child[RIGHT] = Rotate(node->child[RIGHT], LEFT);
+        }
+        node = Rotate(node, RIGHT);   
+    }
+    
+    return node;
+}
+
+static avl_node_t *RecInsert(isbefore_t isbefore, avl_node_t *node, void *data)
+{
+    size_t side = ChildSide(&isbefore, node->data);
+    if (NULL == node->child[side])
+    {
+        if (NULL == (node->child[side] = CreateNode(data)))
+        {
+            return NULL;
+        }
+        UpdateHeight(node);
+        return node;
+    }
+    
+    node->child[side] = RecInsert(isbefore, node->child[side], data);
+    UpdateHeight(node);
+    return BalanceTree(node);
 }
 
 int AVLInsert(avl_t *tree, void *data)
@@ -119,14 +203,10 @@ int AVLInsert(avl_t *tree, void *data)
     
     if (NULL == tree->root)
     {
-        if (NULL == (tree->root = CreateNode(data)))
-        {
-            return FAIL;
-        }
-        return SUCCESS;        
+        return (NULL == (tree->root = CreateNode(data)));
     }
     
-    return RecInsert(tree->isbefore, tree->root, data);
+    return (NULL == (tree->root = RecInsert(tree->isbefore, tree->root, data)));
 }
 
 static avl_node_t *TwoChildSucc(avl_node_t *node)
@@ -160,7 +240,8 @@ static avl_node_t *FindSuccessor(avl_node_t *node)
                 successor->child[RIGHT] = node->child[RIGHT];    
             }
             successor->child[LEFT] = node->child[LEFT];
-            return successor;
+            UpdateHeight(successor);
+            return BalanceTree(successor);
         }   
         return node->child[LEFT];
     }
@@ -179,14 +260,16 @@ static avl_node_t *RecRemove(avl_node_t *node, isbefore_t isbefore)
     else if (0 == isbefore.cmp(isbefore.user_data, node->data))
     {
         new_child = FindSuccessor(node);
-        free(node);
-        return new_child;
+        UpdateHeight(new_child);
+        free(node); node = NULL;
+        return BalanceTree(new_child);
     }
     
     node->child[ChildSide(&isbefore, node->data)] = 
     RecRemove(node->child[ChildSide(&isbefore, node->data)], isbefore);
     
-    return node;
+    UpdateHeight(node);
+    return BalanceTree(node);
 }
 
 void AVLRemove(avl_t *tree, const void *data)
@@ -268,30 +351,9 @@ int AVLIsEmpty(const avl_t *tree)
     return (NULL == tree->root );
 }
 
-static size_t RecGetHeight(avl_node_t *node)
-{
-    int left = 0, right = 0;
-    
-    if (NULL == node)
-    {
-        return -1;
-    }
-    left = RecGetHeight(node->child[LEFT]);
-    right = RecGetHeight(node->child[RIGHT]);
-    
-    if (left > right)
-    {
-        return (left + 1);
-    }
-    else
-    {
-        return (right + 1);
-    }
-}
-
 size_t AVLGetHeight(const avl_t *tree)
 {
     assert(NULL != tree);
     
-    return RecGetHeight(tree->root);
+    return (tree->root->height);
 }

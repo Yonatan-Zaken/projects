@@ -3,8 +3,8 @@
 /*   Data Structures             */
 /*   AVL Tree                    */
 /*   Author: Yonatan Zaken       */
-/*   Last Updated 15/1/20        */
-/*   Reviewed by:             */   
+/*   Last Updated 20/1/20        */
+/*   Reviewed by:                */   
 /*			                   	 */
 /*********************************/
 
@@ -86,9 +86,55 @@ static void AvlTest1()
     printf("\n\n");
 }
 
+static void AvlTest2()
+{
+    avl_t *tree = AVLCreate(&CompareFun);
+    int x1 = 30, x2 = 40, x3 = 20, x4 = 10, x5 = 5;
+    
+    printf("AVLTest 1:\n");
+    RUN_TEST(1 == AVLIsEmpty(tree), "is empty1");
+    
+    RUN_TEST(0 == AVLInsert(tree, &x1), "insert1");
+    RUN_TEST(0 == AVLInsert(tree, &x2), "insert1");
+    RUN_TEST(0 == AVLInsert(tree, &x3), "insert1");
+    RUN_TEST(0 == AVLInsert(tree, &x4), "insert1");
+    RUN_TEST(0 == AVLInsert(tree, &x5), "insert1");
+    
+    RUN_TEST(5 == AVLSize(tree), "size1");
+        
+    RUN_TEST(2 == AVLGetHeight(tree), "get height1");
+    
+    AVLDestroy(tree);
+    printf("\n\n");
+}
+
+static void AvlTest3()
+{
+    avl_t *tree = AVLCreate(&CompareFun);
+    int x1 = 30, x2 = 40, x3 = 20, x4 = 10;
+    
+    printf("AVLTest 1:\n");
+    RUN_TEST(1 == AVLIsEmpty(tree), "is empty1");
+    
+    RUN_TEST(0 == AVLInsert(tree, &x1), "insert1");
+    RUN_TEST(0 == AVLInsert(tree, &x2), "insert1");
+    RUN_TEST(0 == AVLInsert(tree, &x3), "insert1");
+    RUN_TEST(0 == AVLInsert(tree, &x4), "insert1");
+    RUN_TEST(4 == AVLSize(tree), "size1");
+    
+    AVLRemove(tree, &x2);
+    RUN_TEST(3 == AVLSize(tree), "size1");
+    AVLForeach(tree, &ActionFunc, NULL);
+    
+    AVLDestroy(tree);
+    printf("\n\n");
+}
+
 int main()
 {
-    AvlTest1();   
-
+    AvlTest1();
+    AvlTest2();   
+    AvlTest3();
+    
     return 0;
 }
