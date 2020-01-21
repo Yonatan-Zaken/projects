@@ -220,7 +220,9 @@ static avl_node_t *TwoChildSucc(avl_node_t *node)
     {
         avl_node_t *successor = node->child[LEFT]; 
         node->child[LEFT] = node->child[LEFT]->child[RIGHT];
+        UpdateHeight(node->child[LEFT]);
         UpdateHeight(node);
+        
         return successor;
     }
     
