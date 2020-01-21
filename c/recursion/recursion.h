@@ -9,6 +9,6 @@ char *RecStrcpy(char *dest, const char *src);
 char *RecStrcat(char *dest, const char *src);
 char *RecStrstr(const char *haystack, const char *needle);
 node_t *RecFlip(node_t *head);
-stack_t *RecSortStack(stack_t *stack, void *data);
+void SortStack(stack_t *stack);
 
 #endif

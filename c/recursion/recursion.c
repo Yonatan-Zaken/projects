@@ -123,17 +123,22 @@ node_t *RecFlip(node_t *head)
 }
 
 
-stack_t *RecSortStack(stack_t *stack, void *data)
+static void RecSortStack(stack_t *stack, void *data)
 {
     int top_stack = 0;
     
     assert(NULL != stack);
     
+    if (StackIsEmpty(stack))
+    {
+        return;
+    }
+    
     if (1 < StackSize(stack))
     {
         top_stack = *(int*)StackPeek(stack);
         StackPop(stack);
-        RecSortStack(stack, &top_stack);
+        RecSortStack(stack, (void*)&top_stack);
     }
     
     if (*(int *)data >= *(int *)StackPeek(stack))
@@ -145,9 +150,15 @@ stack_t *RecSortStack(stack_t *stack, void *data)
         top_stack = *(int*)StackPeek(stack);
         StackPop(stack);
         StackPush(stack, data);
-        StackPush(stack, &top_stack);
+        RecSortStack(stack, (void*)&top_stack);
     }
     
-    return stack;
+    return;
+}
+
+void SortStack(stack_t *stack)
+{
+    assert(NULL != stack);
+    RecSortStack(stack, StackPeek(stack));
 }
 

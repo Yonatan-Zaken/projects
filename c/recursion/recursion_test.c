@@ -145,11 +145,14 @@ static void StackSortTest()
 {
     
     size_t element_size = sizeof(int);
-    size_t capacity = 4;
+    size_t capacity = 7;
     int data1 = 12;
     int data2 = 1;
     int data3 = 6;
     int data4 = 3;
+    int data5 = 11;
+    int data6 = 0;
+    int data7 = 8;
     stack_t* stack2 = StackCreate(element_size, capacity);
         
     printf("stack sort test:\n");
@@ -158,11 +161,20 @@ static void StackSortTest()
     RUN_TEST(1 == StackPush(stack2, &data2), "push 2 stack2");
     RUN_TEST(1 == StackPush(stack2, &data3), "push 3 stack2");
     RUN_TEST(1 == StackPush(stack2, &data4), "push 4 stack2");
-    RUN_TEST(4 == StackSize(stack2), "check stack 2 size when full");
+    RUN_TEST(1 == StackPush(stack2, &data5), "push 4 stack2");
+    RUN_TEST(1 == StackPush(stack2, &data6), "push 4 stack2");
+    RUN_TEST(1 == StackPush(stack2, &data7), "push 4 stack2");
+    RUN_TEST(7 == StackSize(stack2), "check stack 2 size when full");
     
-    RecSortStack(stack2, NULL);
+    SortStack(stack2);
     
     RUN_TEST(12 == *(int*)StackPeek(stack2), "peek value stack2");
+    printf("%d\n",*(int*)StackPeek(stack2));
+    StackPop(stack2);
+    RUN_TEST(11 == *(int*)StackPeek(stack2), "peek value stack2");
+    printf("%d\n",*(int*)StackPeek(stack2));
+    StackPop(stack2);
+    RUN_TEST(8 == *(int*)StackPeek(stack2), "peek value stack2");
     printf("%d\n",*(int*)StackPeek(stack2));
     StackPop(stack2);
     RUN_TEST(6 == *(int*)StackPeek(stack2), "peek value stack2");
@@ -173,6 +185,10 @@ static void StackSortTest()
     StackPop(stack2);
     RUN_TEST(1 == *(int*)StackPeek(stack2), "peek value stack2");
     printf("%d\n",*(int*)StackPeek(stack2));
+    StackPop(stack2);
+    RUN_TEST(0 == *(int*)StackPeek(stack2), "peek value stack2");
+    printf("%d\n",*(int*)StackPeek(stack2));
+    StackPop(stack2);
     StackDestroy(stack2);
     printf("\n");
 }
