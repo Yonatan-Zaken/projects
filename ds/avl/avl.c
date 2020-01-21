@@ -16,12 +16,14 @@
 #define LEFT 0
 #define RIGHT 1
 
-#define FAIL 1
-#define SUCCESS 0
-
-#define UNUSED(x) (void)(x)
-
 #define MaxSubtree(a, b) ((a > b) ? a : b) 
+
+enum
+{
+	LEFT_CHILD,
+	RIGHT_CHILD,
+	NUM_OF_CHILDREN
+};
 
 typedef struct WrapperCompare
 {
@@ -157,7 +159,7 @@ static avl_node_t* BalanceTree(avl_node_t *node)
     
     if (2 <= b_factor)
     {
-        if (1 < BalanceFactor(node->child[LEFT]))
+        if (-1 >= BalanceFactor(node->child[LEFT]))
         {
             node->child[LEFT] = Rotate(node->child[LEFT], RIGHT);
         }
@@ -167,7 +169,7 @@ static avl_node_t* BalanceTree(avl_node_t *node)
     
     if (-2 >= b_factor)
     {
-        if (-1 >= BalanceFactor(node->child[RIGHT]))
+        if (1 <= BalanceFactor(node->child[RIGHT]))
         {
             node->child[RIGHT] = Rotate(node->child[RIGHT], LEFT);
         }
@@ -211,6 +213,7 @@ int AVLInsert(avl_t *tree, void *data)
 
 static avl_node_t *TwoChildSucc(avl_node_t *node)
 {
+    avl_node_t *successor = NULL;
     if (NULL == node->child[LEFT])
     {
         return node;
@@ -218,15 +221,16 @@ static avl_node_t *TwoChildSucc(avl_node_t *node)
     
     else if (NULL == node->child[LEFT]->child[LEFT])
     {
-        avl_node_t *successor = node->child[LEFT]; 
+        successor = node->child[LEFT]; 
         node->child[LEFT] = node->child[LEFT]->child[RIGHT];
         UpdateHeight(node->child[LEFT]);
         UpdateHeight(node);
-        
         return successor;
     }
     
-    return TwoChildSucc(node->child[LEFT]);
+    successor = TwoChildSucc(node->child[LEFT]);
+    UpdateHeight(node);
+    return successor;
 }
 
 static avl_node_t *FindSuccessor(avl_node_t *node)
@@ -312,11 +316,9 @@ void *AVLFind(const avl_t *tree, const void *data)
 
 static int RecForEach(avl_node_t *node, action_ptr_t action, void *param)
 {
-    int result = 1;
-    
     if (NULL == node)
     {
-        return result;
+        return 0;
     }
     
     return (RecForEach(node->child[LEFT], action, param) + 

@@ -3,13 +3,6 @@
 
 #include <stddef.h> /* size_t */
 
-enum
-{
-	LEFT,
-	RIGHT,
-	NUM_OF_CHILDREN
-};
-
 typedef struct AVLTree avl_t;
 typedef struct AVLNode avl_node_t;
 
