@@ -38,13 +38,11 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libhash.so $(SRC_TEST)
 
 #Debug SO
 $(DIR_DEBUG)libhash.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug -Wl,-rpath,'$$ORIGIN' \
-	 -ldll 
+	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug -Wl,-rpath,'$$ORIGIN' -ldll 
 
 #Release SO
 $(DIR_RELEASE)libhash.so: $(OBJ_RELEASE)
-	$(CC) $(RFLAGS) -shared -o $@ $< -L../librelease -Wl,-rpath,'$$ORIGIN' \
-	-ldll
+	$(CC) $(RFLAGS) -shared -o $@ $< -L../librelease -Wl,-rpath,'$$ORIGIN' -ldll
 
 #Debug Object
 $(OBJ_DEBUG): $(SRC) $(INC)    
