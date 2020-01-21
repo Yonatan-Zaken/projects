@@ -15,7 +15,7 @@
 struct Hash
 {
     size_t table_size;
-    match_func_t is_match;
+    match_func_ptr_t is_match;
     hash_func_t hash_func;
     dll_t *table[1];
 };
@@ -31,9 +31,10 @@ static hash_t *InitTable(hash_t * hash)
     }
 }
 
-hash_t *HashCreate(size_t table_size, hash_func_t hash_func, action_func_t is_match)
+hash_t *HashCreate(size_t table_size, hash_func_t hash_func, match_func_ptr_t is_match)
 {
-    hash_t *hash = (hash_t*)malloc(offsetof(hash_t, table) + table_size * sizeof(dll_t));
+    hash_t *hash = (hash_t*)malloc(offsetof(hash_t, table) + table_size 
+                                                     * sizeof(dll_t*));
     if (NULL == hash)
     {
         return NULL;
