@@ -77,34 +77,66 @@ int HashInsert(hash_t *hash_table, void *data)
     
     assert(NULL != hash_table);
     
-    key = hash_table->hash_func(data);
+    key = hash_table->hash_func(data) % hash_table->table_size;
     
-    return (DLLEnd(hash_table->table[key]) !=
+    return (DLLEnd(hash_table->table[key]) ==
             DLLPushBack(hash_table->table[key], data));
 }
 
 void HashRemove(hash_t *hash_table, const void *data)
 {
+    size_t key = 0;
+    
     assert(NULL != hash_table);
     
+    DLLRemove(DLLFind(DLLBegin(hash_table->table[key]), 
+                       DLLEnd(hash_table->table[key]),
+                       hash_table->is_match, (void*)data));
 }
 
 void *HashFind(const hash_t *hash_table, const void *data)
 {
     size_t key = 0;
+    iterator_t holder = NULL;
     
     assert(NULL != hash_table);
     
-    key = hash_table->hash_func(data);
+    key = hash_table->hash_func(data) % hash_table->table_size;
     
-    return (DLLGetData(DLLFind(DLLBegin(hash_table->table[key]), 
-                       DLLEnd(hash_table->table[key]),
-                       hash_table->is_match, (void*)data)));
+    if (DLLEnd(hash_table->table[key]) != (holder = 
+                                           DLLFind(DLLBegin(hash_table->table[key]), 
+                                           DLLEnd(hash_table->table[key]),
+                                           hash_table->is_match, (void*)data)))
+    
+    {
+        DLLRemove(holder);
+        return DLLGetData(DLLPushFront(hash_table->table[key], (void*)data));
+    }                                           
+    
+    return NULL;
 }
 
 int HashForeach(hash_t *hash_table, action_func_t action, void *param)
 {
-
+    size_t size = 0;
+    size_t i = 0;
+    int result = 0;
+    
+    assert(NULL != hash_table);
+    
+    size = hash_table->table_size;
+    
+    for (i = 0; i < size; ++i)
+    {
+        if (0 != (result = DLLForEach(DLLBegin(hash_table->table[i]), 
+                           DLLEnd(hash_table->table[i]),
+                           action, param)))
+        {
+            return result;
+        }    
+    }
+       
+    return result;   
 }
 
 size_t HashSize(const hash_t *hash_table)

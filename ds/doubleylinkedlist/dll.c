@@ -137,7 +137,7 @@ iterator_t DLLRemove(iterator_t it)
 int DLLIsEmpty(const dll_t *dll)
 {
     assert(NULL != dll);
-  
+    
     return (dll->head.next == &dll->tail);
 }
 
