@@ -7,13 +7,13 @@ typedef struct Hash hash_t;
 
 typedef size_t (*hash_func_t)(const void *data);
 typedef int (*action_func_t)(void *data1, void *datab2);
-typedef int (*match_func_t)(const void *data1, const void *data2);
+typedef int (*match_func_t)(void *data1, void *data2);
 
 /*
 *   Returns a pointer to the HASH data structure
 *	Complexity of malloc     
 */
-hash_t *HashCreate(size_t table_size, hash_func_t hash_func, action_func_t is_match);
+hash_t *HashCreate(size_t table_size, hash_func_t hash_func, match_func_t is_match);
 
 /*
 *	Destroys the HASH Table and frees it from the memory 
