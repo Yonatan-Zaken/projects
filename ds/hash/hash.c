@@ -89,6 +89,8 @@ void HashRemove(hash_t *hash_table, const void *data)
     
     assert(NULL != hash_table);
     
+    key = hash_table->hash_func(data) % hash_table->table_size;
+    
     DLLRemove(DLLFind(DLLBegin(hash_table->table[key]), 
                        DLLEnd(hash_table->table[key]),
                        hash_table->is_match, (void*)data));

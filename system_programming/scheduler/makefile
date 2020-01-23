@@ -44,22 +44,22 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libscheduler.so $(SRC_TEST)
 #Debug SO
 $(DIR_DEBUG)libscheduler.so: $(OBJ_DEBUG)
 	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug \
-	-Wl,-rpath=/home/codezila/git/system_programming/libdebug -ltask \
-	-L../../ds/libdebug -Wl,-rpath=/home/codezila/git/ds/libdebug -lpriorityq 
+	-Wl,-rpath=/home/codesila/git/system_programming/libdebug -ltask \
+	-L../../ds/libdebug -Wl,-rpath=/home/codesila/git/ds/libdebug -lpriorityq 
 	
 $(DIR_DEBUG)libtask.so: $(OBJ_DEBUG_TASK)
 	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug \
-	-Wl,-rpath=/home/codezila/git/system_programming/libdebug -luid
+	-Wl,-rpath=/home/codesila/git/system_programming/libdebug -luid
 
 #Release SO
 $(DIR_RELEASE)libscheduler.so: $(OBJ_RELEASE)
 	$(CC) $(RFLAGS) -shared -o $@ $< -L../librelease \
-	-Wl,-rpath=/home/codezila/git/system_programming/librelease -ltask \
-	-L../../ds/librelease -Wl,-rpath=/home/codezila/git/ds/librelease -lpriorityq 
+	-Wl,-rpath=/home/codesila/git/system_programming/librelease -ltask \
+	-L../../ds/librelease -Wl,-rpath=/home/codesila/git/ds/librelease -lpriorityq 
 
 $(DIR_RELEASE)libtask.so: $(OBJ_RELEASE_TASK)
 	$(CC) $(RFLAGS) -shared -o $@ $< -L../librelease \
-	-Wl,-rpath=/home/codezila/git/system_programming/librelease -luid \
+	-Wl,-rpath=/home/codesila/git/system_programming/librelease -luid 
 
 #Debug Object
 $(OBJ_DEBUG): $(SRC) $(INC)    

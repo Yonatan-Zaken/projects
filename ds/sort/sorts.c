@@ -202,3 +202,16 @@ int RadixSort(unsigned int *arr, size_t size, unsigned int num_of_bits)
     
     return 0;
 }
+
+static void RecMergeSort(int *src_arr, int *dest_arr, size_t size)
+{
+    size_t size /= 2;
+    
+    RecMergeSort()
+}
+
+void MergeSort(int *src_arr, int* dest_arr, size_t size)
+{
+     RecMergeSort(int *src_arr, int *dest_arr, size_t size)   
+}
+

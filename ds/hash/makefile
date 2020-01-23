@@ -13,7 +13,7 @@ TARGET_RELEASE=./outrelease/hash
 SRC=hash.c
 OBJ_DEBUG=./objdebug/hash.o
 OBJ_RELEASE=./objrelease/hash.o
-SRC_TEST=hash_test.c
+SRC_TEST=hash_testguy.c
 DIR_DEBUG=../libdebug/
 DIR_RELEASE=../librelease/
 INC=../include/hash.h
@@ -38,7 +38,7 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libhash.so $(SRC_TEST)
 
 #Debug SO
 $(DIR_DEBUG)libhash.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug -Wl,-rpath,'$$ORIGIN' -ldll 
+	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug -Wl,-rpath,'$$ORIGIN' -ldll -lm 
 
 #Release SO
 $(DIR_RELEASE)libhash.so: $(OBJ_RELEASE)
