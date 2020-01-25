@@ -157,13 +157,35 @@ static void TestRadixSort()
     FREE(arr2);
 }
 
+static void TestMergeSort()
+{
+    clock_t begin = 0, end = 0;
+    int arr[] =  {38, 27, 43, 3, 9, 82, 10};
+    int dest[7] = {0};
+    size_t i = 0;   
+    
+    begin = clock();
+    MergeSort(arr, dest, 7);
+    end = clock();
+    /*PrintArr((int *)arr2, ARR_SIZE);*/
+    printf("MergeSort: %f[sec]\n", (double)(end - begin) / CLOCKS_PER_SEC);
+    
+    for (i = 0; i < 7; ++i)
+    {
+        printf("%d ", dest[i]);
+    }
+    printf("\n");
+    
+}
+
 int main()
 {
     /*TestBubbleSort();
     TestInsertionSort();
     TestSelectionSort();
-    TestCountingSort();*/
-    TestRadixSort();
+    TestCountingSort();
+    TestRadixSort();*/
+    TestMergeSort();
     
     return 0;  
 }

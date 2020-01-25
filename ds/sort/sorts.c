@@ -203,15 +203,86 @@ int RadixSort(unsigned int *arr, size_t size, unsigned int num_of_bits)
     return 0;
 }
 
-static void RecMergeSort(int *src_arr, int *dest_arr, size_t size)
+static void Merge(int *dest_arr, size_t left, size_t middle, size_t right)
 {
-    size_t size /= 2;
+    size_t i = 0, j = 0, k = 0;
+    size_t size1 = middle - left + 1;
+    size_t size2 = right - middle;
     
-    RecMergeSort()
+    int *left_side = malloc(sizeof(int) * size1);
+    int *right_side = malloc(sizeof(int) * size2);
+    
+    for (i = 0; i < size1; ++i)
+    {
+        left_side[i] = dest_arr[left + i];
+    }
+    
+    for (j = 0; j < size2; ++j)
+    {
+        right_side[j] = dest_arr[middle + 1 + j];
+    }
+    
+    i = 0; j = 0; k = left;
+    
+    while (i < size1 && j < size2)
+    {
+        if (left_side[i] <= right_side[j])
+        {
+            dest_arr[k] = left_side[i];
+            ++i;
+        }
+        else
+        {
+            dest_arr[k] = right_side[j];
+            ++j;
+        }
+        ++k;
+    }
+    
+    while (i < size1)
+    {
+        dest_arr[k] = left_side[i];
+        ++i;
+        ++k;
+    }
+    
+    while (j < size2)
+    {
+        dest_arr[k] = right_side[j];
+        ++j;
+        ++k;
+    }
+    
+    free(left_side); left_side = NULL;
+    free(right_side); right_side = NULL;
+}
+
+static void RecMergeSort(int *dest_arr, size_t left, size_t right)
+{
+    size_t middle = 0;
+    
+    if (left < right)
+    {
+        middle = left + (right - left) / 2;
+        
+        RecMergeSort(dest_arr, left, middle);
+        RecMergeSort(dest_arr, middle + 1, right);
+        
+        Merge(dest_arr, left, middle, right);
+    }
 }
 
 void MergeSort(int *src_arr, int* dest_arr, size_t size)
 {
-     RecMergeSort(int *src_arr, int *dest_arr, size_t size)   
+     size_t i = 0;
+     
+     assert(NULL != src_arr);
+     
+     for (i = 0; i < size; ++i)
+     {
+         dest_arr[i] = src_arr[i];
+     }
+     
+     RecMergeSort(dest_arr, 0, size - 1);   
 }
 
