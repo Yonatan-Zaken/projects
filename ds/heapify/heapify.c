@@ -1,7 +1,7 @@
 /*********************************/
 /*   			             	 */
 /*   Data Structures             */
-/*   AVL Tree                    */
+/*   Heap                        */
 /*   Author: Yonatan Zaken       */
 /*   Last Updated 23/1/20        */
 /*   Reviewed by:          */   
@@ -21,6 +21,8 @@
 #define FAIL 1
 #define ELEMENT_SIZE sizeof(void *)
 
+#define UNUSED(x) (void)(x)
+
 typedef struct Wrapper
 {
     compare_func_ptr cmp_func;
@@ -33,9 +35,9 @@ struct PQueue
     wrap_t wrap;    
 };
 
-int WrapCompare(const void *data1, const void *data2, void *param)
+int WrapCmp(void **data1, void **data2, void *param)
 {
-    return (*(int*)data1 - *(int*)data2);
+    return (((wrap_t *)param)->cmp_func(*data1, *data2, ((wrap_t *)param)->param));
 }
 
 pq_t *PQCreate(compare_func_ptr cmp, void *param)
@@ -43,7 +45,7 @@ pq_t *PQCreate(compare_func_ptr cmp, void *param)
     pq_t *pq = malloc(sizeof(*pq));
     if (NULL != pq)
     {
-        pq->heap = VectorCreate(sizeof(void *), CAPACITY);
+        pq->heap = VectorCreate(ELEMENT_SIZE, CAPACITY);
         if (NULL == pq->heap)
         {
             free(pq); pq = NULL;
@@ -72,38 +74,36 @@ static void Swap(void **ptr1, void **ptr2)
 
 void *PQDequeue(pq_t *pq)
 {
-    void *root_holder = NULL;
-    void *end_holder = NULL;
-    void *temp_holder = NULL;
+    void **root_holder = NULL;
+    void **end_holder = NULL;
+    void *return_value = NULL;
+    
     size_t last_index = 0;
     
     assert(NULL != pq);
     
     last_index = VectorSize(pq->heap);
-    end_holder = VectorGetItemAddress(pq->heap, last_index);
+    end_holder = VectorGetItemAddress(pq->heap, last_index); 
     root_holder = VectorGetItemAddress(pq->heap, ROOT);
-    temp_holder = memcpy(temp_holder, root_holder, ELEMENT_SIZE);
-    memcpy(root_holder, end_holder, ELEMENT_SIZE);
-    temp_holder = memcpy(end_holder, temp_holder, ELEMENT_SIZE);
+    
+    Swap(root_holder, end_holder);
+    return_value = *end_holder;
     
     HeapifyDown(pq->heap, last_index, ROOT, ELEMENT_SIZE, pq->wrap.cmp_func, 
-                                                            pq->wrap.param);
-                                                            
+                                                                 &pq->wrap);    
     VectorPopBack(pq->heap);
     
-    return temp_holder;
+    return return_value;
 }
 
 int PQEnqueue(pq_t *pq, void *data)
 {
-    size_t element_size = 0;
-    
     assert(NULL != pq);
      
     if (0 == VectorPushBack(pq->heap, &data))
     {
         HeapifyUp(pq->heap, VectorSize(pq->heap), VectorSize(pq->heap), 
-                      ELEMENT_SIZE, pq->wrap.cmp_func, pq->wrap.param);
+                           ELEMENT_SIZE, pq->wrap.cmp_func, &pq->wrap);
         
         return SUCCESS;        
     }
@@ -153,20 +153,48 @@ void PQClear(pq_t *pq)
 
 void *PQErase(pq_t *pq, match_func_pq match, void *data)
 {
-    size_t size = 0;    
+    size_t index = ROOT;    
+    size_t size = 0;
+    void **last = NULL;
+    void **current = NULL;
     
     assert(NULL != pq->heap);
     
-           
+    size = VectorSize(pq->heap);
+    last = VectorGetItemAddress(pq->heap, size);
+    
+    while (index < size)
+    {
+        current = VectorGetItemAddress(pq->heap, index);
+        if (1 == match(*current, data))
+        {
+            Swap(current, last);
+            HeapifyDown(pq->heap, size, index, ELEMENT_SIZE, pq->wrap.cmp_func,
+                                                                    &pq->wrap);
+            VectorPopBack(pq->heap);
+            
+            return *last; 
+        }
+        else
+        {
+            ++index;
+        }
+    }
+    
+    return NULL;          
 }
 
 void HeapifyUp(void *arr, size_t size, size_t index, size_t element_size,
                                        compare_func_ptr cmp, void *param)
-{
+{    
     void **new_data = NULL;
     void **vector_data = NULL;    
-    size_t parent_index = (size - 1) / 2;
-    
+    size_t parent_index = size / 2;
+ 
+    UNUSED(index);
+    UNUSED(element_size);
+    UNUSED(cmp);
+   
     assert(NULL != arr);
     
     new_data = VectorGetItemAddress(arr, size); 
@@ -174,18 +202,67 @@ void HeapifyUp(void *arr, size_t size, size_t index, size_t element_size,
     
     while (0 != parent_index)
     {
-        Swap(*new_data, *vector_data);
-        vector_data = VectorGetItemAddress(arr, (size/2));
-        0 < cmp(*new_data, *vector_data, param)       
-    }
-    
-    
+        if (0 < WrapCmp(new_data, vector_data, (wrap_t *)param))
+        {
+            Swap(new_data, vector_data);
+            new_data = VectorGetItemAddress(arr, parent_index);
+            parent_index /= 2;
+            vector_data = VectorGetItemAddress(arr, parent_index);
+        }
+        else
+        {
+            break;
+        }       
+    }  
 }                                              
                                              
-void HeapifyDown(void *arr, size_t size, size_t index, size_t element_size,
+v oid HeapifyDown(void *arr, size_t size, size_t index, size_t element_size,
                                          compare_func_ptr cmp, void *param)
 {
-
+    size_t left_index = index * 2;
+    size_t right_index = (index * 2) + 1;
+    size_t biggest = 0;
+    void **left_child = NULL;
+    void **right_child = NULL;
+    void **parent = NULL;
+    
+    assert(NULL != arr);
+    
+    parent = VectorGetItemAddress(arr, index);
+    
+    while (left_index < size)
+    {
+        if ((left_index <= size) &&  
+            (0 < WrapCmp(VectorGetItemAddress(arr, left_index), 
+                                     parent, (wrap_t *)param)))
+        {
+            biggest = left_index;
+        }
+        else
+        {
+            biggest = index;
+        }
+        
+        if ((right_index < size) && 
+            (0 < WrapCmp(VectorGetItemAddress(arr, right_index),
+             VectorGetItemAddress(arr, biggest), (wrap_t *)param)))
+        {
+            biggest = right_index;
+        }
+        
+        if (biggest != index)
+        {
+            Swap(parent, VectorGetItemAddress(arr, biggest));
+            index = biggest;
+            left_index = index * 2;
+            right_index = (index * 2) + 1;
+            parent = VectorGetItemAddress(arr, index);
+        }
+        
+        else
+        {
+            break;
+        }
+    }
 }               
-               
-               
+

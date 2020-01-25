@@ -1,10 +1,3 @@
-
-/*******************************************************************************
--Ws Sorted linked list
--Itai Marienberg
--Dec 10 2019    
-*******************************************************************************/
-
 #include <stdio.h>  /*printf */
 
 #include "priorityqueue.h" /* sorted linked list functions */
