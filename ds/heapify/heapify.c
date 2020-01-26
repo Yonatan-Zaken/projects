@@ -15,7 +15,7 @@
 #include "vector.h"
 #include "heapify.h"
 
-#define CAPACITY 1
+#define CAPACITY 4
 #define ROOT 1
 #define SUCCESS 0
 #define FAIL 1
@@ -35,7 +35,7 @@ struct PQueue
     wrap_t wrap;    
 };
 
-int WrapCmp(void **data1, void **data2, void *param)
+int WrapCmp(void **data2, void **data1, void *param)
 {
     return (((wrap_t *)param)->cmp_func(*data1, *data2, ((wrap_t *)param)->param));
 }
@@ -163,7 +163,7 @@ void *PQErase(pq_t *pq, match_func_pq match, void *data)
     size = VectorSize(pq->heap);
     last = VectorGetItemAddress(pq->heap, size);
     
-    while (index < size)
+    while (index <= size)
     {
         current = VectorGetItemAddress(pq->heap, index);
         if (1 == match(*current, data))
@@ -215,8 +215,8 @@ void HeapifyUp(void *arr, size_t size, size_t index, size_t element_size,
         }       
     }  
 }                                              
-                                             
-v oid HeapifyDown(void *arr, size_t size, size_t index, size_t element_size,
+
+void HeapifyDown(void *arr, size_t size, size_t index, size_t element_size,
                                          compare_func_ptr cmp, void *param)
 {
     size_t left_index = index * 2;

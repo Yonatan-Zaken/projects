@@ -31,11 +31,11 @@ release: $(DIR_RELEASE)libtask.so $(DIR_RELEASE)libscheduler.so
 
 all: debug release
 
-test: $(TARGET_DEBUG) $(TARGET_RELEASE) 
+test: $(TARGET_DEBUG) 
 
 #Debug Out
 $(TARGET_DEBUG): $(DIR_DEBUG)libscheduler.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) $(LDFLAGS_DEBUG) -o $@ $(SRC_TEST) -lscheduler
+	$(CC) $(CFLAGS) $(LDFLAGS_DEBUG) -o $@ $(SRC_TEST) -lscheduler 
 
 #Release Out
 $(TARGET_RELEASE): $(DIR_RELEASE)libscheduler.so $(SRC_TEST) 
@@ -45,7 +45,7 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libscheduler.so $(SRC_TEST)
 $(DIR_DEBUG)libscheduler.so: $(OBJ_DEBUG)
 	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug \
 	-Wl,-rpath=/home/codesila/git/system_programming/libdebug -ltask \
-	-L../../ds/libdebug -Wl,-rpath=/home/codesila/git/ds/libdebug -lpriorityq 
+	-L../../ds/libdebug -Wl,-rpath=/home/codesila/git/ds/libdebug -lheapify 
 	
 $(DIR_DEBUG)libtask.so: $(OBJ_DEBUG_TASK)
 	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug \
@@ -55,7 +55,7 @@ $(DIR_DEBUG)libtask.so: $(OBJ_DEBUG_TASK)
 $(DIR_RELEASE)libscheduler.so: $(OBJ_RELEASE)
 	$(CC) $(RFLAGS) -shared -o $@ $< -L../librelease \
 	-Wl,-rpath=/home/codesila/git/system_programming/librelease -ltask \
-	-L../../ds/librelease -Wl,-rpath=/home/codesila/git/ds/librelease -lpriorityq 
+	-L../../ds/librelease -Wl,-rpath=/home/codesila/git/ds/librelease -lheapify 
 
 $(DIR_RELEASE)libtask.so: $(OBJ_RELEASE_TASK)
 	$(CC) $(RFLAGS) -shared -o $@ $< -L../librelease \
