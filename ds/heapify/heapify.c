@@ -90,8 +90,8 @@ void *PQDequeue(pq_t *pq)
     return_value = *end_holder;
     VectorPopBack(pq->heap);
     
-    HeapifyDown(pq->heap, VectorSize(pq->heap), ROOT, ELEMENT_SIZE,
-                                     pq->wrap.cmp_func, &pq->wrap);    
+    HeapifyDown(pq->heap, last_index - 1, ROOT, ELEMENT_SIZE,
+                               pq->wrap.cmp_func, &pq->wrap);    
     return return_value;
 }
 
