@@ -90,9 +90,8 @@ void *PQDequeue(pq_t *pq)
     return_value = *end_holder;
     VectorPopBack(pq->heap);
     
-    HeapifyDown(pq->heap, last_index, ROOT, ELEMENT_SIZE, pq->wrap.cmp_func, 
-                                                                 &pq->wrap);    
-    
+    HeapifyDown(pq->heap, VectorSize(pq->heap), ROOT, ELEMENT_SIZE,
+                                     pq->wrap.cmp_func, &pq->wrap);    
     return return_value;
 }
 
@@ -100,7 +99,7 @@ int PQEnqueue(pq_t *pq, void *data)
 {
     assert(NULL != pq);
      
-    if (0 == VectorPushBack(pq->heap, &data))
+    if (SUCCESS == VectorPushBack(pq->heap, &data))
     {
         HeapifyUp(pq->heap, VectorSize(pq->heap), VectorSize(pq->heap), 
                            ELEMENT_SIZE, pq->wrap.cmp_func, &pq->wrap);
@@ -113,13 +112,9 @@ int PQEnqueue(pq_t *pq, void *data)
 
 void *PQPeek(const pq_t *pq)
 {
-    void **peek_data = NULL;
-    
     assert(NULL != pq);
     
-    peek_data = VectorGetItemAddress(pq->heap, ROOT);
-    
-    return *peek_data;
+    return *(void **)VectorGetItemAddress(pq->heap, ROOT);
 }
    
 size_t PQSize(const pq_t *pq)
@@ -133,7 +128,7 @@ int PQIsEmpty(const pq_t *pq)
 {
     assert(NULL != pq);
     
-    return (0 == VectorSize(pq->heap));  
+    return (SUCCESS == VectorSize(pq->heap));  
 }
 
 void PQClear(pq_t *pq)
@@ -169,13 +164,11 @@ void *PQErase(pq_t *pq, match_func_pq match, void *data)
         if (1 == match(*current, data))
         {
             Swap(current, last);
-            HeapifyUp(pq->heap, size, index, ELEMENT_SIZE, pq->wrap.cmp_func,
-                                                                  &pq->wrap);
-            HeapifyDown(pq->heap, size, index, ELEMENT_SIZE, pq->wrap.cmp_func,
-                                                                    &pq->wrap);
-                                                                                
             VectorPopBack(pq->heap);
-            
+            HeapifyUp(pq->heap, size - 1, index, ELEMENT_SIZE, pq->wrap.cmp_func,
+                                                                      &pq->wrap);
+            HeapifyDown(pq->heap, size - 1, index, ELEMENT_SIZE, pq->wrap.cmp_func,
+                                                                        &pq->wrap);
             return *last;
         } 
     }
@@ -229,11 +222,10 @@ void HeapifyDown(void *arr, size_t size, size_t index, size_t element_size,
     
     parent = VectorGetItemAddress(arr, index);
     
-    while (left_index < size)
+    while (left_index <= size)
     {
-        if ((left_index <= size) &&  
-            (0 < WrapCmp(VectorGetItemAddress(arr, left_index), 
-                                     parent, (wrap_t *)param)))
+        if ((0 < WrapCmp(VectorGetItemAddress(arr, left_index), parent,
+                                                     (wrap_t *)param)))
         {
             biggest = left_index;
         }
@@ -242,9 +234,8 @@ void HeapifyDown(void *arr, size_t size, size_t index, size_t element_size,
             biggest = index;
         }
         
-        if ((right_index < size) && 
-            (0 < WrapCmp(VectorGetItemAddress(arr, right_index),
-             VectorGetItemAddress(arr, biggest), (wrap_t *)param)))
+        if ((right_index < size) && (0 < WrapCmp(VectorGetItemAddress(arr, right_index),
+                                  VectorGetItemAddress(arr, biggest), (wrap_t *)param)))
         {
             biggest = right_index;
         }

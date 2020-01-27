@@ -147,9 +147,41 @@ static void Test2()
     printf("\n\n");
 }
 
+static void Test3()
+{
+    pq_t *pq = NULL;
+
+    int x1 = 15, x2 = 10, x3 = 14, x4 = 9, x5 = 7, x6 = 13;
+
+    printf("PQ Test :\n\n");
+    
+    pq = PQCreate(&CompareFunc, NULL);
+    printf("PQEnqueue:\n");          
+    RUN_TEST(0 == PQEnqueue(pq, &x1), "enqueue");
+    RUN_TEST(0 == PQEnqueue(pq, &x2), "enqueue");
+    RUN_TEST(0 == PQEnqueue(pq, &x3), "enqueue");
+    RUN_TEST(0 == PQEnqueue(pq, &x4), "enqueue");
+    RUN_TEST(0 == PQEnqueue(pq, &x5), "enqueue");
+    RUN_TEST(0 == PQEnqueue(pq, &x6), "enqueue");
+    
+    printf("PQSize:\n");          
+    RUN_TEST(6 == PQSize(pq), "size");
+    
+    printf("PQErase:\n");              
+    RUN_TEST(7 == *(int*)PQErase(pq, &IsMatch, &x5), "erase");
+    RUN_TEST(5 == PQSize(pq), "size");
+      
+    
+    PQDestroy(pq);
+    printf("\n\n");
+}
+
+
 int main()
 {   
     Test1();
     Test2();
+    Test3();
+    
     return 0;
 }
