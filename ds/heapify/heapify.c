@@ -4,7 +4,7 @@
 /*   Heap                        */
 /*   Author: Yonatan Zaken       */
 /*   Last Updated 23/1/20        */
-/*   Reviewed by:          */   
+/*   Reviewed by: Israel         */   
 /*			                   	 */
 /*********************************/
 #include <stdlib.h> /* malloc */
@@ -35,7 +35,7 @@ struct PQueue
     wrap_t wrap;    
 };
 
-int WrapCmp(void **data2, void **data1, void *param)
+int WrapCmp(void **data1, void **data2, void *param)
 {
     return (((wrap_t *)param)->cmp_func(*data1, *data2, ((wrap_t *)param)->param));
 }
@@ -88,10 +88,10 @@ void *PQDequeue(pq_t *pq)
     
     Swap(root_holder, end_holder);
     return_value = *end_holder;
+    VectorPopBack(pq->heap);
     
     HeapifyDown(pq->heap, last_index, ROOT, ELEMENT_SIZE, pq->wrap.cmp_func, 
                                                                  &pq->wrap);    
-    VectorPopBack(pq->heap);
     
     return return_value;
 }
@@ -163,24 +163,22 @@ void *PQErase(pq_t *pq, match_func_pq match, void *data)
     size = VectorSize(pq->heap);
     last = VectorGetItemAddress(pq->heap, size);
     
-    while (index <= size)
+    for (; index <= size; ++index)
     {
         current = VectorGetItemAddress(pq->heap, index);
         if (1 == match(*current, data))
         {
             Swap(current, last);
+            HeapifyUp(pq->heap, size, index, ELEMENT_SIZE, pq->wrap.cmp_func,
+                                                                  &pq->wrap);
             HeapifyDown(pq->heap, size, index, ELEMENT_SIZE, pq->wrap.cmp_func,
                                                                     &pq->wrap);
+                                                                                
             VectorPopBack(pq->heap);
             
-            return *last; 
-        }
-        else
-        {
-            ++index;
-        }
+            return *last;
+        } 
     }
-    
     return NULL;          
 }
 
@@ -189,7 +187,7 @@ void HeapifyUp(void *arr, size_t size, size_t index, size_t element_size,
 {    
     void **new_data = NULL;
     void **vector_data = NULL;    
-    size_t parent_index = size / 2;
+    size_t parent_index = index / 2;
  
     UNUSED(index);
     UNUSED(element_size);
@@ -222,9 +220,10 @@ void HeapifyDown(void *arr, size_t size, size_t index, size_t element_size,
     size_t left_index = index * 2;
     size_t right_index = (index * 2) + 1;
     size_t biggest = 0;
-    void **left_child = NULL;
-    void **right_child = NULL;
     void **parent = NULL;
+    
+    UNUSED(cmp);
+    UNUSED(element_size);
     
     assert(NULL != arr);
     
