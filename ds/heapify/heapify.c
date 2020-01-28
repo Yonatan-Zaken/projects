@@ -35,7 +35,7 @@ struct PQueue
     wrap_t wrap;    
 };
 
-int WrapCmp(void **data1, void **data2, void *param)
+int WrapCmp(void **data2, void **data1, void *param)
 {
     return (((wrap_t *)param)->cmp_func(*data1, *data2, ((wrap_t *)param)->param));
 }

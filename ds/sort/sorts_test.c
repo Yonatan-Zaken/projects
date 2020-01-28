@@ -13,8 +13,10 @@
 
 #include "sorts.h"
 
-#define ARR_SIZE 100000
+#define ARR_SIZE 50
 #define FREE(ptr) free(ptr); ptr = NULL;
+
+#define UNUSED(x) (void)(x)
 
 #define NORMAL "\033[0m"
 #define RED "\033[;031m"
@@ -33,6 +35,18 @@
         printf("FAIL %s\n", error_message);\
         printf(NORMAL);\
     }\
+}
+
+static int Compare(const void *data1, const void* data2)
+{
+    
+    return (*(int*)data1- *(int*)data2);
+}
+
+static int CompareSearch(const void *data1, const void *data2, void *param)
+{
+    UNUSED(param);
+    return (*(int*)data1 - *(int*)data2);
 }
 
 static void Init(int arr[], size_t n)
@@ -178,14 +192,53 @@ static void TestMergeSort()
     
 }
 
+static void TestQuickSort()
+{
+    int *arr = NULL;
+    arr = (int *)malloc(ARR_SIZE * sizeof(int));
+    Init(arr, ARR_SIZE);
+    QuickSort(arr, ARR_SIZE, sizeof(int), &Compare);
+    
+    PrintArr(arr, ARR_SIZE);
+    FREE(arr);
+}
+
+static void TestBinarySearch()
+{
+    int arr[] = {3, 5, 10, 12, 17, 20, 25};
+    int data = 25;
+    int data2 = 30;
+    RUN_TEST(data == *(int*)BinarySearch(arr, sizeof(int), 7, &CompareSearch, 
+                                                     NULL, &data), "test");
+    RUN_TEST(NULL == BinarySearch(arr, sizeof(int), 7, &CompareSearch, 
+                                                NULL, &data2), "test");
+                                                         
+    
+}
+
+static void TestJumpSearch()
+{
+    int arr[] = {3, 5, 6, 8, 10, 11, 12, 13, 15, 20, 21};
+    int data = 12;
+    int data2 = 21;
+    RUN_TEST(data == *(int*)JumpSearch(arr, sizeof(int), 11, &CompareSearch, 
+                                                     NULL, &data), "test");
+    RUN_TEST(data2 == *(int*)JumpSearch(arr, sizeof(int), 11, &CompareSearch, 
+                                                NULL, &data2), "test");
+    
+}
+
 int main()
 {
-    /*TestBubbleSort();
+    /*TestBubbleSort();n
     TestInsertionSort();
     TestSelectionSort();
     TestCountingSort();
-    TestRadixSort();*/
+    TestRadixSort();
     TestMergeSort();
+    TestQuickSort();
+    TestBinarySearch();*/
+    TestJumpSearch();
     
     return 0;  
 }

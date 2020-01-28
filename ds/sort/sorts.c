@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
+#include <string.h>
+#include <alloca.h>
 
 #include "sorts.h"
 
@@ -17,6 +19,8 @@
 #define BITS_IN_INT (sizeof(int) * 8)
 
 #define FREE(ptr) free(ptr); ptr = NULL;
+
+#define UNUSED(x) (void)(x)
 
 void BubbleSort(int arr[], size_t n)
 {
@@ -284,5 +288,146 @@ void MergeSort(int *src_arr, int* dest_arr, size_t size)
      }
      
      RecMergeSort(dest_arr, 0, size - 1);   
+}
+
+void SwapPtr(void *data1, void *data2, size_t element_size)
+{
+    void *temp = alloca(element_size);
+    
+    assert(NULL != data1);
+    assert(NULL != data2);
+    
+    memcpy(temp, data1, element_size);
+    memcpy(data1, data2, element_size);
+    memcpy(data2, temp, element_size);
+}
+
+static void Partition(void *base, size_t size, size_t left, size_t right, compare_t cmp)
+{
+    size_t pivot_index = (left + right) / 2;
+    size_t left_index = left;
+    size_t right_index = right;
+    char *runner = NULL;
+    
+    assert(NULL != base);
+    
+    runner = base;
+    
+    if (right_index <= left_index)
+    {
+        return;
+    }
+    
+    while ((left_index <= pivot_index) && (right_index >= pivot_index))
+    {
+        while (0 > cmp(runner + size * left_index, runner + size * pivot_index) 
+                              && left_index <= pivot_index)
+        {
+            ++left_index;
+        }
+        
+        while (0 < cmp(runner + size * right_index, 
+                       runner + size * pivot_index) && right_index >= pivot_index)
+        {
+            --right_index;
+        }
+        
+        SwapPtr(runner + size * left_index, runner + size * right_index, size);
+        ++left_index;
+        --right_index;
+        
+        if ((left_index - 1) == pivot_index)
+        {
+            right_index += 1;
+            pivot_index = right_index;
+        }
+        else if ((right_index + 1) == pivot_index)
+        {
+            left_index -= 1;
+            pivot_index = left_index;
+        }
+    }
+    
+    if (0 < pivot_index)
+    {
+        Partition(base, size, left, pivot_index - 1, cmp);    
+    }
+    Partition(base, size, pivot_index + 1, right, cmp); 
+}
+
+void QuickSort(void *base, size_t nmemb, size_t size, compare_t cmp)
+{    
+    assert(NULL != base);
+    
+    Partition(base, size, 0, nmemb - 1, cmp);
+}                                                                     
+
+static void *RecBinarySearch(void *arr, size_t element_size, size_t left, size_t right,
+                                          cmp_ptr_t cmp, void *param, const void *data)
+{
+    size_t mid = left + (right - left) / 2;
+    int result = 0;
+    char *runner = NULL;
+     
+    assert(NULL != arr);
+    
+    if (right >= left)
+    {
+        runner = (char *)arr + element_size * mid;
+        result = cmp(runner, data, param);
+        
+        if (0 == result)
+        {
+            return (void *)runner;    
+        }
+        
+        else if (0 < result)
+        {
+            return RecBinarySearch(arr, element_size, left, mid - 1, cmp,
+                                                               param, data);
+        }
+        
+        return RecBinarySearch(arr, element_size, mid + 1, right, cmp, param, data);
+    }
+    
+    return NULL;
+}
+
+void *BinarySearch(void *arr, size_t element_size, size_t nmemb, cmp_ptr_t cmp,
+                                                 void *param, const void *data)
+{
+    size_t left = 0;
+    size_t right = nmemb - 1;
+    
+    assert(NULL != arr);
+    
+    return RecBinarySearch(arr, element_size, left, right, cmp, param, data);
+
+}
+
+void *JumpSearch(void *arr, size_t element_size, size_t nmemb, cmp_ptr_t cmp,
+                                                 void *param, const void *data)
+{
+    size_t jump_factor = sqrt(nmemb);
+    size_t i = 0;
+    size_t remaining_members = 0;
+    char *runner = arr;
+    
+    assert(NULL != arr);
+    
+    for (i = 1; i * jump_factor < nmemb; ++i)
+    {            
+        if (0 <= cmp(runner, data, param))
+        {   
+            runner -= element_size * jump_factor;
+            return BinarySearch(runner, element_size, jump_factor + 1,
+                                                    cmp, param, data);
+        }
+               
+        runner += element_size * jump_factor;
+    }
+    
+    remaining_members = nmemb - ((--i) * jump_factor);
+    return BinarySearch(runner, element_size, remaining_members, cmp, param, data);
 }
 

@@ -45,7 +45,7 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libscheduler.so $(SRC_TEST)
 $(DIR_DEBUG)libscheduler.so: $(OBJ_DEBUG)
 	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug \
 	-Wl,-rpath=/home/codesila/git/system_programming/libdebug -ltask \
-	-L../../ds/libdebug -Wl,-rpath=/home/codesila/git/ds/libdebug -lheapify 
+	-L../../ds/libdebug -Wl,-rpath=/home/codesila/git/ds/libdebug -lheapify
 	
 $(DIR_DEBUG)libtask.so: $(OBJ_DEBUG_TASK)
 	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug \
