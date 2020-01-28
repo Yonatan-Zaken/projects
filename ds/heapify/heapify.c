@@ -234,8 +234,9 @@ void HeapifyDown(void *arr, size_t size, size_t index, size_t element_size,
             biggest = index;
         }
         
-        if ((right_index < size) && (0 < WrapCmp(VectorGetItemAddress(arr, right_index),
-                                  VectorGetItemAddress(arr, biggest), (wrap_t *)param)))
+        if ((right_index <= size) && 
+           (0 < WrapCmp(VectorGetItemAddress(arr, right_index),
+                VectorGetItemAddress(arr, biggest), (wrap_t *)param)))
         {
             biggest = right_index;
         }

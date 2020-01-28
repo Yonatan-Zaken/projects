@@ -44,22 +44,22 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libscheduler.so $(SRC_TEST)
 #Debug SO
 $(DIR_DEBUG)libscheduler.so: $(OBJ_DEBUG)
 	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug \
-	-Wl,-rpath,'$$ORIGIN' -ltask \
-	-L../../ds/libdebug -Wl,-rpath,'$$ORIGIN/../../ds/libdebug' -lheapify
+	-Wl,-rpath=/home/codesila/git/system_programming/libdebug -ltask \
+	-L../../ds/libdebug -Wl,-rpath=/home/codesila/git/ds/libdebug -lheapify
 	
 $(DIR_DEBUG)libtask.so: $(OBJ_DEBUG_TASK)
 	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug \
-	-Wl,-rpath,'$$ORIGIN' -luid
+	-Wl,-rpath=/home/codesila/git/system_programming/libdebug -luid
 
 #Release SO
 $(DIR_RELEASE)libscheduler.so: $(OBJ_RELEASE)
 	$(CC) $(RFLAGS) -shared -o $@ $< -L../librelease \
-	-Wl,-rpath,'$$ORIGIN' -ltask \
-	-L../../ds/librelease -Wl,-rpath,'$$ORIGIN/../../ds/librelease' -lheapify 
+	-Wl,-rpath=/home/codesila/git/system_programming/librelease -ltask \
+	-L../../ds/librelease -Wl,-rpath=/home/codesila/git/ds/librelease -lheapify 
 
 $(DIR_RELEASE)libtask.so: $(OBJ_RELEASE_TASK)
 	$(CC) $(RFLAGS) -shared -o $@ $< -L../librelease \
-	-Wl,-rpath,'$$ORIGIN' -luid
+	-Wl,-rpath=/home/codesila/git/system_programming/librelease -luid 
 
 #Debug Object
 $(OBJ_DEBUG): $(SRC) $(INC)    
