@@ -209,9 +209,9 @@ static void TestBinarySearch()
     int data = 25;
     int data2 = 30;
     RUN_TEST(data == *(int*)BinarySearch(arr, sizeof(int), 7, &CompareSearch, 
-                                                     NULL, &data), "test");
+                                                       NULL, &data), "test");
     RUN_TEST(NULL == BinarySearch(arr, sizeof(int), 7, &CompareSearch, 
-                                                NULL, &data2), "test");
+                                               NULL, &data2), "test");
                                                          
     
 }
@@ -236,8 +236,8 @@ int main()
     TestCountingSort();
     TestRadixSort();
     TestMergeSort();
-    TestQuickSort();
-    TestBinarySearch();*/
+    TestQuickSort();*/
+    TestBinarySearch();
     TestJumpSearch();
     
     return 0;  

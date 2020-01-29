@@ -378,13 +378,13 @@ static void *RecBinarySearch(void *arr, size_t element_size, size_t left, size_t
         
         if (0 == result)
         {
-            return (void *)runner;    
+            return runner;    
         }
         
         else if (0 < result)
         {
             return RecBinarySearch(arr, element_size, left, mid - 1, cmp,
-                                                               param, data);
+                                                            param, data);
         }
         
         return RecBinarySearch(arr, element_size, mid + 1, right, cmp, param, data);
@@ -393,11 +393,11 @@ static void *RecBinarySearch(void *arr, size_t element_size, size_t left, size_t
     return NULL;
 }
 
-void *BinarySearch(void *arr, size_t element_size, size_t nmemb, cmp_ptr_t cmp,
-                                                 void *param, const void *data)
+void *BinarySearch(void *arr, size_t element_size, size_t num_of_members,
+                            cmp_ptr_t cmp, void *param, const void *data)
 {
     size_t left = 0;
-    size_t right = nmemb - 1;
+    size_t right = num_of_members - 1;
     
     assert(NULL != arr);
     
@@ -405,17 +405,17 @@ void *BinarySearch(void *arr, size_t element_size, size_t nmemb, cmp_ptr_t cmp,
 
 }
 
-void *JumpSearch(void *arr, size_t element_size, size_t nmemb, cmp_ptr_t cmp,
-                                                 void *param, const void *data)
+void *JumpSearch(void *arr, size_t element_size, size_t num_of_members, cmp_ptr_t cmp,
+                                                        void *param, const void *data)
 {
-    size_t jump_factor = sqrt(nmemb);
+    size_t jump_factor = sqrt(num_of_members);
     size_t i = 0;
     size_t remaining_members = 0;
     char *runner = arr;
     
     assert(NULL != arr);
     
-    for (i = 1; i * jump_factor < nmemb; ++i)
+    for (i = jump_factor; i < num_of_members; i += jump_factor)
     {            
         if (0 <= cmp(runner, data, param))
         {   
@@ -427,7 +427,7 @@ void *JumpSearch(void *arr, size_t element_size, size_t nmemb, cmp_ptr_t cmp,
         runner += element_size * jump_factor;
     }
     
-    remaining_members = nmemb - ((--i) * jump_factor);
+    remaining_members = num_of_members - (i - jump_factor);
     return BinarySearch(runner, element_size, remaining_members, cmp, param, data);
 }
 
