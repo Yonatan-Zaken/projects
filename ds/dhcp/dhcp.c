@@ -53,7 +53,8 @@ void DhcpDestroy(dhcp_t *dhcp)
 
 alc_status_t DhcpAllocIp(dhcp_t *dhcp, ip_t requested_ip, ip_t allocated_ip)
 {
-
+    assert(NULL != dhcp);
+    
 }
 
 free_status_t DhcpFreeIp(dhcp_t *dhcp, ip_t ip_address)

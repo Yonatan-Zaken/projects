@@ -103,7 +103,6 @@ static void UpdateAvailabilityIMP(trie_node_t *node)
             node->availability = OCCUPIED;            
         }    
     }
-
 }
 
 static status_t InsertIMP(trie_node_t *node, char *data)
