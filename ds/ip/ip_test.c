@@ -1,7 +1,7 @@
 /*********************************/
 /*   			             	 */
 /*   Data Structures             */
-/*   Trie                        */
+/*   ip                          */
 /*   Author: Yonatan Zaken       */
 /*   Last Updated 30/1/20        */
 /*   Reviewed by:                */   
@@ -10,7 +10,7 @@
 
 #include <stdio.h> /* printf */
 
-#include "trie.h"
+#include "ip.h"
 
 #define UNUSED(x) (void)(x)
 
@@ -33,28 +33,21 @@
     }\
 }
 
-static void TrieTest1()
+static void IpTest1()
 {
-    trie_t *trie = TrieCreate();
-    char *str1 = "1001";
-    char *str2 = "1110";
-    char *str3 = "0001";
+    unsigned char arr[4] = {5, 5, 8, 8};
+    unsigned char ip1[4] = {232, 232, 199, 252};
+    unsigned char ip2[4] = {232, 232, 199, 252};
+    char buffer[33] = {0};
     
-    printf("TrieTest1:\n");
-    
-    RUN_TEST(SUCCESS == TrieInsert(trie, str1), "insert");
-    RUN_TEST(SUCCESS == TrieInsert(trie, str2), "insert");
-    RUN_TEST(SUCCESS == TrieInsert(trie, str3), "insert");
-    RUN_TEST(3 == TrieCountLeafs(trie), "countleafs");
-    RUN_TEST(1 == TrieIsAvailable(trie, str1), "isavailable");
-    
-    TrieDestroy(trie);
-    printf("\n\n");
+    printf("%s\n", IpConvertAddress(arr, buffer));
+    printf("%d\n", IpIsSame(ip1, ip2));
+
 }
 
 int main()
 {
-    TrieTest1();
-    
+    IpTest1();
+
     return 0;
 }

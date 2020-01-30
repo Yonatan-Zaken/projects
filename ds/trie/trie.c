@@ -3,7 +3,7 @@
 /*   Data Structures             */
 /*   Trie                        */
 /*   Author: Yonatan Zaken       */
-/*   Last Updated 29/1/20        */
+/*   Last Updated 30/1/20        */
 /*   Reviewed by:          */   
 /*			                   	 */
 /*********************************/
@@ -88,38 +88,58 @@ void TrieDestroy(trie_t *trie)
     assert(NULL != trie);
      
     DestroyIMP(trie->root);
+    free(trie); trie = NULL;
+}
+
+static void UpdateAvailabilityIMP(trie_node_t *node)
+{
+    assert(NULL != node);
+    
+    if ((NULL != node->side[LEFT]) && (NULL != node->side[RIGHT]))
+    {
+        if ((OCCUPIED == node->side[LEFT]->availability) &&
+            (OCCUPIED == node->side[RIGHT]->availability))
+        {
+            node->availability = OCCUPIED;            
+        }    
+    }
+
+}
+
+static status_t InsertIMP(trie_node_t *node, char *data)
+{
+    status_t status = 0;
+    
+    assert(NULL != node);
+    
+    if ('\0' == *data)
+    {
+        node->availability = OCCUPIED;
+        return SUCCESS;
+    }
+    
+    if (NULL == node->side[*data - ASCII_0])
+    {
+        
+        if (NULL == (node->side[*data - ASCII_0] = CreateNode()))
+        {
+            return FAIL;
+        }
+    }
+    ++data;
+    status = InsertIMP(node->side[*(data - 1) - ASCII_0], data);
+    
+    UpdateAvailabilityIMP(node);
+    
+    return status;
+    
 }
 
 status_t TrieInsert(trie_t *trie, char *data)
 {
-    size_t side = 0;
-    char *runner = NULL;
-    trie_node_t *node = NULL;
-    
     assert(NULL != trie);
-    assert(NULL != data);
     
-    runner = data;
-    node = trie->root;
-    
-    while (('\0' != *runner) && (VACANT == node->availability))
-    {
-        side = *runner - ASCII_0;
-        if (NULL == node->side[side])
-        {
-            node->side[side] = CreateNode();
-            if (NULL == node->side[side])
-            {
-                return FAIL;
-            }    
-        }
-        
-        node = node->side[side];
-        ++runner; 
-    }
-    
-    node->availability = OCCUPIED;
-    return SUCCESS;    
+    return InsertIMP(trie->root, data);
 }
 
 bool_t TrieIsEmpty(const trie_t *trie)
@@ -146,6 +166,11 @@ size_t TrieSize(const trie_t *trie)
 
 static size_t CountLeafsIMP(trie_node_t *node)
 {
+    if (NULL == node)
+    {
+        return 0;
+    }    
+    
     if ((NULL == node->side[LEFT])  &&
         (NULL == node->side[RIGHT]) && node->availability == OCCUPIED)
     {
@@ -162,7 +187,7 @@ size_t TrieCountLeafs(const trie_t *trie)
     return CountLeafsIMP(trie->root);
 }
 
-bool_t TrieIsExist(const trie_t *trie, char *data)
+bool_t TrieIsAvailable(const trie_t *trie, char *data)
 {
     char *runner = NULL;
     trie_node_t *node = NULL;
@@ -185,5 +210,10 @@ bool_t TrieIsExist(const trie_t *trie, char *data)
     }
     
     return (OCCUPIED == node->availability);
+}
+
+void TrieFreeLeaf(trie_t *trie, char *data)
+{
+
 }
 

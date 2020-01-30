@@ -68,12 +68,20 @@ size_t TrieSize(const trie_t *trie);
 size_t TrieCountLeafs(const trie_t *trie);
 
 /*
-* TrieIsExist() -
-
+* TrieIsAvailable() -
+* checks if the path referenced by data is available
 * undefined behaviour for @trie NULL pointer
 * complexity: O(n);                  
 */
-bool_t TrieIsExist(const trie_t *trie, char *data);
+bool_t TrieIsAvailable(const trie_t *trie, char *data);
+
+/*
+* TrieIsAvailable() -
+* frees the path referenced by data
+* undefined behaviour for @trie NULL pointer
+* complexity: O(n);                  
+*/
+void TrieFreeLeaf(trie_t *trie, char *data);
 
 #endif 
 
