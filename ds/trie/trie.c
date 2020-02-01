@@ -186,10 +186,57 @@ size_t TrieCountLeafs(const trie_t *trie)
     return CountLeafsIMP(trie->root);
 }
 
+bool_t TrieIsExist(trie_t *trie, char *data)
+{
+    trie_node_t *node = NULL;
+    char *runner = NULL;
+    
+    assert(NULL != node);
+    assert(NULL != data);
+    
+    node = trie->root;
+    runner = data;
+    
+    while ('\0' != *runner)
+    {   
+        if (NULL == (node = node->side[*runner - ASCII_0]))
+        {
+            return FALSE;        
+        }
+        ++runner;
+    }
+    
+    return TRUE;
+}
+
 bool_t TrieIsAvailable(const trie_t *trie, char *data)
 {
-    char *runner = NULL;
     trie_node_t *node = NULL;
+    char *runner = NULL;
+    
+    assert(NULL != trie);
+    assert(NULL != data);
+    
+    node = trie->root;    
+    runner = data;
+        
+    while ('\0' != *runner)
+    {
+        if (OCCUPIED == node->availability)
+        {
+            return FALSE;
+        }
+        node = node->side[*runner - ASCII_0];
+        ++runner;
+    }
+    
+    return (VACANT == node->availability);
+}
+
+void TrieFreeLeaf(trie_t *trie, char *data)
+{
+    trie_node_t *node = NULL;
+    char *runner = NULL;
     
     assert(NULL != trie);
     assert(NULL != data);
@@ -199,20 +246,11 @@ bool_t TrieIsAvailable(const trie_t *trie, char *data)
     
     while ('\0' != *runner)
     {
+        node->availability = VACANT;
         node = node->side[*runner - ASCII_0];
-        if (NULL == node)
-        {
-            return FALSE;
-        }
-        
         ++runner;
     }
-    
-    return (OCCUPIED == node->availability);
-}
 
-void TrieFreeLeaf(trie_t *trie, char *data)
-{
-
+    node->availability = VACANT;
 }
 

@@ -38,11 +38,13 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libdhcp.so $(SRC_TEST)
 
 #Debug SO
 $(DIR_DEBUG)libdhcp.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $<
+	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug -Wl,-rpath,'$$ORIGIN' \
+	 -ltrie -L../libdebug -Wl,-rpath,'$$ORIGIN' -lip -lm
 
 #Release SO
 $(DIR_RELEASE)libdhcp.so: $(OBJ_RELEASE)
-	$(CC) $(RFLAGS) -shared -o $@ $<
+	$(CC) $(RFLAGS) -shared -o $@ $< -L../librelease -Wl,-rpath,'$$ORIGIN' \
+	-ltrie -L../libdebug -Wl,-rpath,'$$ORIGIN' -lip -lm
 
 #Debug Object
 $(OBJ_DEBUG): $(SRC) $(INC)    

@@ -83,5 +83,13 @@ bool_t TrieIsAvailable(const trie_t *trie, char *data);
 */
 void TrieFreeLeaf(trie_t *trie, char *data);
 
+/*
+* TrieIsExist() -
+* checks if the path referenced by data exists 
+* undefined behaviour for @trie NULL pointer
+* complexity: O(n);                  
+*/
+bool_t TrieIsExist(trie_t *trie, char *data);
+
 #endif 
 
