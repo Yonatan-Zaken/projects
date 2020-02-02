@@ -2,7 +2,9 @@
 #define __DHCP_H__
 
 #include <stddef.h> /*size_t*/
-   
+
+#define ADDRESS_SIZE_IN_BYTES 4 
+
 typedef struct DHCP dhcp_t;
 
 typedef unsigned char ip_t[ADDRESS_SIZE_IN_BYTES];

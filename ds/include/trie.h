@@ -22,7 +22,7 @@ typedef struct Trie trie_t;
 * Returns pointer to the Trie, will return NULL if failed. 
 * complexity of malloc();       
 */
-trie_t *TrieCreate();
+trie_t *TrieCreate(size_t height);
 
 /*
 * TrieDetroy() -

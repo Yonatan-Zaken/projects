@@ -14,7 +14,6 @@
 #include "trie.h"
 
 #define ASCII_0 48
-#define MASK 0x01U
 
 typedef enum ChildSide
 {
@@ -108,22 +107,8 @@ static void UpdateAvailabilityIMP(trie_node_t *node)
     }
 }
 
-static unsigned char SideFinder(char *data, size_t height)
-{
-    unsigned char shift_holder = (height - 1) % BITS_IN_BYTE;
-    unsigned char result = 0;
-    
-    assert(NULL != data);
-    
-    result = (*(data + (BITS_IN_IP - height) / BITS_IN_BYTE) &
-             (MASK << (height - 1) % BITS_IN_BYTE));
-        
-    return (result >> shift_holder);
-}
-/*
 static status_t InsertIMP(trie_node_t *node, char *data)
 {
-    unsigned char holder = 0;
     status_t status = 0;
     
     assert(NULL != node);
@@ -150,36 +135,12 @@ static status_t InsertIMP(trie_node_t *node, char *data)
     return status;
     
 }
-*/
 
 status_t TrieInsert(trie_t *trie, char *data)
 {
-    size_t height = 0;
-    size_t side = 0;
-    trie_node_t *node = NULL;
-    
     assert(NULL != trie);
     
-    node = trie->root;
-    height = trie->height;
-    
-    while (0 < height)
-    {
-        side = SideFinder(data, height);
-        
-        if (NULL == node->side[side])
-        {
-            if (NULL == (node->side[side] = CreateNode()))
-            {
-                return FAIL;
-            }
-        }
-        
-        node = node->side[side];
-        --height;        
-    }
-    
-    return SUCCESS;   
+    return InsertIMP(trie->root, data);
 }
 
 bool_t TrieIsEmpty(const trie_t *trie)

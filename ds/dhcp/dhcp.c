@@ -33,7 +33,7 @@ dhcp_t *DhcpCreate(ip_t subnet_mask, size_t subnet_mask_reserved_bits)
     dhcp_t *dhcp = malloc(sizeof(*dhcp));
     if (NULL != dhcp)
     {
-        dhcp->trie = TrieCreate();
+        dhcp->trie = TrieCreate(BITS_IN_IP - subnet_mask_reserved_bits);
         if (NULL == dhcp->trie)
         {
             free(dhcp); dhcp = NULL;
@@ -56,7 +56,16 @@ void DhcpDestroy(dhcp_t *dhcp)
 
 alc_status_t DhcpAllocIp(dhcp_t *dhcp, ip_t requested_ip, ip_t allocated_ip)
 {
+    char *buffer = NULL;
+    
     assert(NULL != dhcp);
+    
+    buffer = alloca(sizeof(char) * (BITS_IN_IP + 1));
+    
+    buffer = IpConvertToBinary(requested_ip, buffer);
+    
+    buffer += BITS_IN_IP - dhcp->available_bits;
+    TrieInsert(dhcp->trie, buffer);
     
 }
 
@@ -67,7 +76,7 @@ free_status_t DhcpFreeIp(dhcp_t *dhcp, ip_t ip_address)
     assert(NULL != dhcp);
     
     ip_buffer = (char *)alloca(sizeof(char) * (BITS_IN_IP + 1));
-    ip_buffer = IpConvertAddress(ip_address, ip_buffer) + 
+    ip_buffer = IpConvertToBinary(ip_address, ip_buffer) + 
                      (BITS_IN_IP - dhcp->available_bits); 
                      
     if (FALSE == TrieIsExist(dhcp->trie, ip_buffer))

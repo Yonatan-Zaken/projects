@@ -10,7 +10,7 @@
 
 #include <stdio.h> /* printf */
 
-#include "avl.h"
+#include "dhcp.h"
 
 #define UNUSED(x) (void)(x)
 
@@ -33,8 +33,22 @@
     }\
 }
 
+static void DHCPTest1()
+{
+    ip_t subnet_mask = {192,30,200,6};
+    size_t reserved_bits = 24;
+    dhcp_t *dhcp = DhcpCreate(subnet_mask, reserved_bits);
+    ip_t requested_ip = {192, 30, 200, 15};
+    ip_t allocated_ip = {0};
+    
+    DhcpAllocIp(dhcp, requested_ip, allocated_ip);
+    
+    DhcpDestroy(dhcp);
+}
+
 int main()
 {
-
+    DHCPTest1();
+    
     return 0;
 }

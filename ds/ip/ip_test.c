@@ -40,7 +40,7 @@ static void IpTest1()
     unsigned char ip2[4] = {232, 232, 199, 252};
     char buffer[33] = {0};
     
-    printf("%s\n", IpConvertAddress(arr, buffer));
+    printf("%s\n", IpConvertToBinary(arr, buffer));
     printf("%d\n", IpIsSame(ip1, ip2));
 
 }

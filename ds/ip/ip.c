@@ -16,6 +16,7 @@
 #define BASE 2
 #define ASCII_ZERO 48
 #define BITS_IN_BYTE 8
+#define ADDRESS_SIZE_IN_BYTES 4
 
 #define MASK1 0x55555555
 #define MASK2 0xaaaaaaaa
@@ -55,7 +56,7 @@ static unsigned char MirrorIMP(unsigned char bits)
     return bits;
 }
 
-char *IpConvertAddress(unsigned char ip_address[], char *dest)
+char *IpConvertToBinary(unsigned char ip_address[], char *dest)
 {
     size_t i = 0; 
     char buffer[BITS_IN_BYTE + 1] = {0};
@@ -68,6 +69,28 @@ char *IpConvertAddress(unsigned char ip_address[], char *dest)
     }
     
     return dest;                                       
+}
+
+char *BinaryConvertToIp(char *ip_address, unsigned char dest[])
+{
+    const char *runner = NULL;
+    int result = 0;
+  
+    assert(NULL != ip_address);
+    
+    runner = ip_address;
+    
+    for (i = 0; i < ADDRESS_SIZE_IN_BYTES; ++i)
+    {
+        while ('\0' != *runner)
+        {
+            dest[i] = dest[i] * base + (*runner - ASCII_0);
+            ++runner;
+        }    
+    }
+        
+    return result;
+
 }
 
 int IpIsSame(unsigned char ip1[], unsigned char ip2[])
