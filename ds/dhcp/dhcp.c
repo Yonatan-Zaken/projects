@@ -3,13 +3,11 @@
 /*   Data Structures             */
 /*   DHCP                        */
 /*   Author: Yonatan Zaken       */
-/*   Last Updated 30/1/20        */
-/*   Reviewed by:          */   
+/*   Last Updated 3/2/20         */
+/*   Reviewed by: Raz            */   
 /*			                   	 */
 /*********************************/
-
 #include <stdlib.h> /* malloc */
-#include <alloca.h> /* alloca */
 #include <assert.h> /* assert */
 #include <string.h> /* memcpy */
 #include <math.h> /* pow */
@@ -23,8 +21,6 @@
 #define RESERVED_ADDRESSES 3
 #define MASK 0XFFU
 #define LSB 0x01U
-
-#define INDEX(height) ((BITS_IN_IP - height) / BITS_IN_BYTE)
 
 struct DHCP
 {
@@ -68,7 +64,6 @@ static status_t CheckSubnetIMP(ip_t ip_address, size_t height)
         {
             return FAIL;
         }
-        
         --height;
     }        
     
@@ -117,7 +112,6 @@ static status_t CheckRequestedIMP(dhcp_t *dhcp, ip_t requested_ip)
     size_t shift_holder = 0;
     
     height = dhcp->available_bits;
-    shift_holder = height % BITS_IN_BYTE;
     memcpy(requested, requested_ip, ADDRESS_SIZE_IN_BYTES);
     
     while (0 < height)
@@ -139,16 +133,26 @@ static status_t CheckRequestedIMP(dhcp_t *dhcp, ip_t requested_ip)
     return !(0 == memcmp(requested, dhcp->subnet_mask, ADDRESS_SIZE_IN_BYTES));
 }
 
+static void GetMinAddress(ip_t ip_address, size_t height)
+{
+    while (0 < height)
+    {
+        *(ip_address + (BITS_IN_IP - height) / BITS_IN_BYTE) &= 
+                        (LSB << ((height - 1) % BITS_IN_BYTE));
+        --height;
+    }        
+}
+
 alc_status_t DhcpAllocIp(dhcp_t *dhcp, ip_t requested_ip, ip_t allocated_ip)
 { 
     assert(NULL != dhcp);
+    assert(FAIL != CheckRequestedIMP(dhcp, requested_ip));
     
     memcpy(allocated_ip, requested_ip, ADDRESS_SIZE_IN_BYTES);
     
-    assert(FAIL != CheckRequestedIMP(dhcp, requested_ip));
-    
     if (!TrieIsAvailable(dhcp->trie, requested_ip))
     {
+         GetMinAddress(allocated_ip, dhcp->available_bits);
          TrieNextAvailable(dhcp->trie, allocated_ip);
          if (FAIL == TrieInsert(dhcp->trie, allocated_ip))
          {
@@ -168,6 +172,10 @@ alc_status_t DhcpAllocIp(dhcp_t *dhcp, ip_t requested_ip, ip_t allocated_ip)
 free_status_t DhcpFreeIp(dhcp_t *dhcp, ip_t ip_address)
 { 
     assert(NULL != dhcp);
+    if (FAIL == CheckRequestedIMP(dhcp, ip_address))
+    {
+        return ADDRESS_NOT_FOUND;
+    }
                     
     TrieFreeLeaf(dhcp->trie, ip_address);
     return ADDRESS_FOUND;

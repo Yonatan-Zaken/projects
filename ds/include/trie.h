@@ -76,13 +76,11 @@ bool_t TrieIsAvailable(const trie_t *trie, unsigned char *data);
 void TrieFreeLeaf(trie_t *trie, unsigned char *data);
 
 /*
-* TrieIsExist() -
-* checks if the path referenced by data exists 
+* TrieNextAvailable() -
+* Finds the smallest next available address
 * undefined behaviour for @trie NULL pointer
-* complexity: O(n);                  
+* complexity: O(log(n));
 */
-bool_t TrieIsExist(trie_t *trie, unsigned char *data);
-
 void TrieNextAvailable(trie_t *trie, unsigned char *ip_buffer);
 
 #endif 

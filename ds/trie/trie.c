@@ -14,7 +14,6 @@
 
 #include "trie.h"
 
-#define ASCII_0 48
 #define MASK 0x01U
 #define BITS_IN_BYTE 8
 #define BITS_IN_IP 32
@@ -141,8 +140,7 @@ static status_t InsertIMP(trie_node_t *node, unsigned char *data, size_t height)
     }
     
     if (NULL == node->side[side])
-    {
-        
+    {     
         if (NULL == (node->side[side] = CreateNode()))
         {
             return FAIL;
@@ -150,11 +148,9 @@ static status_t InsertIMP(trie_node_t *node, unsigned char *data, size_t height)
     }
     --height;
     status = InsertIMP(node->side[side], data, height);
-    
     UpdateAvailabilityIMP(node);
     
     return status;
-    
 }
 
 status_t TrieInsert(trie_t *trie, unsigned char *data)
@@ -193,29 +189,6 @@ size_t TrieCountLeafs(const trie_t *trie)
     return CountLeafsIMP(trie->root);
 }
 
-bool_t TrieIsExist(trie_t *trie, unsigned char *data)
-{
-    trie_node_t *node = NULL;
-    unsigned char *runner = NULL;
-    
-    assert(NULL != node);
-    assert(NULL != data);
-    
-    node = trie->root;
-    runner = data;
-    
-    while ('\0' != *runner)
-    {   
-        if (NULL == (node = node->side[*runner - ASCII_0]))
-        {
-            return FALSE;        
-        }
-        ++runner;
-    }
-    
-    return TRUE;
-}
-
 bool_t TrieIsAvailable(const trie_t *trie, unsigned char *data)
 {
     trie_node_t *node = NULL;
@@ -227,13 +200,8 @@ bool_t TrieIsAvailable(const trie_t *trie, unsigned char *data)
     node = trie->root;    
     height = trie->height;
     
-    while (0 < height)
+    while ((0 < height) && (NULL != node->side[SideFinderIMP(data, height)]))
     {
-        if (NULL == node)
-        {
-            return TRUE;
-        }
-        
         node = node->side[SideFinderIMP(data, height)]; 
         --height;
     }
@@ -283,8 +251,7 @@ static void NextAvailableIMP(trie_node_t *node, size_t height, unsigned char *bu
     else
     {
         *(buffer + (BITS_IN_IP - height) / BITS_IN_BYTE) |= 
-                     (MASK << (height - 1) % BITS_IN_BYTE);
-                     
+                     (MASK << (height - 1) % BITS_IN_BYTE);           
         NextAvailableIMP(node->side[RIGHT], --height, buffer);
     } 
 }
