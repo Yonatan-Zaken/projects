@@ -35,28 +35,30 @@
 
 static void TrieTest1()
 {
-    trie_t *trie = TrieCreate();
-    char *str1 = "00";
-    char *str2 = "01";
-    char *str3 = "10";
-    char *str4 = "11";
+    trie_t *trie = TrieCreate(2);
+    unsigned char ip1[4] = {255, 255, 255, 252};
+    unsigned char ip2[4] = {255, 255, 255, 253};
+    unsigned char ip3[4] = {255, 255, 255, 254};
+    unsigned char ip4[4] = {255, 255, 255, 255};
+    
+    unsigned char next_available[4] = {0};
     
     printf("TrieTest1:\n");
     
-    RUN_TEST(SUCCESS == TrieInsert(trie, str1), "insert");
-    RUN_TEST(SUCCESS == TrieInsert(trie, str2), "insert");
-    RUN_TEST(SUCCESS == TrieInsert(trie, str3), "insert");
-    RUN_TEST(SUCCESS == TrieInsert(trie, str4), "insert");
+    RUN_TEST(SUCCESS == TrieInsert(trie, ip1), "insert");
+    RUN_TEST(SUCCESS == TrieInsert(trie, ip2), "insert");
+    RUN_TEST(SUCCESS == TrieInsert(trie, ip3), "insert");
+    RUN_TEST(SUCCESS == TrieInsert(trie, ip4), "insert");
     
     RUN_TEST(4 == TrieCountLeafs(trie), "countleafs");
-    RUN_TEST(FALSE == TrieIsAvailable(trie, str1), "isavailable");
-    TrieFreeLeaf(trie, str1);
-    RUN_TEST(3 == TrieCountLeafs(trie), "countleafs");
-    TrieFreeLeaf(trie, str3);
-    RUN_TEST(2 == TrieCountLeafs(trie), "countleafs");
-    RUN_TEST(TRUE == TrieIsAvailable(trie, str1), "isavailable");
-    RUN_TEST(TRUE == TrieIsAvailable(trie, str3), "isavailable");
     
+    RUN_TEST(FALSE == TrieIsAvailable(trie, ip1), "isavailable");
+    TrieFreeLeaf(trie, ip3);
+    RUN_TEST(3 == TrieCountLeafs(trie), "countleafs");
+
+    RUN_TEST(TRUE == TrieIsAvailable(trie, ip3), "isavailable");
+    
+    TrieNextAvailable(trie, next_available);
     
     TrieDestroy(trie);
     printf("\n\n");

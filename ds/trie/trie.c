@@ -10,11 +10,15 @@
 
 #include <stdlib.h> /* malloc */
 #include <assert.h> /* assert */
+#include <string.h> /* memcpy */
 
 #include "trie.h"
 
 #define ASCII_0 48
 #define MASK 0x01U
+#define BITS_IN_BYTE 8
+#define BITS_IN_IP 32
+#define ADDRESS_SIZE_IN_BYTES 4
 
 typedef enum ChildSide
 {
@@ -108,7 +112,7 @@ static void UpdateAvailabilityIMP(trie_node_t *node)
     }
 }
 
-static unsigned char SideFinder(char *data, size_t height)
+static unsigned char SideFinderIMP(unsigned char *data, size_t height)
 {
     unsigned char shift_holder = (height - 1) % BITS_IN_BYTE;
     unsigned char result = 0;
@@ -116,92 +120,54 @@ static unsigned char SideFinder(char *data, size_t height)
     assert(NULL != data);
     
     result = (*(data + (BITS_IN_IP - height) / BITS_IN_BYTE) &
-             (MASK << (height - 1) % BITS_IN_BYTE));
+             (MASK << ((height - 1) % BITS_IN_BYTE)));
         
     return (result >> shift_holder);
 }
-/*
-static status_t InsertIMP(trie_node_t *node, char *data)
+
+static status_t InsertIMP(trie_node_t *node, unsigned char *data, size_t height)
 {
-    unsigned char holder = 0;
+    unsigned char side = 0;
     status_t status = 0;
     
     assert(NULL != node);
     
-    if ('\0' == *data)
+    side = SideFinderIMP(data, height);
+    
+    if (0 == height)
     {
         node->availability = OCCUPIED;
         return SUCCESS;
     }
     
-    if (NULL == node->side[*data - ASCII_0])
+    if (NULL == node->side[side])
     {
         
-        if (NULL == (node->side[*data - ASCII_0] = CreateNode()))
+        if (NULL == (node->side[side] = CreateNode()))
         {
             return FAIL;
         }
     }
-    ++data;
-    status = InsertIMP(node->side[*(data - 1) - ASCII_0], data);
+    --height;
+    status = InsertIMP(node->side[side], data, height);
     
     UpdateAvailabilityIMP(node);
     
     return status;
     
 }
-*/
 
-status_t TrieInsert(trie_t *trie, char *data)
+status_t TrieInsert(trie_t *trie, unsigned char *data)
 {
-    size_t height = 0;
-    size_t side = 0;
-    trie_node_t *node = NULL;
-    
     assert(NULL != trie);
+    assert(NULL != data);
     
-    node = trie->root;
-    height = trie->height;
-    
-    while (0 < height)
-    {
-        side = SideFinder(data, height);
-        
-        if (NULL == node->side[side])
-        {
-            if (NULL == (node->side[side] = CreateNode()))
-            {
-                return FAIL;
-            }
-        }
-        
-        node = node->side[side];
-        --height;        
-    }
-    
-    return SUCCESS;   
+    return InsertIMP(trie->root, data, trie->height);
 }
 
 bool_t TrieIsEmpty(const trie_t *trie)
 {
     return ((NULL == trie->root->side[LEFT]) && (NULL == trie->root->side[RIGHT]));
-}
-
-static size_t SizeIMP(trie_node_t *node)
-{
-    if (NULL == node)
-    {
-        return 0;
-    }
-    
-    return (1 + SizeIMP(node->side[LEFT]) + SizeIMP(node->side[RIGHT]));
-}
-
-size_t TrieSize(const trie_t *trie)
-{
-    assert(NULL != trie);
-    
-    return SizeIMP(trie->root);
 }
 
 static size_t CountLeafsIMP(trie_node_t *node)
@@ -227,10 +193,10 @@ size_t TrieCountLeafs(const trie_t *trie)
     return CountLeafsIMP(trie->root);
 }
 
-bool_t TrieIsExist(trie_t *trie, char *data)
+bool_t TrieIsExist(trie_t *trie, unsigned char *data)
 {
     trie_node_t *node = NULL;
-    char *runner = NULL;
+    unsigned char *runner = NULL;
     
     assert(NULL != node);
     assert(NULL != data);
@@ -250,91 +216,82 @@ bool_t TrieIsExist(trie_t *trie, char *data)
     return TRUE;
 }
 
-bool_t TrieIsAvailable(const trie_t *trie, char *data)
+bool_t TrieIsAvailable(const trie_t *trie, unsigned char *data)
 {
     trie_node_t *node = NULL;
-    char *runner = NULL;
+    size_t height = 0;
     
     assert(NULL != trie);
     assert(NULL != data);
     
     node = trie->root;    
-    runner = data;
-        
-    while ('\0' != *runner)
+    height = trie->height;
+    
+    while (0 < height)
     {
-        if (OCCUPIED == node->availability)
+        if (NULL == node)
         {
-            return FALSE;
+            return TRUE;
         }
-        node = node->side[*runner - ASCII_0];
-        ++runner;
+        
+        node = node->side[SideFinderIMP(data, height)]; 
+        --height;
     }
     
     return (VACANT == node->availability);
 }
 
-void TrieFreeLeaf(trie_t *trie, char *data)
+void TrieFreeLeaf(trie_t *trie, unsigned char *data)
 {
     trie_node_t *node = NULL;
-    char *runner = NULL;
+    size_t height = 0;
     
     assert(NULL != trie);
     assert(NULL != data);
     
     node = trie->root;
-    runner = data;
+    height = trie->height;
     
-    while ('\0' != *runner)
+    while ((0 < height) && (NULL != node))
     {
         node->availability = VACANT;
-        node = node->side[*runner - ASCII_0];
-        ++runner;
+        node = node->side[SideFinderIMP(data, height)];
+        --height;
     }
-
+    
+    if (NULL == node)
+    {
+        return;
+    }
     node->availability = VACANT;
 }
 
-static void CreatePath(char *buffer, size_t remaining_bits)
+static void NextAvailableIMP(trie_node_t *node, size_t height, unsigned char *buffer) 
 {
-    char *runner = NULL;
-    
-    assert(NULL != buffer);
-    
-    runner = buffer;
-    
-    while (remaining_bits > 0)
+    if ((NULL == node) || (0 == height))
     {
-        *runner = '0';
-        ++runner;
-        --remaining_bits;
+        return;  
     }
+    
+    if (VACANT == node->side[LEFT]->availability)
+    {
+        *(buffer + (BITS_IN_IP - height) / BITS_IN_BYTE) &= 
+                     ~(MASK << (height - 1) % BITS_IN_BYTE);
+        NextAvailableIMP(node->side[LEFT], --height, buffer); 
+    }
+    
+    else
+    {
+        *(buffer + (BITS_IN_IP - height) / BITS_IN_BYTE) |= 
+                     (MASK << (height - 1) % BITS_IN_BYTE);
+                     
+        NextAvailableIMP(node->side[RIGHT], --height, buffer);
+    } 
 }
 
-
-char *TrieFirstAvailable(trie_t *trie, size_t available_bits, char *buffer)
-{
-    size_t i = 0;
-    char *runner = NULL;
-    size_t remaining_bits = available_bits;
-    
+void TrieNextAvailable(trie_t *trie, unsigned char *ip_allocated)
+{  
     assert(NULL != trie);
-    assert(NULL != data);
     
-    runner = buffer;
-    
-    for (i = 0; i < available_bits; ++i)
-    {
-        if (NULL == node->side[LEFT])
-        {
-            CreatePath(buffer, remaining_bits);    
-        }
-        
-        else if (VACANT == node->side[LEFT])
-        {
-            *buffer = '0';
-            ++buffer;
-        }
-    }
-    
+    NextAvailableIMP(trie->root, trie->height, ip_allocated);
 }

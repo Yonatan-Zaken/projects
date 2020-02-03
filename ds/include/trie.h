@@ -38,7 +38,7 @@ void TrieDestroy(trie_t *trie);
 * undefined behaviour for @trie NULL pointer
 * complexity: malloc();                  
 */
-status_t TrieInsert(trie_t *trie, char *data);
+status_t TrieInsert(trie_t *trie, unsigned char *data);
 
 /*
 * TrieIsEmpty() -
@@ -50,14 +50,6 @@ status_t TrieInsert(trie_t *trie, char *data);
 * complexity: O(1);                  
 */
 bool_t TrieIsEmpty(const trie_t *trie);
-
-/*
-* TrieSize() -
-* Counts the number of elements in the trie.
-* undefined behaviour for @trie NULL pointer
-* complexity: O(n);                  
-*/
-size_t TrieSize(const trie_t *trie);
 
 /*
 * TrieCountLeafs() -
@@ -73,7 +65,7 @@ size_t TrieCountLeafs(const trie_t *trie);
 * undefined behaviour for @trie NULL pointer
 * complexity: O(n);                  
 */
-bool_t TrieIsAvailable(const trie_t *trie, char *data);
+bool_t TrieIsAvailable(const trie_t *trie, unsigned char *data);
 
 /*
 * TrieIsAvailable() -
@@ -81,7 +73,7 @@ bool_t TrieIsAvailable(const trie_t *trie, char *data);
 * undefined behaviour for @trie NULL pointer
 * complexity: O(n);                  
 */
-void TrieFreeLeaf(trie_t *trie, char *data);
+void TrieFreeLeaf(trie_t *trie, unsigned char *data);
 
 /*
 * TrieIsExist() -
@@ -89,7 +81,9 @@ void TrieFreeLeaf(trie_t *trie, char *data);
 * undefined behaviour for @trie NULL pointer
 * complexity: O(n);                  
 */
-bool_t TrieIsExist(trie_t *trie, char *data);
+bool_t TrieIsExist(trie_t *trie, unsigned char *data);
+
+void TrieNextAvailable(trie_t *trie, unsigned char *ip_buffer);
 
 #endif 
 

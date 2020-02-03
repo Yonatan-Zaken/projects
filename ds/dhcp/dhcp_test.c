@@ -33,17 +33,32 @@
     }\
 }
 
+static void PrintIP(ip_t ip)
+{
+    size_t i = 0;
+    
+    for (i = 0; i < 4; ++i)
+    {
+        printf("%u.", ip[i]);    
+    }
+}
+
 static void DHCPTest1()
 {
-    ip_t subnet_mask = {192,30,200,6};
-    size_t reserved_bits = 24;
-    dhcp_t *dhcp = DhcpCreate(subnet_mask, reserved_bits);
-    ip_t requested_ip = {192, 30, 200, 15};
+    ip_t subnet_mask = {192,50,72,0};
+    ip_t requested_ip = {192, 50, 72, 0};
+    size_t reserved_bits = 30;
     ip_t allocated_ip = {0};
     
+    dhcp_t *dhcp = DhcpCreate(subnet_mask, reserved_bits);
+
+    RUN_TEST(1 == DhcpCountFree(dhcp), "countfree");
+
     DhcpAllocIp(dhcp, requested_ip, allocated_ip);
-    
+    PrintIP(allocated_ip);
+
     DhcpDestroy(dhcp);
+    printf("\n\n");
 }
 
 int main()
