@@ -58,8 +58,10 @@ alc_status_t DhcpAllocIp(dhcp_t *dhcp, ip_t requested_ip, ip_t allocated_ip);
 * DhcpFreeIp() -
 * frees the @ip_address from the dhcp
 * undefined behaviour for @dhcp NULL pointer
+* undefined behavior for freeing reserved addresses: 
+* 0.0.0.0, 255.255.255.255, 255.255.255.254
 * return value: 
-    - SUCCESS 
+    - ADDRESS_FOUND 
     - ADDRESS_NOT_FOUND   
 * complexity: Olog(n)            
 */

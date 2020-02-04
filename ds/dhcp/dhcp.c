@@ -31,28 +31,18 @@ struct DHCP
 
 static status_t ReservedAddressIMP(trie_t *trie)
 {
+    status_t insert_status = 0; 
     ip_t min_address = {0, 0, 0 ,0};
     ip_t max_address = {255, 255, 255, 255};
     ip_t before_max_address = {255, 255, 255, 254};
     
     assert(NULL != trie);
     
-    if (SUCCESS != TrieInsert(trie, min_address))
-    {
-        return FAIL;
-    }
-    
-    if (SUCCESS != TrieInsert(trie, max_address))
-    {
-        return FAIL;
-    }
-    
-    if (SUCCESS != TrieInsert(trie, before_max_address))
-    {
-        return FAIL;
-    }
-    
-    return SUCCESS;
+    insert_status += TrieInsert(trie, min_address);
+    insert_status += TrieInsert(trie, max_address);
+    insert_status += TrieInsert(trie, before_max_address);
+
+    return insert_status;
 }
 
 static status_t CheckSubnetIMP(ip_t ip_address, size_t height)
@@ -88,9 +78,9 @@ dhcp_t *DhcpCreate(ip_t subnet_mask, size_t subnet_mask_reserved_bits)
     
     assert(FAIL != CheckSubnetIMP(subnet_mask, dhcp->available_bits));
     
-    if (FAIL == ReservedAddressIMP(dhcp->trie))
+    if (SUCCESS != ReservedAddressIMP(dhcp->trie))
     {
-        free(dhcp); dhcp = NULL;
+        DhcpDestroy(dhcp);
         return NULL;    
     }
     
@@ -149,6 +139,11 @@ alc_status_t DhcpAllocIp(dhcp_t *dhcp, ip_t requested_ip, ip_t allocated_ip)
     assert(FAIL != CheckRequestedIMP(dhcp, requested_ip));
     
     memcpy(allocated_ip, requested_ip, ADDRESS_SIZE_IN_BYTES);
+    
+    if (0 == DhcpCountFree(dhcp))
+    {
+        return FAIL_TO_ALLOC;
+    }
     
     if (!TrieIsAvailable(dhcp->trie, requested_ip))
     {

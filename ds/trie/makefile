@@ -30,11 +30,11 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(DIR_DEBUG)libtrie.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) $(LDFLAGS_DEBUG) -o $@ $(SRC_TEST) -ltrie
+	$(CC) $(CFLAGS) $(LDFLAGS_DEBUG) -o $@ $(SRC_TEST) -ltrie -lm
 
 #Release Out	
 $(TARGET_RELEASE): $(DIR_RELEASE)libtrie.so $(SRC_TEST) 
-	$(CC) $(RFLAGS) $(LDFLAGS_RELEASE) -o $@ $(SRC_TEST) -ltrie	
+	$(CC) $(RFLAGS) $(LDFLAGS_RELEASE) -o $@ $(SRC_TEST) -ltrie	-lm
 
 #Debug SO
 $(DIR_DEBUG)libtrie.so: $(OBJ_DEBUG)

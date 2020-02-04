@@ -71,7 +71,8 @@ static void DHCPTest2()
          request2 = {200, 15, 150, 2},
          request3 = {200, 15, 150, 4},
          request4 = {200, 15, 150, 7},
-         request5 = {200, 15, 151, 7};
+         request5 = {200, 15, 151, 7},
+         request6 = {200, 15, 150, 6};
     ip_t allocated_ip = {0};
         
     printf("DHCP Test2:\n");
@@ -104,6 +105,16 @@ static void DHCPTest2()
     
     RUN_TEST(ADDRESS_NOT_FOUND == DhcpFreeIp(dhcp, request5), "free");
     RUN_TEST(ADDRESS_FOUND == DhcpFreeIp(dhcp, request2), "free");
+    RUN_TEST(2 == DhcpCountFree(dhcp), "countfree");
+    
+    RUN_TEST(AS_REQUESTED == DhcpAllocIp(dhcp, request2, allocated_ip), "Alloc");
+    RUN_TEST(1 == DhcpCountFree(dhcp), "countfree");
+    PrintIP(allocated_ip);
+    
+    RUN_TEST(NOT_AS_REQUESTED == DhcpAllocIp(dhcp, request6, allocated_ip), "Alloc");
+    RUN_TEST(0 == DhcpCountFree(dhcp), "countfree");
+    
+    RUN_TEST(FAIL_TO_ALLOC == DhcpAllocIp(dhcp, request6, allocated_ip), "Alloc");
     
     DhcpDestroy(dhcp);
     printf("\n\n");

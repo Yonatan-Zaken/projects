@@ -243,8 +243,6 @@ static void NextAvailableIMP(trie_node_t *node, size_t height, unsigned char *bu
     
     if (VACANT == node->side[LEFT]->availability)
     {
-        *(buffer + (BITS_IN_IP - height) / BITS_IN_BYTE) &= 
-                     ~(MASK << (height - 1) % BITS_IN_BYTE);
         NextAvailableIMP(node->side[LEFT], --height, buffer); 
     }
     
