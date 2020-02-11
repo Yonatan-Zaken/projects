@@ -16,7 +16,7 @@
 #include "trie.h"
 #include "dhcp.h"
 
-#define BITS_IN_IP 32
+#define BITS_IN_IP (32)
 #define BITS_IN_BYTE 8
 #define RESERVED_ADDRESSES 3
 #define MASK 0XFFU
