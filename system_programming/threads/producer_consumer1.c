@@ -1,12 +1,11 @@
 #include <pthread.h> /* pthread_create */
 #include <unistd.h>  /* sleep */
 #include <stdio.h>   /* printf */
-#include <stdatomic.h>
+#include <stdatomic.h> /* atomic_int */
 
-#define FAIL 1;
-#define NUM_OF_ELEMENTS 5
-#define COUNTER 100 
-#define NUM_OF_THREADS 2
+#define FAIL 1
+#define NUM_OF_ELEMENTS 50
+#define COUNTER 50
 
 enum 
 {
@@ -16,26 +15,22 @@ enum
 
 int arr[NUM_OF_ELEMENTS] = {0};
 
-atomic_int flag = READ;
-
-/*atomic_flag_test_and_set(volatile atomic_flag* obj);*/
+atomic_int flag = WRITE;
 
 void *Producer(void *param)
 {
     size_t i = 0;
     size_t j = 0;
     
-    while ((COUNTER > j))
+    for (i = 0; i < COUNTER; ++i)
     {
-        while (READ == flag);
-        for (i = 0; i < NUM_OF_ELEMENTS; ++i)
+        while (__sync_lock_test_and_set(&flag, READ));
+        for (j = 0; j < NUM_OF_ELEMENTS; ++j)
         {
-            arr[i] += 1;            
+            ++arr[j];            
         }
-        ++j;
-        flag = READ;
-    }
-        
+         __sync_lock_test_and_set(&flag, WRITE);      
+    }     
 }
 
 void *Consumer(void *param)
@@ -43,17 +38,16 @@ void *Consumer(void *param)
     size_t i = 0;
     size_t j = 0;
     
-    while ((COUNTER > j))
+    for (i = 0; i < COUNTER; ++i)
     {
-        while (WRITE == flag);
-        for (i = 0; i < NUM_OF_ELEMENTS; ++i)
+        while (__sync_lock_test_and_set(&flag, READ));
+        for (j = 0; j < NUM_OF_ELEMENTS; ++j)
         {
-            printf("%d\n", arr[i]);        
+            printf("%d", arr[i]);            
         }
-        ++j;
-        flag = WRITE;    
-    }
-  
+        printf("\n");
+         __sync_lock_test_and_set(&flag, WRITE);      
+    }   
 }
 
 int main()
