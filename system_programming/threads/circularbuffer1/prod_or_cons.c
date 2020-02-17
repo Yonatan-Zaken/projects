@@ -1,37 +1,30 @@
 #include <stdio.h>   /* printf */
-#include <unistd.h>  /* sleep */
 #include <assert.h>  /* assert */
 #include <pthread.h> /* pthread_create */
-#include <stdatomic.h> /* atomic_int */
+#include <semaphore.h> /* sem_init */
 
-#include "dllist.h"
+#include "circularbuffer.h"
 
 #define FAIL 1
-#define PRODUCERS 5
-#define CONSUMERS 20
+#define PRODUCERS 8
+#define CONSUMERS 5
+#define CAPACITY 5
 
-enum 
-{
-    WRITE,
-    READ
-};
-
-enum
-{
-    RELEASE,
-    LOCK
-};
-
-pthread_mutex_t lock;
-int insert_value = 1;
+pthread_mutex_t lock = {0};
+sem_t prod_jobs = {0};
+sem_t cons_jobs = {0};
+int insert_value = 0;
 
 void *Producer(void *data)
 {
     assert(NULL != data);
     
+    sem_wait(&prod_jobs);
     pthread_mutex_lock(&lock);
-    DLLPushBack((dll_t *)data, &insert_value); 
-    printf("size: %lu\n", DLLSize((dll_t*)data));   
+    CBufferWrite((cbuffer_t*)data, insert_value);
+    printf("Write %d\n", insert_value);
+    ++insert_value;     
+    sem_post(&cons_jobs);
     pthread_mutex_unlock(&lock); 
     
     return NULL;   
@@ -41,39 +34,37 @@ void *Consumer(void *data)
 {
     assert(NULL != data);
     
-    while (1)
-    {
-        pthread_mutex_lock(&lock); 
-        if (!DLLIsEmpty((dll_t*)data))
-        {    
-            printf("%d\n", *(int*)DLLPopFront((dll_t *)data)); 
-        }  
-        pthread_mutex_unlock(&lock);
-    }
-     return NULL;
+    sem_wait(&cons_jobs);
+    pthread_mutex_lock(&lock);
+    printf("%d\n", CBufferRead((cbuffer_t *)data));
+    sem_post(&prod_jobs);
+    pthread_mutex_unlock(&lock);
+    
+    return NULL;
 }    
 
 int main()
 {
     size_t i = 0;
     int status = 0;
-    int insert_value = 1;
-    dll_t *dll = NULL;
+    cbuffer_t *cbuffer = NULL;
     
     pthread_t producers[PRODUCERS];
     pthread_t consumers[CONSUMERS];
     
     pthread_mutex_init(&lock, NULL);
-    
-    dll = DLLCreate();
-    if (NULL == dll)
+    sem_init (&prod_jobs, 0, CAPACITY);
+    sem_init (&cons_jobs, 0, 0);
+
+    cbuffer = CBufferCreate(CAPACITY);
+    if (NULL == cbuffer)
     {
         return FAIL;
     }
     
     for (i = 0; i < PRODUCERS; ++i)
     {
-        status = pthread_create(&(producers[i]), NULL, Producer, dll);
+        status = pthread_create(&(producers[i]), NULL, Producer, cbuffer);
         if (0 != status)
         {
             printf("Error pthread_create\n");
@@ -83,7 +74,7 @@ int main()
     
     for (i = 0; i < CONSUMERS; ++i)
     {
-        status = pthread_create(&(consumers[i]), NULL, Consumer, dll);
+        status = pthread_create(&(consumers[i]), NULL, Consumer, cbuffer);
         if (0 != status)
         {
             printf("Error pthread_create\n");
@@ -101,8 +92,15 @@ int main()
         pthread_join(consumers[i], NULL);
     }
     
-    DLLDestroy(dll);
+    for (i = 0; i < CAPACITY; ++i)
+    {
+        printf("arr[%ld] = %d\n", i, cbuffer->arr[i]);
+    }
+    
+    CBufferDestroy(cbuffer);
     pthread_mutex_destroy(&lock);
+    sem_destroy(&prod_jobs);
+    sem_destroy(&cons_jobs);
     
     return 0;
 }

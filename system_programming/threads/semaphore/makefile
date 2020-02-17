@@ -2,7 +2,7 @@
 
 #flags
 CC=gcc   
-CFLAGS=-ansi -pedantic-errors -Wall -Wextra -g -I../../ds/include
+CFLAGS=-ansi -pedantic-errors -Wall -Wextra -g -I../../../ds/include
 RFLAGS=-ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3 -I../include 
 LDFLAGS_DEBUG=-L../libdebug -Wl,-rpath=../../libdebug
 LDFLAGS_RELEASE=-L../librelease -Wl,-rpath=../../librelease
@@ -13,7 +13,7 @@ SRC=producer_consumer4.c
 OBJ_DEBUG=./producer_consumer4.o
 SRC_TEST=producer_consumer4.c
 DIR_DEBUG=../libdebug/
-INC=../../ds/include/dllist.h
+INC=../../../ds/include/dllist.h
 
 .PHONY: clean release debug all
 
@@ -24,7 +24,7 @@ test: $(TARGET_DEBUG)
 #Debug Out
 $(TARGET_DEBUG): $(SRC_TEST) 
 	$(CC) $(CFLAGS) $(LDFLAGS_DEBUG) -o $@ $(SRC_TEST) \
-	-L../../ds/libdebug -Wl,-rpath,'$$ORIGIN/../../ds/libdebug' -ldll -pthread
+	-L../../../ds/libdebug -Wl,-rpath,'$$ORIGIN/../../../ds/libdebug' -ldll -pthread
 
 #Debug Object
 $(OBJ_DEBUG): $(SRC) $(INC)    

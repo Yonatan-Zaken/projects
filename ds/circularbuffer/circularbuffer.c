@@ -7,7 +7,6 @@
 /*			                   	 */
 /*********************************/
 
-#include <sys/types.h> /* ssize_t & size_t */
 #include <stdlib.h>    /* malloc */
 #include <string.h>    /* memcpy */
 #include <assert.h>    /* assert */
