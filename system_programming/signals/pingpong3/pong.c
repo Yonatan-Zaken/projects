@@ -7,32 +7,6 @@
 #include <sys/wait.h>
 #include <assert.h>
 
-
-int MyAtoi(const char *str, int base)
-{
-    const char *runner = str;
-    int result = 0;
-    int sign = 1;
-    
-    assert(NULL != str);
-    
-    if ('-' == *runner)
-    {
-        sign = -1;
-        ++runner;
-    }
-    
-    /*ReverseStr((char*)runner);*/
-    
-    while ('\0' != *runner)
-    {
-        result = result * base + ((*runner) - 48);
-        ++runner;
-    }    
-    
-    return (result * sign);
-}
-
 void handler(int sig)
 {
     write(1, "pong\n", 6);
@@ -50,7 +24,7 @@ int main(int argc, char *argv[])
     
     while (j < 500)
     {   
-        kill(MyAtoi(argv[1],10), SIGUSR1);   
+        kill(atoi(argv[1]), SIGUSR1);   
         pause();
         ++j;
     }            

@@ -11,7 +11,7 @@ pthread_mutex_t lock = {0};
 sem_t prod_jobs = {0};
 pthread_cond_t producer_cond = {0};
 
-size_t counter = 0;
+size_t signal_flag = 0;
 int product_job = 0;
 
 void *Producer(void *data)
@@ -20,43 +20,41 @@ void *Producer(void *data)
     
     while (1)
     {
-        pthread_mutex_lock(&lock);
-        ++product_job;
-        printf("job done!\n");
         for (i = 0; i < CONSUMERS; ++i)
         {
-            sem_post(&prod_jobs);
+            sem_wait(&prod_jobs);
         }
-
-        pthread_cond_wait(&producer_cond, &lock);    
+        pthread_mutex_lock(&lock);
+        printf("job done!\n");
+        ++product_job;
+        pthread_cond_broadcast(&producer_cond);
         pthread_mutex_unlock(&lock);     
     }  
     
-    return NULL;    
+    return data;    
 }
 
 void *Consumer(void *data)
 {
+    int flag = 0;
+    
     while (1)
     {
-        sem_wait(&prod_jobs);
+        flag = product_job;
         pthread_mutex_lock(&lock);
-        printf("%d\n", product_job);
-        ++counter;
-        
-        if (CONSUMERS == counter)
+        sem_post(&prod_jobs);        
+        while (flag == product_job)
         {
-            counter = 0;
-            pthread_cond_broadcast(&producer_cond);
+            pthread_cond_wait(&producer_cond, &lock);     
         }
-        
+        printf("%d\n", product_job);
         pthread_mutex_unlock(&lock);
     }
     
-    return NULL;
+    return data;
 }    
 
-int main()
+int main()  
 {
     size_t i = 0;
     int status = 0;

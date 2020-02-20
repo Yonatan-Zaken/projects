@@ -1,5 +1,4 @@
 #include <stdio.h>   /* printf */
-#include <time.h>    /* time */
 #include <assert.h>  /* assert */
 #include <pthread.h> /* pthread_create */
 #include <stdatomic.h> /* atomic_int */
@@ -27,25 +26,18 @@ void *Producer(void *data)
 
 void *Consumer(void *data)
 {
- 
-    time_t end = 0;
-    time_t start = time(NULL);
-    time_t seconds = 7; 
-
     assert(NULL != data);
 
-    end = start + seconds;   
-       
-    while (start < end)
-    {
-        start = time(NULL);
-        pthread_mutex_lock(&lock); 
-        if (!DLLIsEmpty((dll_t*)data))
-        {    
-            printf("Pop Output: %d\n", *(int*)DLLPopFront((dll_t *)data)); 
-        }  
+    pthread_mutex_lock(&lock); 
+    while (DLLIsEmpty((dll_t*)data))
+    {    
         pthread_mutex_unlock(&lock);
-    }
+        pthread_mutex_lock(&lock);    
+    }  
+
+    printf("Pop Output: %d\n", *(int*)DLLPopFront((dll_t *)data)); 
+    pthread_mutex_unlock(&lock);
+
     return NULL;
 }    
 

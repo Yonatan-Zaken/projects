@@ -129,7 +129,7 @@ void SchedulerRun(scheduler_t *s)
         
         if (time(NULL) < TaskGetTimeToRun(s->current_task))
         {
-            while (sleep(TaskGetTimeToRun(new_task) - time(NULL)));
+            while (sleep(TaskGetTimeToRun(new_task) - <time(NULL)));
         }
         
         if ((0 == TaskRun(new_task)) && (OFF == s->remove_current))

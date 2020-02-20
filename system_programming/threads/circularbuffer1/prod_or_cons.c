@@ -92,11 +92,6 @@ int main()
         pthread_join(consumers[i], NULL);
     }
     
-    for (i = 0; i < CAPACITY; ++i)
-    {
-        printf("arr[%ld] = %d\n", i, cbuffer->arr[i]);
-    }
-    
     CBufferDestroy(cbuffer);
     pthread_mutex_destroy(&lock);
     sem_destroy(&prod_jobs);
