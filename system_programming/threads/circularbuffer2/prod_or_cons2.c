@@ -6,9 +6,9 @@
 #include "circularbuffer.h"
 
 #define FAIL 1
-#define PRODUCERS 18
+#define PRODUCERS 10
 #define CONSUMERS 8
-#define CAPACITY 10
+#define CAPACITY 5
 
 pthread_mutex_t write_lock = {0};
 pthread_mutex_t read_lock = {0};
