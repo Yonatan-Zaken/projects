@@ -45,7 +45,7 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libscheduler.so $(SRC_TEST)
 $(DIR_DEBUG)libscheduler.so: $(OBJ_DEBUG)
 	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug \
 	-Wl,-rpath,'$$ORIGIN' -ltask \
-	-L../../ds/libdebug -Wl,-rpath,'$$ORIGIN/../../ds/libdebug' -lheapify
+	-L../../ds/libdebug -Wl,-rpath,'$$ORIGIN/../../ds/libdebug' -lpriorityq
 	
 $(DIR_DEBUG)libtask.so: $(OBJ_DEBUG_TASK)
 	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug \
@@ -55,9 +55,9 @@ $(DIR_DEBUG)libtask.so: $(OBJ_DEBUG_TASK)
 $(DIR_RELEASE)libscheduler.so: $(OBJ_RELEASE)
 	$(CC) $(RFLAGS) -shared -o $@ $< -L../librelease \
 	-Wl,-rpath,'$$ORIGIN' -ltask \
-	-L../../ds/librelease -Wl,-rpath,'$$ORIGIN/../../ds/librelease' -lheapify 
+	-L../../ds/librelease -Wl,-rpath,'$$ORIGIN/../../ds/librelease' -lpriorityq 
 
-$(DIR_RELEASE)libtask.so: $(OBJ_RELEASE_TASK)
+$(DIR_RELEASE)libwdhelper.so: $(OBJ_RELEASE_TASK)
 	$(CC) $(RFLAGS) -shared -o $@ $< -L../librelease \
 	-Wl,-rpath,'$$ORIGIN' -luid
 

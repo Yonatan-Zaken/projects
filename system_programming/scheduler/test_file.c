@@ -44,7 +44,7 @@ typedef struct Remove
 {
     scheduler_t *s;
     ilrd_uid_t uid;
-}remove_t;
+} remove_t;
 
 int RemoveTask(void *param)
 {
