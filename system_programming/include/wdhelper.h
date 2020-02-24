@@ -14,14 +14,18 @@ struct WatchDog
     scheduler_t *s;
     sem_t *sem_p1;
     sem_t *sem_p2;
+    char filename[100];
+    status_t status;
 };
 
 pid_t updated_id;
 
-scheduler_t *WDInit(status_t *status);
+sem_t *sem_stop_flag = NULL;
+
+status_t WDInit(wd_t *wrap);
 
 void *WDSchedulerRun(void *param);
 
-int TaskImAlive(void *param);
+void WDCleanUp(void *param);
 
 #endif

@@ -8,12 +8,28 @@
 #include <signal.h>    /* sigaction () */
 #include <assert.h>    /* assert() */
 #include <stdio.h>     /* printf () */
+#include <string.h>    /* strcpy () */
 
 #include "scheduler.h"
 #include "wdhelper.h"
-#include "wd.h"
 
 pid_t updated_id = {0};
+
+static status_t SemaphoreInitIMP(wd_t *wrap, status_t *status)
+{
+    if (SEM_FAILED == (wrap->sem_p2 = sem_open("/sem_wd_ready", O_CREAT, 0644, 0)))
+    {
+        *status = FAIL;
+        return FAIL;
+    }
+    
+    if (SEM_FAILED == (wrap->sem_p1 = sem_open("/sem_app_ready", O_CREAT, 0644, 0)))
+    {
+        *status = FAIL;
+        return FAIL;
+    }
+    return SUCCESS;
+}
 
 int main(int argc, char *argv[])
 {
@@ -29,13 +45,23 @@ int main(int argc, char *argv[])
         
     updated_id = getppid();
     
-    wrap->s = WDInit(status);
-    if (NULL == wrap->s)
+    wrap->status = WDInit(wrap);
+    if (FAIL == wrap->status)
     {
         return 1;
     }
-
-    WDSchedulerRun(wrap->s);
+    
+    if (FAIL == SemaphoreInitIMP(wrap, status))
+    {
+        return 1;    
+    }
+    
+    strcpy(wrap->filename, "/home/codesila/git/system_programming/watchdogtimer/outdebug/app");
+    
+    WDSchedulerRun(wrap);
+    
+    sem_close(wrap->sem_p1);
+    sem_close(wrap->sem_p2);
        
     return 0;
 }
