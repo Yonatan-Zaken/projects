@@ -16,6 +16,7 @@
 int is_alive = 0;
 
 /******************************* Handler Functions **************************/
+
 void HandlerImAlive(int signal)
 {
     UNUSED(signal);
@@ -26,21 +27,20 @@ void HandlerImAlive(int signal)
 void HandlerStopSign(int signal)
 {
     UNUSED(signal);
-    printf("current process :%d\n", getpid());
+    printf("Stop Sign Recieved current process :%d\n", getpid());
     sem_post(sem_stop_flag);
 }
 
 /******************************* Task Functions *****************************/
+
 int TaskImAlive(void *param)
 {
     int sval = 0;
     UNUSED(param);
     
     sem_getvalue(sem_stop_flag, &sval);
-    printf("before if - sval = %d\n", sval);
     if (0 != sval)
     {
-        printf("inside if - sval = %d\n", sval);
         SchedulerStop(((scheduler_t*)param));
     }
     else
@@ -56,14 +56,13 @@ int TaskIsAlive(void *param)
     pid_t pid = {0};
     
     assert(NULL != param);
-    printf("Welcome to the second task\n");
     if (0 == is_alive)
     {
         kill(updated_id, SIGKILL);
         if (0 == (pid = fork()))
         {
-            printf("you are in the exec of the second task\n");
-            execl(((wd_t *)param)->filename , ((wd_t *)param)->filename, NULL);        
+            execl(((wd_t *)param)->exec_filename , ((wd_t *)param)->my_filename,
+                  ((wd_t *)param)->exec_filename, NULL);        
         }
         else
         {
@@ -82,26 +81,26 @@ status_t WDInit(wd_t *wrap)
 { 
     struct sigaction sa1 = {0};
     struct sigaction sa2 = {0};   
-    
-    if (SEM_FAILED == (sem_stop_flag = sem_open("/sem_stop_flag", O_CREAT, 0644, 0)))
-    {
-        wrap->status = FAIL;
-        return FAIL;    
-    }
-          
+              
     sa1.sa_handler = &HandlerImAlive;
     if (0 != sigaction(SIGUSR1, &sa1, NULL))
     {
-        wrap->status = FAIL;
-        return FAIL;   
+        wrap->status = SYSCALL_FAIL;
+        return SYSCALL_FAIL;   
     }
 
     sa2.sa_handler = &HandlerStopSign;
     if (0 != sigaction(SIGUSR2, &sa2, NULL))
     {
-        wrap->status = FAIL;
-        return FAIL;   
+        wrap->status = SYSCALL_FAIL;
+        return SYSCALL_FAIL;   
     }    
+
+    if (SEM_FAILED == (sem_stop_flag = sem_open("/sem_stop_flag", O_CREAT, 0644, 0)))
+    {
+        wrap->status = SYSCALL_FAIL;
+        return SYSCALL_FAIL;    
+    }
     
     if (NULL != (wrap->s = SchedulerCreate()))
     {
@@ -113,10 +112,10 @@ status_t WDInit(wd_t *wrap)
                 return SUCCESS;
             } 
         }    
-    }
-    wrap->status = FAIL;
+    } 
+    wrap->status = MEMORY_FAIL;
     SchedulerDestroy(wrap->s);        
-    return FAIL;
+    return MEMORY_FAIL;
 }
 
 void *WDSchedulerRun(void *param)
@@ -124,21 +123,24 @@ void *WDSchedulerRun(void *param)
     int sem_value = 0;
     
     assert(NULL != param);
+    
+    sem_getvalue(sem_stop_flag, &sem_value);    
     while (0 == sem_value)
     {
-        sem_getvalue(sem_stop_flag, &sem_value);
         sem_post(((wd_t *)param)->sem_p1);
         sem_wait(((wd_t *)param)->sem_p2);
         SchedulerRun(((wd_t*)param)->s);
+        sem_getvalue(sem_stop_flag, &sem_value);
     }
-    
     WDCleanUp((wd_t*)param);
     return NULL;
 }
 
 void WDCleanUp(void *param)
 {
-    printf("scheduler cleanup\n");
-    SchedulerDestroy(((wd_t*)param)->s);
+    printf("Scheduler Cleanup Process : %d\n", getpid());
+    SchedulerDestroy(((wd_t *)param)->s);
+    sem_close(((wd_t *)param)->sem_p1);
+    sem_close(((wd_t *)param)->sem_p2);
     sem_close(sem_stop_flag);
 }

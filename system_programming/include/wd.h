@@ -6,7 +6,8 @@ typedef struct WatchDog wd_t;
 typedef enum Status
 {
     SUCCESS,
-    FAIL
+    MEMORY_FAIL,
+    SYSCALL_FAIL
 } status_t;
 
 /* the function recives a pointer to a thread created by the user */

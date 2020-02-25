@@ -29,20 +29,26 @@ static status_t SemaphoreInitIMP(wd_t *wrap, status_t *status)
 {
     if (SEM_FAILED == (wrap->sem_p1 = sem_open("/sem_wd_ready", O_CREAT, 0644, 0)))
     {
-        *status = FAIL;
-        return FAIL;
+        *status = SYSCALL_FAIL;
+        return SYSCALL_FAIL;
     }
     
     if (SEM_FAILED == (wrap->sem_p2 = sem_open("/sem_app_ready", O_CREAT, 0644, 0)))
     {  
-        *status = FAIL;
-        return FAIL;
+        *status = SYSCALL_FAIL;
+        sem_close(wrap->sem_p1);
+        sem_unlink("/sem_wd_ready");
+        return SYSCALL_FAIL;
     }
  
     if (SEM_FAILED == (sem_is_wd_up = sem_open("/sem_is_wd_up", O_CREAT, 0644, 0)))
     {
-        *status = FAIL;
-        return FAIL;
+        *status = SYSCALL_FAIL;
+        sem_close(wrap->sem_p1);
+        sem_unlink("/sem_wd_ready");
+        sem_close(wrap->sem_p2);
+        sem_unlink("/sem_app_ready");
+        return SYSCALL_FAIL;
     }
     return SUCCESS;    
 }
@@ -59,29 +65,34 @@ wd_t *WDStart(const char *filename, status_t *status)
     wrap = malloc(sizeof(*wrap));
     if (NULL == wrap)
     {
+        *status = MEMORY_FAIL;
         return NULL; 
     }
     
     wrap->status = WDInit(wrap);
-    if (FAIL == wrap->status)
+    *status = wrap->status;
+    if (SUCCESS != wrap->status)
     {
         free(wrap); wrap = NULL;
-        return wrap;
+        return NULL;
     }     
 
-    if (FAIL == SemaphoreInitIMP(wrap, status))
+    if (SUCCESS != (*status = SemaphoreInitIMP(wrap, status)))
     {
+        free(wrap); wrap = NULL;
         return NULL;    
     }
 
-    strcpy(wrap->filename, "/home/codesila/git/system_programming/watchdoghelper/outdebug/main_wd_out");
+    strcpy(wrap->exec_filename, 
+    "/home/codesila/git/system_programming/watchdoghelper/outdebug/main_wd_out");
+    strcpy(wrap->my_filename, filename);
     
     sem_getvalue(sem_is_wd_up, &sem_wd_up_value);
     if (0 == sem_wd_up_value)
     {
         if (0 == (pid = fork()))
         {
-            execl(wrap->filename, wrap->filename, NULL);
+            execl(wrap->exec_filename, wrap->my_filename, wrap->exec_filename, NULL);
         }    
         else
         {
@@ -97,7 +108,7 @@ wd_t *WDStart(const char *filename, status_t *status)
             
     if (0 != pthread_create(&(wrap->thread), NULL, &WDSchedulerRun, wrap))
     {
-        *status = FAIL;
+        *status = SYSCALL_FAIL;
         return NULL;
     }
     
@@ -107,20 +118,17 @@ wd_t *WDStart(const char *filename, status_t *status)
 void WDStop(wd_t *wd)
 {
     time_t start = time(NULL);
-    time_t seconds = 10;   
+    time_t seconds = 4;   
     time_t end = start + seconds;
     int sval = 0;
     
     assert(NULL != wd);
 
-    printf("counting down %ld seconds...\n", seconds);
-    while (!sval && (start < end))
+    while ((0 == sval) && (start < end))
     {
-        printf("timeout loop\n");
         start = time(NULL);
-        sem_getvalue(sem_stop_flag, &sval);
-        printf("updated_id for SIGUSR2 %d\n", updated_id);
         kill(updated_id, SIGUSR2);
+        sem_getvalue(sem_stop_flag, &sval);
     }
 
     if (0 == sval)
@@ -129,17 +137,14 @@ void WDStop(wd_t *wd)
         kill(updated_id, SIGTERM);    
     }
     
-    sem_close(wd->sem_p1);
-    sem_close(wd->sem_p2);
     sem_close(sem_is_wd_up);
-    
+
     sem_unlink("/sem_stop_flag");
     sem_unlink("/sem_wd_ready");
     sem_unlink("/sem_app_ready");
     sem_unlink("/sem_is_wd_up");
-    
-    printf("pthread join line\n"); 
+
     pthread_join(wd->thread, NULL);
-    
+    printf("FREE WRAP IN WD APP\n");
     free(wd); wd = NULL;
 }

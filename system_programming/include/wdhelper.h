@@ -14,18 +14,26 @@ struct WatchDog
     scheduler_t *s;
     sem_t *sem_p1;
     sem_t *sem_p2;
-    char filename[100];
+    char my_filename[100];
+    char exec_filename[100];
     status_t status;
 };
 
 pid_t updated_id;
 
-sem_t *sem_stop_flag = NULL;
+sem_t *sem_stop_flag;
 
+/* Gets a struct of type WatchDog and initializes its members.
+*  Initializes the sigaction for both signal handlers,
+*  Semaphores of the sem_stop_flag 
+*  Returns SUCCESS if no error occured, otherwise FAIL
+*/
 status_t WDInit(wd_t *wrap);
 
+/* Runs the scheduler of both proccesses*/
 void *WDSchedulerRun(void *param);
 
+/* Destroys the scheduler of both proccesses */
 void WDCleanUp(void *param);
 
 #endif

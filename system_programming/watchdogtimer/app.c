@@ -1,32 +1,27 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <unistd.h>
-#include <time.h>
+#include <stdio.h>  /* printf () */
+#include <unistd.h> /* time_t */
+#include <time.h>   /* sleep () */
 
 #include "wd.h"
 
-int main()
-{
-    status_t status;
+#define UNUSED(x) (void)(x)
+
+int main(int argc, char *argv[])
+{  
+    status_t status = 0;
     time_t sleep_delay = 100;
-    
-    wd_t *wd = WDStart("app.c", &status);
- 
+    wd_t *wd = WDStart(
+    "/home/codesila/git/system_programming/watchdogtimer/outdebug/app", &status);
+
+    UNUSED(argc);
+    UNUSED(argv);
+        
     while (sleep_delay)
     {
         sleep_delay = sleep(sleep_delay);
     }
     
     WDStop(wd);
-    
-    printf("App is alive!\n");
-    
-    sleep_delay = 10;
-    
-    while (sleep_delay)
-    {
-        sleep_delay = sleep(sleep_delay);
-    }
     
     return 0;
 }
