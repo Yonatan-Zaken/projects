@@ -9,9 +9,8 @@
 #include <sys/mman.h>  /* mmap() */
 #include <sys/types.h> /* ssize_t */
 
-#define NUM_OF_THREADS (2)
-#define NUM_OF_COPIES (2)
-#define MAX_NUM_OF_CHAR (25)
+#define NUM_OF_THREADS (3)
+#define NUM_OF_COPIES (3)
 #define FILE_NAME "/usr/share/dict/words"
 
 enum
@@ -182,10 +181,10 @@ static void PrintBuffer()
 
 /**************************************************************************/
 
-static void Merge(void *dest_arr, size_t left, size_t middle, size_t right)
+static void MergeSort(void *dest_arr, size_t left, size_t middle, size_t right)
 {
     size_t i = 0, j = 0, k = 0;
-    size_t size1 = middle - left + 1;
+    size_t size1 = middle - left;
     size_t size2 = right - middle;
     
     void **left_side = malloc(sizeof(char *) * size1);
@@ -193,27 +192,27 @@ static void Merge(void *dest_arr, size_t left, size_t middle, size_t right)
     
     for (i = 0; i < size1; ++i)
     {
-        left_side[i] = dest_arr[left + i];
+        left_side[i] = ((char **)dest_arr)[left + i];
     }
     
     for (j = 0; j < size2; ++j)
     {
-        right_side[j] = dest_arr[middle + 1 + j];
+        right_side[j] = ((char **)dest_arr)[middle + j];
     }
     
     i = 0; j = 0; k = left;
     
     while ((i < size1) && (j < size2))
     {
-        if()
+     
         if (left_side[i] <= right_side[j])
         {
-            dest_arr[k] = left_side[i];
+            ((char **)dest_arr)[k] = left_side[i];
             ++i;
         }
         else
         {
-            dest_arr[k] = right_side[j];
+            ((char **)dest_arr)[k] = right_side[j];
             ++j;
         }
         ++k;
@@ -221,14 +220,14 @@ static void Merge(void *dest_arr, size_t left, size_t middle, size_t right)
     
     while (i < size1)
     {
-        dest_arr[k] = left_side[i];
+        ((char **)dest_arr)[k] = left_side[i];
         ++i;
         ++k;
     }
     
     while (j < size2)
     {
-        dest_arr[k] = right_side[j];
+        ((char **)dest_arr)[k] = right_side[j];
         ++j;
         ++k;
     }
@@ -237,11 +236,29 @@ static void Merge(void *dest_arr, size_t left, size_t middle, size_t right)
     free(right_side); right_side = NULL;
 }
 
-/**************************************************************************/
-
 static void MergeBuffer()
 {
+	size_t i = 0;
+	size_t start = 0;
+	size_t end = 0;
+	size_t middle = 0;
 
+	for (i = 1; i < NUM_OF_THREADS; ++i)
+	{
+	    size_t start = 0;
+    	size_t end = (i + 1) * ((num_of_words * NUM_OF_COPIES) / NUM_OF_THREADS);
+    	size_t middle = end - num_of_words;
+    	MergeSort(buffer, start, middle, end);
+	}
+}
+
+/**************************************************************************/
+
+void Destroy(int fd)
+{
+	free(buffer); buffer = NULL;
+	close(fd);
+	munmap(dict, num_of_words);
 }
 
 /**************************************************************************/
@@ -276,6 +293,8 @@ int main ()
 	MergeBuffer();
 	
 	PrintBuffer();
+	
+	Destroy(fd);
 	
 	return 0;
 }
