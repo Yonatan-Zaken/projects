@@ -5,8 +5,7 @@
 #include "bitsarray.h"
 
 #define NUM_OF_SQUARES 64
-#define NUM_OF_ROWS 8
-#define NUM_OF_COLS 8
+#define AVAILABLE_MOVES 8
 
 enum
 {
@@ -19,7 +18,7 @@ typedef int (*cmp_func_t)(const void *data1, const void *data2);
 
 typedef struct Moves
 {
-	int new_pos[NUM_OF_COLS];
+	int new_pos[AVAILABLE_MOVES];
 	size_t min_degree;
 } move_t;
 
@@ -44,16 +43,16 @@ static void InitMovesLut()
 
 	for (i = 0; i < NUM_OF_SQUARES; ++i)
 	{
-		column = i % NUM_OF_COLS;
-		row = i / NUM_OF_ROWS;
-		for (j = 0; j < NUM_OF_ROWS; ++j)
+		column = i % AVAILABLE_MOVES;
+		row = i / AVAILABLE_MOVES;
+		for (j = 0; j < AVAILABLE_MOVES; ++j)
 		{
-			if (((column + x_moves[j]) < NUM_OF_ROWS) &&
+			if (((column + x_moves[j]) < AVAILABLE_MOVES) &&
 				((column + x_moves[j]) >= 0) &&
-				((row + y_moves[j]) < NUM_OF_ROWS) &&
+				((row + y_moves[j]) < AVAILABLE_MOVES) &&
 				((row + y_moves[j]) >= 0))
 			{
-				LUT[i].new_pos[j] = i + x_moves[j] + (NUM_OF_ROWS * y_moves[j]);
+				LUT[i].new_pos[j] = i + x_moves[j] + (AVAILABLE_MOVES * y_moves[j]);
 			}
 			else
 			{
@@ -61,7 +60,7 @@ static void InitMovesLut()
 			}
 		}
 		
-		for (j = 0; j < NUM_OF_ROWS; ++j)
+		for (j = 0; j < AVAILABLE_MOVES; ++j)
 		{
 			if (INVALID != LUT[i].new_pos[j])
 			{
@@ -75,24 +74,32 @@ static void InitMovesLut()
 
 /*************************************************************************/
 
-static int GetMinDegree(int current)
+static int GetMinDegree(int current, bitsarr_t board_doc)
 {
 	size_t i = 0;
-	size_t min_degree = NUM_OF_ROWS + 1; 
+	size_t min_index = 0;
+	size_t min_degree = AVAILABLE_MOVES + 1; 
 	int possible_pos = 0;
 	
-	for (i = 0; i < NUM_OF_ROWS; ++i)
+	for (i = 0; i < AVAILABLE_MOVES; ++i)
 	{
-		if (INVALID != (possible_pos = LUT[current].new_pos[i]))
+	    possible_pos = LUT[current].new_pos[i];
+		if ((INVALID != possible_pos) && BArrIsOff(board_doc, possible_pos + 1))
 		{
 			if (min_degree > LUT[possible_pos].min_degree)
 			{
 				min_degree = LUT[possible_pos].min_degree;
+				min_index = i;
 			}
 		}
 	}
 	
-	return min_degree;
+	if ((AVAILABLE_MOVES + 1) == min_degree)
+	{
+	    return FAIL;
+	}
+	
+	return LUT[current].new_pos[min_index];
 }
 
 /*************************************************************************/
@@ -109,10 +116,10 @@ static int RecSolveKT(int current, bitsarr_t board_doc, int *moves)
 		return SUCCESS;
 	}
 	
-	for (i = 0; i < NUM_OF_ROWS; ++i)
+	for (i = 0; i < AVAILABLE_MOVES; ++i)
 	{
-		possible_pos = GetMinDegree(current);
-		possible_pos = LUT[current].new_pos[i];
+		possible_pos = GetMinDegree(current, board_doc);
+		/*possible_pos = LUT[current].new_pos[i];*/
 		if ((INVALID == possible_pos) || BArrIsOn(board_doc, possible_pos + 1))
 		{
 			continue;
@@ -126,7 +133,7 @@ static int RecSolveKT(int current, bitsarr_t board_doc, int *moves)
 		}
 	}
 	
-	if (NUM_OF_ROWS == i)
+	if (AVAILABLE_MOVES == i)
 	{
 		--moves;
 		return FAIL;
@@ -148,7 +155,7 @@ static void PrintPath(int *moves)
 {
 	size_t i = 0;
 	
-	for (i = 0; i < NUM_OF_SQUARES; ++i)
+	for (i = 0; i < AVAILABLE_MOVES; ++i)
 	{
 		printf("step %lu: %d\n", i, moves[i]);
 	}
