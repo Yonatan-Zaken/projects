@@ -1,6 +1,16 @@
+/*********************************/
+/*   			             	 */
+/*   Algorithm		             */
+/*   Knights Tour                */
+/*   Author: Yonatan Zaken       */
+/*   Last Updated 4/3/20         */
+/*   Reviewed by: Guy            */   
+/*			                   	 */
+/*********************************/
 #include <stdio.h>    /* printf() */
 #include <stdlib.h>   /* malloc() */
 #include <pthread.h>  /* pthread_create() */
+#include <assert.h>   /* assert() */
 
 #include "bitsarray.h"
 
@@ -14,20 +24,38 @@ enum
 	FAIL
 };
 
-typedef int (*cmp_func_t)(const void *data1, const void *data2);
-
 typedef struct Moves
 {
 	int new_pos[AVAILABLE_MOVES];
-	size_t min_degree;
+	size_t degrees;
 } move_t;
 
 move_t LUT[NUM_OF_SQUARES] = {0};
+
+/***************************************
+*	     Function Prototypes  		   *
+***************************************/
+static void InitMovesLut();
+static int GetMinDegree(int current, bitsarr_t board_doc, bitsarr_t *already_been);
+static int RecSolveKT(int current, bitsarr_t board_doc, int *moves);
+static int SolveKT(int first_pos, int *moves);
+static void PrintPath(int *moves);
+
 /*************************************************************************/
 
-static int CompareFunc(const void *data1, const void *data2)
+int main(int argc, char *argv[])
 {
-	return (((move_t *)data1)->min_degree - ((move_t *)data2)->min_degree);
+	int first_pos = atoi(argv[1]);
+	int moves[NUM_OF_SQUARES] = {0};
+	(void)argc;
+	
+	InitMovesLut();
+	
+	SolveKT(first_pos, moves);
+	
+	PrintPath(moves);
+	
+	return 0;
 }
 
 /*************************************************************************/
@@ -53,42 +81,36 @@ static void InitMovesLut()
 				((row + y_moves[j]) >= 0))
 			{
 				LUT[i].new_pos[j] = i + x_moves[j] + (AVAILABLE_MOVES * y_moves[j]);
+				++LUT[i].degrees; 
 			}
 			else
 			{
 				LUT[i].new_pos[j] = INVALID;
 			}
-		}
-		
-		for (j = 0; j < AVAILABLE_MOVES; ++j)
-		{
-			if (INVALID != LUT[i].new_pos[j])
-			{
-				++LUT[i].min_degree; 
-			}
-		}
-		
-		
+		} 
 	}
 }
 
 /*************************************************************************/
 
-static int GetMinDegree(int current, bitsarr_t board_doc)
+static int GetMinDegree(int current, bitsarr_t board_doc, bitsarr_t *already_been)
 {
 	size_t i = 0;
 	size_t min_index = 0;
 	size_t min_degree = AVAILABLE_MOVES + 1; 
 	int possible_pos = 0;
 	
+	assert(NULL != already_been);
+	
 	for (i = 0; i < AVAILABLE_MOVES; ++i)
 	{
 	    possible_pos = LUT[current].new_pos[i];
-		if ((INVALID != possible_pos) && BArrIsOff(board_doc, possible_pos + 1))
+		if ((INVALID != possible_pos) && BArrIsOff(board_doc, possible_pos + 1) &&
+			 					       BArrIsOff(*already_been, possible_pos + 1))
 		{
-			if (min_degree > LUT[possible_pos].min_degree)
+			if (min_degree > LUT[possible_pos].degrees)
 			{
-				min_degree = LUT[possible_pos].min_degree;
+				min_degree = LUT[possible_pos].degrees;
 				min_index = i;
 			}
 		}
@@ -96,9 +118,10 @@ static int GetMinDegree(int current, bitsarr_t board_doc)
 	
 	if ((AVAILABLE_MOVES + 1) == min_degree)
 	{
-	    return FAIL;
+	    return INVALID;
 	}
 	
+	*already_been = BArrSetOn(*already_been, LUT[current].new_pos[min_index] + 1);
 	return LUT[current].new_pos[min_index];
 }
 
@@ -108,18 +131,21 @@ static int RecSolveKT(int current, bitsarr_t board_doc, int *moves)
 {
 	int possible_pos = 0;
 	size_t i = 0;
+	bitsarr_t already_been = {0};
+	
+	assert(NULL != moves);
+	
 	board_doc = BArrSetOn(board_doc, current + 1);
 	*moves = current;
 	
-	if (BArrSetAllBits((size_t)0) == board_doc)
+	if (BArrSetAllBits(0) == board_doc)
 	{
 		return SUCCESS;
 	}
 	
 	for (i = 0; i < AVAILABLE_MOVES; ++i)
 	{
-		possible_pos = GetMinDegree(current, board_doc);
-		/*possible_pos = LUT[current].new_pos[i];*/
+		possible_pos = GetMinDegree(current, board_doc, &already_been);
 		if ((INVALID == possible_pos) || BArrIsOn(board_doc, possible_pos + 1))
 		{
 			continue;
@@ -133,20 +159,14 @@ static int RecSolveKT(int current, bitsarr_t board_doc, int *moves)
 		}
 	}
 	
-	if (AVAILABLE_MOVES == i)
-	{
-		--moves;
-		return FAIL;
-	}
-	
-	return SUCCESS;
+	return FAIL;
 }
 
 static int SolveKT(int first_pos, int *moves)
 {
-	bitsarr_t board_doc = 0;
+	assert(NULL != moves);
 	
-	return RecSolveKT(first_pos, board_doc, moves);
+	return RecSolveKT(first_pos, 0, moves);
 }
 
 /*************************************************************************/
@@ -155,25 +175,8 @@ static void PrintPath(int *moves)
 {
 	size_t i = 0;
 	
-	for (i = 0; i < AVAILABLE_MOVES; ++i)
+	for (i = 0; i < NUM_OF_SQUARES; ++i)
 	{
 		printf("step %lu: %d\n", i, moves[i]);
 	}
-}
-
-/*************************************************************************/
-
-int main(int argc, char *argv[])
-{
-	int first_pos = atoi(argv[1]);
-	int moves[NUM_OF_SQUARES] = {0};
-	(void)argc;
-	
-	InitMovesLut();
-	
-	SolveKT(first_pos, moves);
-	
-	PrintPath(moves);
-	
-	return 0;
 }
