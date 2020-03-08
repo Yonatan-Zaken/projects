@@ -4,7 +4,7 @@
 extern "C"
 {
     void Foo(int a);
-    void Foo(char c, int a);
+    /*void Foo(char c, int a);*/
     void Bar(float b);
 }
 
