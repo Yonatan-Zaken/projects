@@ -19,9 +19,9 @@ int main()
     int x = 5;
     double d = 155.5;
     
-    cout << (size_t)&d << "\n";
     cout << (size_t)&x << "\n";
     Foo(x);
+    Bar(x);
     Bar(reinterpret_cast<double&>(x));
     
     

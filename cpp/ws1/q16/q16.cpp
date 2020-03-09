@@ -20,7 +20,7 @@ int main()
     foo(4.2);
     foo(5);
     foo('a');
-    foo<int>(5);
+    /*foo<int>(5);*/
        
     return 0;
 }
