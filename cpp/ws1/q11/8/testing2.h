@@ -3,13 +3,18 @@
 
 #include <stdio.h>
 
-extern "C"
+#ifdef __cplusplus
+extern "C" 
 {
-    int Foo(int a, int b);
-    void FooTwo(char *str);
-    void Bar(char c);
+#endif // __cplusplus guard
+
+int Foo(int a, int b);
+void FooTwo(char *str);
+void Bar(char c);
+
+#ifdef __cplusplus
 }
+#endif // __cplusplus guard
 
-#endif
-
+#endif // SHARED2_H guard
 
