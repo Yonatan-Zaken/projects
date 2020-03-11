@@ -4,10 +4,10 @@ using namespace std;
 struct X
 {
     /*explicit X();*/ // defualt ctor
-    explicit X(int a_ = 3, int b_ = 8); // regular ctor
+    explicit X(int a_, int b_ = 8); // regular ctor
     ~X(); // dtor
     X(const X& other_); // copy ctor
-/*    X& operator=(const X& other_); // assignment operator*/
+    X& operator=(const X& other_); // assignment operator
     int m_a;
     const int m_b;
 };
@@ -34,7 +34,7 @@ X::X(const X& other_): m_a(other_.m_a), m_b(other_.m_b) // imp copy ctor
 {
     cout << "this:" << this << " X copy Ctor. m_a:" << m_a << " m_b:" << m_b << endl;
 }
-/*
+
 X& X::operator=(const X& other_)
 {
     m_a = other_.m_a;
@@ -42,7 +42,7 @@ X& X::operator=(const X& other_)
     cout << "this:" << this << " X assignment operator m_a:" << m_a << " does not change m_b:" << m_b << endl;
     return *this;
 }
-*/
+
 X::~X()
 {
     cout << "this:" << this << " X Dtor. m_a:" << m_a << " m_b:" << m_b << endl;
@@ -50,12 +50,14 @@ X::~X()
 
 int main()
 {
+/*
     X x1;
     X x2(7);
     X *px = new X[10];
     X x3(9,10);
     X x4(x1);
-    /*x1 = x3;*/
+    x1 = x3;
+    */
     
     Y y1;
     y1.m_x.m_a = 250;
@@ -63,7 +65,7 @@ int main()
     Y y3;
     y3 = y1;
     
-    delete[] px; px = 0;
+   /* delete px; px = 0;*/
     return 0;
 }
 
