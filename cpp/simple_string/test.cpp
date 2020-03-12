@@ -28,7 +28,7 @@ int main()
     String s2(s1);
     String s3("QQQQQQ");
     String s4("hi");
-    
+    String s5();
     std::cout << s1 << std::endl; 
     std::cout << s3 << std::endl;
     

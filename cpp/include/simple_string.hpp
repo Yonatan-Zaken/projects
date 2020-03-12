@@ -10,10 +10,10 @@ public:
     String& operator=(const String& other_); // assignment operator
     ~String(); //dtor
     
+    bool operator==(const String& other_);
+    bool operator>(const String& other_);
+    bool operator<(const String& other_);
     friend std::ostream& operator<<(std::ostream& os_, const String& other_);
-    friend bool operator==(const String& s1, const String& s2);
-    friend bool operator>(const String& s1, const String& s2);
-    friend bool operator<(const String& s1, const String& s2);
     
     size_t Length() const;
     char *Cstr() const;
