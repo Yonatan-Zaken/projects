@@ -26,7 +26,7 @@ public:
     
     size_t Length() const;
     char *Cstr();
-    const char *Cster() const;
+    const char *Cstr() const;
     
 private:
     char *m_cstr;
