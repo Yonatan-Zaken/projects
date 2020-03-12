@@ -7,11 +7,17 @@
 /*   Reviewed by: Gidron         */   
 /*			                   	 */
 /*********************************/
-
 #include <iostream> // cout
 #include <cstring> // strcpy
 
 #include "simple_string.hpp"
+
+/**************************************************************************/
+
+String::String()
+{
+    std::cout << "deafault ctor\n";
+}
 
 /**************************************************************************/
 
@@ -31,9 +37,10 @@ String::String(const String& other_): m_cstr(new char[strlen(other_.m_cstr) + 1]
 
 String& String::operator=(const String& other_)
 {
-    delete [](m_cstr); m_cstr = NULL;
-    this->m_cstr = new char[strlen(other_.m_cstr) + 1];
-    strcpy(this->m_cstr, other_.m_cstr);
+    delete [](m_cstr);
+    m_cstr = NULL;
+    m_cstr = new char[strlen(other_.m_cstr) + 1];
+    strcpy(m_cstr, other_.m_cstr);
 
     return *this;
 }
@@ -70,7 +77,8 @@ bool operator<(const String& s1, const String& s2)
 
 String::~String()
 {
-    delete []m_cstr; m_cstr = NULL;
+    delete []m_cstr;
+    m_cstr = NULL;
 }
 
 /**************************************************************************/

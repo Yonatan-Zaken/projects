@@ -4,6 +4,7 @@
 class String
 {
 public:
+    explicit String(); // ctor
     explicit String(const char* ); // ctor
     String(const String& other_); // cctor
     String& operator=(const String& other_); // assignment operator
