@@ -12,21 +12,25 @@
 
 #include "simple_string.hpp"
 using namespace ilrd;
+
+/******************************* Static Functions *****************************/
+
+static char* Strdup(const char *str)
+{
+    size_t length = strlen(str);
+    char *ptr = new char[length + 1];
+    memcpy(ptr, str, length);
+    return ptr;
+}
+
 /******************************* Ctors and Dtor *******************************/
 
-String::String()
+String::String(const char *str): m_cstr(Strdup(str))
 {
-    std::cout << "deafault ctor\n";
 }
 
-String::String(const char *str): m_cstr(new char[strlen(str) + 1])
+String::String(const String& other_): m_cstr(Strdup(other_.m_cstr))
 {
-    strcpy(m_cstr, str);
-}
-
-String::String(const String& other_): m_cstr(new char[strlen(other_.m_cstr) + 1])
-{
-    strcpy(m_cstr, other_.m_cstr);
 }
 
 String::~String()
@@ -47,24 +51,24 @@ String& String::operator=(const String& other_)
     return *this;
 }
 
-bool String::operator>(const String& other_)
+bool ilrd::operator>(const String& str1, const String& str2)
 {
-    return (0 < strcmp(m_cstr, other_.m_cstr));
+    return (0 < strcmp(str1.Cstr(), str2.Cstr()));
 }
 
-bool String::operator<(const String& other_)
+bool ilrd::operator<(const String& str1, const String& str2)
 {
-    return (0 > strcmp(m_cstr, other_.m_cstr));
+    return (0 > strcmp(str1.Cstr(), str2.Cstr()));
 }
 
-bool String::operator==(const String& other_)
+bool ilrd::operator==(const String& str1, const String& str2)
 {
-    return (0 == strcmp(m_cstr, other_.m_cstr));
+    return (0 == strcmp(str1.Cstr(), str2.Cstr()));
 }
 
 std::ostream& ilrd::operator<<(std::ostream& os_, const String& other_)
 {
-    return (os_ << other_.m_cstr);
+    return (os_ << other_.Cstr());
 } 
 
 /***************************** Member Functions *******************************/
@@ -74,7 +78,12 @@ size_t String::Length() const
     return strlen(m_cstr);
 }
 
-char *String::Cstr() const
+const char *String::Cstr() const
+{
+    return m_cstr;
+}
+
+char *String::Cstr() 
 {
     return m_cstr;
 }

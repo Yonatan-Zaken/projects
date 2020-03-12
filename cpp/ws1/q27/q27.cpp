@@ -36,10 +36,10 @@ void Fifi(X x_)
 int main()
 {
     X x1(7);
-    x1 = X(12);
+
     Fifi(x1);
     Fifi(X(7));
-//    Fifi(9);
+    Fifi(9);
 //    Fifi(3, 4);
     
     return x1 * 3;
