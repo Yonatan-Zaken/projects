@@ -19,7 +19,8 @@ static char* Strdup(const char *str)
 {
     size_t length = strlen(str);
     char *ptr = new char[length + 1];
-    memcpy(ptr, str, length);
+    strcpy(ptr, str);
+//    memcpy(ptr, str, sizeof(char) * length);
     return ptr;
 }
 
@@ -39,14 +40,13 @@ String::~String()
     m_cstr = NULL;
 }
 
-/*************************** Operator Functions ******************************/
+/**************************** Operator Functions ******************************/
 
 String& String::operator=(const String& other_)
 {
-    delete [](m_cstr);
+    delete [] m_cstr;
     m_cstr = NULL;
-    m_cstr = new char[strlen(other_.m_cstr) + 1];
-    strcpy(m_cstr, other_.m_cstr);
+    m_cstr = Strdup(other_.m_cstr);
 
     return *this;
 }

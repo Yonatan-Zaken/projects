@@ -40,8 +40,8 @@ int main()
     std::cout << (s1 > s4) << "\n";
     std::cout << (s4 < s1) << "\n";
     
-    s1.Cstr();
-    s2.Cstr();
+    std::cout << s1.Cstr() << "\n";
+    std::cout << s2.Cstr() << "\n";
     std::cout << s1.Length() << "\n";
     std::cout << s2.Length() << "\n";
     
