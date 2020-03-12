@@ -37,11 +37,14 @@ void X::Bar() const
     //m_p = 0; //---2---
     //*m_p = 0; //---3---
     ++m_p;
+    //++m_p;
+
 }
 
 void Fifi(const X& x_)
 {
     //x_.Foo(); //---4---
+    x_.Foo(); //---4---
     x_.Bar();
 }
 
