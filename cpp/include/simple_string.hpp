@@ -9,16 +9,17 @@ public:
     String(const String& other_); // cctor
     String& operator=(const String& other_); // assignment operator
     ~String(); //dtor
-
+    
+    friend std::ostream& operator<<(std::ostream& os_, const String& other_);
+    friend bool operator==(const String& s1, const String& s2);
+    friend bool operator>(const String& s1, const String& s2);
+    friend bool operator<(const String& s1, const String& s2);
+    
     size_t Length() const;
     char *Cstr() const;
     
 private:
     char *m_cstr;
-    friend std::ostream& operator<<(std::ostream& os_, const String& other_);
-    friend bool operator==(const String& s1, const String& s2);
-    friend bool operator>(const String& s1, const String& s2);
-    friend bool operator<(const String& s1, const String& s2);
 };
 
 #endif
