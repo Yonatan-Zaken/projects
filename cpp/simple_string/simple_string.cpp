@@ -11,7 +11,7 @@
 #include <cstring> // strcpy
 
 #include "simple_string.hpp"
-
+using namespace ilrd;
 /******************************* Ctors and Dtor *******************************/
 
 String::String()
@@ -62,7 +62,7 @@ bool String::operator==(const String& other_)
     return (0 == strcmp(m_cstr, other_.m_cstr));
 }
 
-std::ostream& operator<<(std::ostream& os_, const String& other_)
+std::ostream& ilrd::operator<<(std::ostream& os_, const String& other_)
 {
     return (os_ << other_.m_cstr);
 } 

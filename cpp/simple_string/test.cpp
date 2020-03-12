@@ -2,6 +2,8 @@
 
 #include "simple_string.hpp"
 
+using namespace ilrd;
+
 #define NORMAL "\033[0m"
 #define RED "\033[;031m"
 #define GREEN "\033[;032m"

@@ -1,6 +1,12 @@
 #ifndef ILRD__RD81_SIMPLE_STRING_HPP
 #define ILRD__RD81_SIMPLE_STRING_HPP
 
+namespace ilrd
+{
+
+class String;
+std::ostream& operator<<(std::ostream& os_, const String& other_);
+
 class String
 {
 public:
@@ -21,5 +27,7 @@ public:
 private:
     char *m_cstr;
 };
+
+}// namespace ilrd
 
 #endif
