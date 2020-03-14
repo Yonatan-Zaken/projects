@@ -6,6 +6,8 @@
 /*    Date:   13/3/20            */
 /*********************************/
 #include <cmath> // sqrt 
+#include <cassert> // assert
+#include <iostream> // <<
 
 #include "complex.hpp"
 
@@ -48,4 +50,122 @@ Complex Complex::Conj() const
     Complex c1(m_re);
     c1.m_im = -m_im;
     return c1;
+}
+
+/**************************** Operator Functions ******************************/
+
+Complex operator+(const Complex& c1, const Complex&c2)
+{
+    double re = c1.GetReal() + c2.GetReal();
+    double im = c1.GetIm() + c2.GetIm();
+    
+    Complex sum = 0;
+    sum.SetReal(re);
+    sum.SetImag(im);
+    
+    return sum;
+}
+
+Complex operator-(const Complex& c1, const Complex&c2)
+{
+    double re = c1.GetReal() - c2.GetReal();
+    double im = c1.GetIm() - c2.GetIm();
+    
+    Complex sub(0);
+    sub.SetReal(re);
+    sub.SetImag(im);
+    
+    return sub;
+}
+
+Complex operator*(const Complex& c1, const Complex& c2)
+{
+    double re = (c1.GetReal() * c2.GetReal()) - (c1.GetIm() * c2.GetIm());
+    double im = (c1.GetReal() * c2.GetIm()) + (c1.GetIm() * c2.GetReal());
+    
+    Complex mult(0);
+    mult.SetReal(re);
+    mult.SetImag(im);
+    
+    return mult;
+}
+
+Complex operator/(const Complex& c1, const Complex& c2)
+{
+    assert((0 != c2.GetReal()) && (0 != c2.GetIm()));
+    
+    Complex conj = c2.Conj();
+    Complex mult = c2 * conj;
+    double abs = mult.GetReal();
+    
+    Complex div = (c1 * conj);
+    div.SetReal(div.GetReal() / abs);
+    div.SetImag(div.GetIm() / abs);
+    
+    return div;
+}
+
+bool operator==(const Complex& c1, const Complex& c2)
+{
+    return ((c1.GetReal() == c2.GetReal()) && (c1.GetIm() == c2.GetIm()));
+}
+
+bool operator!=(const Complex& c1, const Complex& c2)
+{
+    return (!(c1 == c2));
+}
+
+bool operator>(const Complex& c1, const Complex& c2)
+{
+    return (c1.Abs() > c2.Abs());
+}
+
+bool operator<(const Complex& c1, const Complex& c2)
+{
+    return (c1.Abs() < c2.Abs());
+}
+
+Complex& Complex::operator+=(const Complex& c)
+{
+    *this = *this + c;
+    return *this;    
+}
+
+Complex& Complex::operator-=(const Complex& c)
+{
+    *this = *this - c;
+    return *this;    
+}
+
+Complex& Complex::operator*=(const Complex& c)
+{
+    *this = *this * c;
+    return *this;    
+}
+
+Complex& Complex::operator/=(const Complex& c)
+{
+    *this = *this / c;
+    return *this;    
+}
+
+std::ostream& operator<<(std::ostream& os, const Complex& c)
+{
+    os << "(" << c.GetReal() << "," << c.GetIm() << "i)";
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, Complex& c)
+{
+    std::cout << "\nEnter Real Part: ";
+    double re = 0; 
+    is >> re; 
+    std::cout << "Enter Imaginary Part: "; 
+    double im = 0;
+    is >> im;
+    
+    c.SetReal(re);
+    c.SetImag(im);
+
+    return is; 
 }

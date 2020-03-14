@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cmath>
+#include <iostream>
 #include "complex.hpp"
 
 using namespace ilrd;
@@ -68,7 +69,31 @@ static void ComplxTestMemberFuncs()
 
 static void ComplxTestOperators()
 {
+    printf("Complx Test Member Funcs:\n"); 
+    Complex c1(0);
+    Complex c2(0);
+    
+    c1.SetReal(55.2); c1.SetImag(200);
+    c2.SetReal(20); c2.SetImag(-5000.2);    
+    Complex c3 = c1 + c2;
 
+    c1.SetReal(3); c1.SetImag(2);
+    c2.SetReal(2); c2.SetImag(-1);
+    c3 = c1 * c2;
+    c3 = 2 * c1;
+    c3 = 5 * 2;
+    
+    c1.SetReal(20); c1.SetImag(-4);
+    c2.SetReal(3); c2.SetImag(2);
+    c3 = c1 / c2;
+    
+    c1 += 2;
+    
+    std::cout << c1;
+    std::cin >> c1;
+    std::cout << c1;
+    
+    printf("\n"); 
 }
 
 int main()
@@ -76,5 +101,6 @@ int main()
     ComplxTestCtor();
     ComplxTestMemberFuncs();
     ComplxTestOperators();
+    
 	return 0;
 }

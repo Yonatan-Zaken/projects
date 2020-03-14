@@ -9,7 +9,7 @@
 #ifndef ILRD_RD8081__HPP
 #define ILRD_RD8081__HPP
 
-#include <iosfwd> // ostream
+#include <iosfwd> // i/ostream
 
 namespace ilrd
 {
@@ -29,6 +29,11 @@ public:
     double Abs() const;
     Complex Conj() const;
     
+    Complex& operator+=(const Complex&);
+    Complex& operator-=(const Complex&);
+    Complex& operator*=(const Complex&);
+    Complex& operator/=(const Complex&);
+    
 private:
     double m_re;
     double m_im;
@@ -36,7 +41,6 @@ private:
 } // namespace ilrd 
 
 ilrd::Complex operator+(const ilrd::Complex&, const ilrd::Complex&);  
-ilrd::Complex operator+=(const ilrd::Complex&, const ilrd::Complex&);
 ilrd::Complex operator-(const ilrd::Complex&, const ilrd::Complex&);  
 ilrd::Complex operator*(const ilrd::Complex&, const ilrd::Complex&);  
 ilrd::Complex operator/(const ilrd::Complex&, const ilrd::Complex&);  
@@ -45,8 +49,6 @@ bool operator!=(const ilrd::Complex&, const ilrd::Complex&);
 bool operator>(const ilrd::Complex&, const ilrd::Complex&);  
 bool operator<(const ilrd::Complex&, const ilrd::Complex&);  
 std::ostream& operator<<(std::ostream&, const ilrd::Complex&);
-
-//add functuanality for >>
-//??? std::istream& operator>>(std::istream&, ilrd::Complex&);
+std::istream& operator>>(std::istream&, ilrd::Complex&);
 
 #endif
