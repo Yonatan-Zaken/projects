@@ -88,7 +88,9 @@ static void ComplxTestOperators()
     c3 = c1 / c2;
     
     c1 += 2;
-    
+    c3 -= c1;
+    c2 *= c1;
+
     std::cout << c1;
     std::cin >> c1;
     std::cout << c1;

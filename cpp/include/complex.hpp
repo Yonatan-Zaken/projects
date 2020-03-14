@@ -5,7 +5,6 @@
 /*    Reviewed By:               */
 /*    Date:   13/3/20            */
 /*********************************/
-
 #ifndef ILRD_RD8081__HPP
 #define ILRD_RD8081__HPP
 
@@ -40,10 +39,10 @@ private:
 }; // class Complex
 } // namespace ilrd 
 
-ilrd::Complex operator+(const ilrd::Complex&, const ilrd::Complex&);  
-ilrd::Complex operator-(const ilrd::Complex&, const ilrd::Complex&);  
-ilrd::Complex operator*(const ilrd::Complex&, const ilrd::Complex&);  
-ilrd::Complex operator/(const ilrd::Complex&, const ilrd::Complex&);  
+const ilrd::Complex operator+(const ilrd::Complex&, const ilrd::Complex&);  
+const ilrd::Complex operator-(const ilrd::Complex&, const ilrd::Complex&);  
+const ilrd::Complex operator*(const ilrd::Complex&, const ilrd::Complex&);  
+const ilrd::Complex operator/(const ilrd::Complex&, const ilrd::Complex&);  
 bool operator==(const ilrd::Complex&, const ilrd::Complex&);  
 bool operator!=(const ilrd::Complex&, const ilrd::Complex&);  
 bool operator>(const ilrd::Complex&, const ilrd::Complex&);  
