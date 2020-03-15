@@ -25,7 +25,7 @@ double Complex::GetReal() const
     return m_re;
 }
 
-double Complex::GetIm() const
+double Complex::GetImag() const
 {
     return m_im;
 }
@@ -48,20 +48,19 @@ double Complex::Abs() const
 Complex Complex::Conj() const
 {
     Complex c1(m_re);
-    c1.m_im = -m_im;
+    c1.m_im = (m_im == 0) ? 0 : -m_im;
+    
     return c1;
 }
 
 /**************************** Operator Functions ******************************/
 
-const Complex operator+(const Complex& c1, const Complex&c2)
+const Complex operator+(const Complex& c1, const Complex& c2)
 {
     double re = c1.GetReal() + c2.GetReal();
-    double im = c1.GetIm() + c2.GetIm();
+    double im = c1.GetImag() + c2.GetImag();
     
-    Complex sum = 0;
-    sum.SetReal(re);
-    sum.SetImag(im);
+    Complex sum(re,im);
     
     return sum;
 }
@@ -69,30 +68,26 @@ const Complex operator+(const Complex& c1, const Complex&c2)
 const Complex operator-(const Complex& c1, const Complex&c2)
 {
     double re = c1.GetReal() - c2.GetReal();
-    double im = c1.GetIm() - c2.GetIm();
+    double im = c1.GetImag() - c2.GetImag();
     
-    Complex sub(0);
-    sub.SetReal(re);
-    sub.SetImag(im);
+    Complex sub(re,im);
     
     return sub;
 }
 
 const Complex operator*(const Complex& c1, const Complex& c2)
 {
-    double re = (c1.GetReal() * c2.GetReal()) - (c1.GetIm() * c2.GetIm());
-    double im = (c1.GetReal() * c2.GetIm()) + (c1.GetIm() * c2.GetReal());
+    double re = (c1.GetReal() * c2.GetReal()) - (c1.GetImag() * c2.GetImag());
+    double im = (c1.GetReal() * c2.GetImag()) + (c1.GetImag() * c2.GetReal());
     
-    Complex mult(0);
-    mult.SetReal(re);
-    mult.SetImag(im);
+    Complex mult(re,im);
     
     return mult;
 }
 
 const Complex operator/(const Complex& c1, const Complex& c2)
 {
-    assert((0 != c2.GetReal()) && (0 != c2.GetIm()));
+    assert((0 != c2.GetReal()) || (0 != c2.GetImag()));
     
     Complex conj = c2.Conj();
     Complex mult = c2 * conj;
@@ -100,14 +95,14 @@ const Complex operator/(const Complex& c1, const Complex& c2)
     
     Complex div = (c1 * conj);
     div.SetReal(div.GetReal() / abs);
-    div.SetImag(div.GetIm() / abs);
+    div.SetImag(div.GetImag() / abs);
     
     return div;
 }
 
 bool operator==(const Complex& c1, const Complex& c2)
 {
-    return ((c1.GetReal() == c2.GetReal()) && (c1.GetIm() == c2.GetIm()));
+    return ((c1.GetReal() == c2.GetReal()) && (c1.GetImag() == c2.GetImag()));
 }
 
 bool operator!=(const Complex& c1, const Complex& c2)
@@ -122,7 +117,7 @@ bool operator>(const Complex& c1, const Complex& c2)
 
 bool operator<(const Complex& c1, const Complex& c2)
 {
-    return (c1.Abs() < c2.Abs());
+    return (!(c1 > c2));
 }
 
 /************************** Operator Member Functions *************************/
@@ -153,7 +148,7 @@ Complex& Complex::operator/=(const Complex& c)
 
 std::ostream& operator<<(std::ostream& os, const Complex& c)
 {
-    os << "(" << c.GetReal() << "," << c.GetIm() << "i)";
+    os << "(" << c.GetReal() << "," << c.GetImag() << "i)";
     return os;
 }
 

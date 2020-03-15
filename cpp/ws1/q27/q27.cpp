@@ -3,7 +3,7 @@
 class X
 {
 public:
-    explicit X();
+     X();
     explicit X(int a_);
     explicit X(int a_, int b_);
     
@@ -36,11 +36,10 @@ void Fifi(X x_)
 int main()
 {
     X x1(7);
-
     Fifi(x1);
     Fifi(X(7));
-    Fifi(9);
-//    Fifi(3, 4);
+//    Fifi(9);
+//   Fifi(3, 4);
     
     return x1 * 3;
 }

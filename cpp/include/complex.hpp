@@ -22,7 +22,7 @@ public:
     // using compiler generated assignment operator
     
     double GetReal() const;
-    double GetIm() const;
+    double GetImag() const;
     void SetReal(double re);
     void SetImag(double im);
     double Abs() const;
