@@ -1,22 +1,11 @@
-#include <iostream> // cout
+#ifndef ILRD_RD8081_UTILITY_HPP
+#define ILRD_RD8081_UTILITY_HPP
 
-#define NORMAL "\033[0m"
-#define RED "\033[;031m"
-#define GREEN "\033[;032m"
+#if __cplusplus<201104
+#define noexcept throw()
+#endif
 
-#define RUN_TEST(test, error_message){\
-    if (test)\
-    {\
-        printf(GREEN);\
-        printf("SUCCESS\n");\
-        printf(NORMAL);\
-    }\
-    else\
-    {\
-        printf(RED);\
-        printf("FAIL %s\n", error_message);\
-        printf(NORMAL);\
-    }\
-}
+#define ONE 1
 
+#endif // ILRD_RD8081_UTILITY_HPP
 

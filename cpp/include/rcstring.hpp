@@ -24,20 +24,14 @@ public:
     RCString& operator=(const RCString& other);  // copy assignment
 
     std::size_t Length() const;
-    const char *GetCStr() const;
-    char *GetCStr(); // time complexity O(n)           
+    const char *GetCStr() const;          
     
     RCString& operator+=(const RCString& other); 
     char& operator[](std::size_t index);
-    char operator[](std::size_t index) const; // ???
+    char operator[](std::size_t index) const;
     
-    s1("moshe");
-    std::cout << s1[1];
-    s1[1] = 'h';
-
 private:
-    char *m_cstr;
-    std::size_t *m_count;
+    char *m_rcstr;
 };
 
 std::ostream& operator<<(std::ostream& os, const RCString& str);

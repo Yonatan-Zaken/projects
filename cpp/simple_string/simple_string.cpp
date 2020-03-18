@@ -9,6 +9,8 @@
 /*********************************/
 #include <iostream> // cout
 #include <cstring> // strcpy
+#include <exception>
+
 
 #include "simple_string.hpp"
 using namespace ilrd;
