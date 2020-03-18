@@ -19,8 +19,8 @@ static char* Strdup(const char *str)
 {
     size_t length = strlen(str);
     char *ptr = new char[length + 1];
-    strcpy(ptr, str);
-//    memcpy(ptr, str, sizeof(char) * length);
+    memcpy(ptr, str, sizeof(char) * (length + 1));
+    
     return ptr;
 }
 

@@ -3,8 +3,8 @@
 class X
 {
 public:
-     X();
-    explicit X(int a_);
+    explicit X();
+     X(int a_);
     explicit X(int a_, int b_);
     
     operator int() const;
@@ -38,8 +38,9 @@ int main()
     X x1(7);
     Fifi(x1);
     Fifi(X(7));
-//    Fifi(9);
-//   Fifi(3, 4);
+    Fifi(X(7.2));
+    Fifi((3,4));
+    X(3,4);
     
     return x1 * 3;
 }

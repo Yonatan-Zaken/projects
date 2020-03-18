@@ -154,10 +154,8 @@ std::ostream& operator<<(std::ostream& os, const Complex& c)
 
 std::istream& operator>>(std::istream& is, Complex& c)
 {
-    std::cout << "\nEnter Real Part: ";
     double re = 0; 
     is >> re; 
-    std::cout << "Enter Imaginary Part: "; 
     double im = 0;
     is >> im;
     

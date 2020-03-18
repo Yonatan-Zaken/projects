@@ -94,9 +94,9 @@ static void ComplxTestOperators()
     c2 *= c1;
 
     std::cout << c1;
-//    std::cin >> c1;
+    std::cin >> c1 >> c2;
     std::cout << c1;
-    
+    std::cout << c2;
     Complex c4(2,3);
     Complex c5(3,0);
     c5 = c5.Conj();
@@ -114,7 +114,7 @@ static void BenchmarkTest()
     clock_t begin = 0, end = 0;
     begin = clock();
     
-    for (float i = 0; i < 100000; ++i)
+    for (float i = 0; i < 10000000; ++i)
     {
         Complex c2(i,i);
         Complex c3(i,i);
