@@ -15,6 +15,8 @@ static size_t GetCounter(char *str);
 static char* RCStrdup(const char *str);
 /******************************************************************************/
 
+const size_t BUFFER_SIZE = 75;
+
 namespace ilrd
 {
 /******************************* Ctors and Dtor *******************************/
@@ -45,7 +47,6 @@ RCString& RCString::operator=(const RCString& other)
 RCString::~RCString() noexcept
 {
     --(*reinterpret_cast<size_t*>(m_rcstr));  
-
     if (0 == GetCounter(m_rcstr))
     {
         delete[] m_rcstr;
@@ -64,12 +65,7 @@ const char *RCString::GetCStr() const
 {
     return GoToString(m_rcstr);    
 }
-/*
-char *RCString::GetCStr() 
-{
-    return GoToString(m_rcstr);    
-}
-*/
+
 /**************************** Operator Functions ******************************/
 
 RCString& RCString::operator+=(const RCString& other)
@@ -79,11 +75,11 @@ RCString& RCString::operator+=(const RCString& other)
     
     char *concat_string = new char[length_member + length_other + sizeof(size_t)];
     memcpy(GoToString(concat_string), GoToString(m_rcstr), length_member);
-    memcpy(GoToString(concat_string) + length_member, GoToString(other.m_rcstr) , length_other);
+    memcpy(GoToString(concat_string) + length_member, 
+                                GoToString(other.m_rcstr) , length_other);
     
     (*reinterpret_cast<size_t *>(concat_string)) = 1;
     --(*reinterpret_cast<size_t *>(m_rcstr));
-    
     if (0 == GetCounter(m_rcstr))
     {
         delete[] m_rcstr;
@@ -98,6 +94,7 @@ const RCString operator+(const RCString& lhs, const RCString& rhs)
 {
     RCString rcstr(lhs.GetCStr()); 
     rcstr += rhs;
+    
     return rcstr;    
 }
 
@@ -123,9 +120,9 @@ bool operator<(const RCString& lhs, const RCString& rhs)
 
 char& RCString::operator[](std::size_t index)
 {
-    char *duplicate_rcstr = RCStrdup(GoToString(m_rcstr));        
+    char *duplicate_rcstr = RCStrdup(GoToString(m_rcstr));  
+          
     --(*reinterpret_cast<size_t *>(m_rcstr));   
-    
     if (0 == GetCounter(m_rcstr))
     {
         delete[] m_rcstr;
@@ -141,14 +138,24 @@ char RCString::operator[](std::size_t index) const
     return (*(GoToString(m_rcstr) + index));
 }
 
-std::ostream& operator<<(std::ostream& os, const RCString& str)
+std::ostream& operator<<(std::ostream& os, const RCString& rcstr)
 {
-    return (os << str.GetCStr());
+    return (os << rcstr.GetCStr());
 }
 
-std::istream& operator>>(std::istream& is, RCString& str)
+std::istream& operator>>(std::istream& is, RCString& rcstr)
 {
+    const char *m_rcstr = rcstr.GetCStr() - sizeof(size_t);
+    char *buffer = new char[BUFFER_SIZE];
     
+    --(*reinterpret_cast<size_t *>(m_rcstr));   
+    if (0 == GetCounter(m_rcstr))
+    {
+        delete[] m_rcstr;
+        m_rcstr = NULL;
+    }
+    m_rcstr = buffer;
+    return (is >> m_rcstr);
 }
 
 } // namespace ilrd

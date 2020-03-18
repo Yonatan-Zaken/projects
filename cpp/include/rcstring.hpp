@@ -34,8 +34,8 @@ private:
     char *m_rcstr;
 };
 
-std::ostream& operator<<(std::ostream& os, const RCString& str);
-std::istream& operator>>(std::istream& is, RCString& str);
+std::ostream& operator<<(std::ostream& os, const RCString& rcstr);
+std::istream& operator>>(std::istream& is, RCString& rcstr);
 bool operator==(const RCString& lhs, const RCString& rhs);
 bool operator!=(const RCString& lhs, const RCString& rhs);
 bool operator>(const RCString& lhs, const RCString& rhs);
