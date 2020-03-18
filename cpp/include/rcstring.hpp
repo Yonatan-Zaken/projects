@@ -19,9 +19,9 @@ class RCString
 {
 public:
     RCString(const char *str = ""); // implicit convertor constructor
-    ~RCString() noexcept;
-    RCString(const RCString& other);
-    RCString& operator=(const RCString& other);   
+    ~RCString() noexcept; // dtor
+    RCString(const RCString& other); // cctor
+    RCString& operator=(const RCString& other);  // copy assignment
 
     std::size_t Length() const;
     const char *GetCStr() const;

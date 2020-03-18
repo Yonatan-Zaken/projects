@@ -36,7 +36,7 @@ String::String(const String& other_): m_cstr(Strdup(other_.m_cstr))
 
 String::~String()
 {
-    delete []m_cstr;
+    delete[] m_cstr;
     m_cstr = NULL;
 }
 
