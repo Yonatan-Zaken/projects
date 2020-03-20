@@ -23,8 +23,22 @@ using namespace ilrd;
     }\
 }
 
+String foo(String s_)
+{
+    String s2(s_);
+    return s2;
+}
+
+static void Test()
+{
+    String str1 = "123";
+    String str2;
+    str2 = foo(str1);
+}
+
 int main()
 {
+    Test();
     String s1("hello");
     String s2(s1);
     String s3("QQQQQQ");

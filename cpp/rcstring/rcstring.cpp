@@ -6,8 +6,9 @@
 *******************************/
 #include <iostream> // cout
 #include <cstring> // strcpy
+#include <cassert> //assert
 
-#include "rcstring.hpp"
+#include "rcstring.hpp" 
 
 /************************ Static Functions Declarations ***********************/
 static char *GoToString(char *str);
@@ -15,31 +16,49 @@ static size_t GetCounter(char *str);
 static char* RCStrdup(const char *str);
 /******************************************************************************/
 
-const size_t BUFFER_SIZE = 75;
+const size_t RCSTR_BUFFER_SIZE = 75;
 
 namespace ilrd
 {
-/******************************* Ctors and Dtor *******************************/
+
+/************************* Proxy Ctors and operators **************************/
+
+RCString::CharProxy::CharProxy(RCString& rcstr, size_t index): 
+m_prx_rcstr(rcstr), m_prx_index(index)
+{
+}
+
+RCString::CharProxy& RCString::CharProxy::operator=(char c)
+{
+    char *duplicate = RCStrdup(GoToString(m_prx_rcstr.m_rcstr));
+    m_prx_rcstr.~RCString();
+    m_prx_rcstr.m_rcstr = duplicate;
+    *(GoToString(m_prx_rcstr.m_rcstr) + m_prx_index) = c;
+    
+    return *this;        
+}
+
+RCString::CharProxy::operator char()
+{
+    return (*(m_prx_rcstr.GetCStr() + m_prx_index));
+}
+
+/*************************** RCString Ctors and Dtor **************************/
 
 RCString::RCString(const char *str): m_rcstr(RCStrdup(str))
 {
 }
 
-RCString::RCString(const RCString& other): m_rcstr(other.m_rcstr) 
+RCString::RCString(const RCString& other) noexcept: m_rcstr(other.m_rcstr) 
 {
     ++(*reinterpret_cast<size_t *>(m_rcstr));
 }
 
 RCString& RCString::operator=(const RCString& other)
 {
-    if (&other != this)
-    {
-        delete[] m_rcstr;
-        m_rcstr = NULL;
-    }
-    
-    m_rcstr = other.m_rcstr;
-    ++(*(reinterpret_cast<size_t *>(other.m_rcstr))); 
+    char *duplicate = RCStrdup(GoToString(other.m_rcstr));
+    this->~RCString(); 
+    m_rcstr = duplicate;
     
     return *this;
 }
@@ -56,12 +75,12 @@ RCString::~RCString() noexcept
 
 /***************************** Member Functions *******************************/
 
-size_t RCString::Length() const
+size_t RCString::Length() const noexcept
 {
     return strlen(GoToString(m_rcstr));
 }
 
-const char *RCString::GetCStr() const
+const char *RCString::GetCStr() const noexcept
 {
     return GoToString(m_rcstr);    
 }
@@ -79,12 +98,7 @@ RCString& RCString::operator+=(const RCString& other)
                                 GoToString(other.m_rcstr) , length_other);
     
     (*reinterpret_cast<size_t *>(concat_string)) = 1;
-    --(*reinterpret_cast<size_t *>(m_rcstr));
-    if (0 == GetCounter(m_rcstr))
-    {
-        delete[] m_rcstr;
-        m_rcstr = NULL;
-    }
+    this->~RCString();
     m_rcstr = concat_string;
      
     return *this;
@@ -92,70 +106,62 @@ RCString& RCString::operator+=(const RCString& other)
 
 const RCString operator+(const RCString& lhs, const RCString& rhs)
 {
-    RCString rcstr(lhs.GetCStr()); 
-    rcstr += rhs;
-    
-    return rcstr;    
+    return (RCString(lhs.GetCStr()) += rhs);    
 }
 
-bool operator==(const RCString& lhs, const RCString& rhs)
+bool operator==(const RCString& lhs, const RCString& rhs) noexcept
 {
     return (0 == strcmp(lhs.GetCStr(), rhs.GetCStr())); 
 }
 
-bool operator!=(const RCString& lhs, const RCString& rhs)
+bool operator!=(const RCString& lhs, const RCString& rhs) noexcept
 {
     return (!(lhs == rhs));
 }
 
-bool operator>(const RCString& lhs, const RCString& rhs)
+bool operator>(const RCString& lhs, const RCString& rhs) noexcept
 {
     return (0 < strcmp(lhs.GetCStr(), rhs.GetCStr()));
 }
 
-bool operator<(const RCString& lhs, const RCString& rhs)
+bool operator<(const RCString& lhs, const RCString& rhs) noexcept
 {
-    return (!(lhs > rhs));
+    return (0 > strcmp(lhs.GetCStr(), rhs.GetCStr()));
 }
 
-char& RCString::operator[](std::size_t index)
+RCString::CharProxy RCString::operator[](std::size_t index) 
 {
+    assert(strlen(GoToString(m_rcstr)) >= index);
+    /*   
     char *duplicate_rcstr = RCStrdup(GoToString(m_rcstr));  
-          
-    --(*reinterpret_cast<size_t *>(m_rcstr));   
-    if (0 == GetCounter(m_rcstr))
-    {
-        delete[] m_rcstr;
-        m_rcstr = NULL;
-    }
-    
+    this->~RCString();
     m_rcstr = duplicate_rcstr;
+    
     return (*(GoToString(m_rcstr) + index));
+    */
+    return RCString::CharProxy(*this, index);
 }
 
-char RCString::operator[](std::size_t index) const 
+char RCString::operator[](std::size_t index) const noexcept  
 {
+    assert(strlen(GoToString(m_rcstr)) >= index);
+    
     return (*(GoToString(m_rcstr) + index));
 }
 
-std::ostream& operator<<(std::ostream& os, const RCString& rcstr)
+std::ostream& operator<<(std::ostream& os, const RCString& rcstr) noexcept
 {
     return (os << rcstr.GetCStr());
 }
 
 std::istream& operator>>(std::istream& is, RCString& rcstr)
 {
-    const char *m_rcstr = rcstr.GetCStr() - sizeof(size_t);
-    char *buffer = new char[BUFFER_SIZE];
+    char *buffer = new char[RCSTR_BUFFER_SIZE];
+    is >> buffer;
+    rcstr = buffer;   
+    delete[] buffer;
     
-    --(*reinterpret_cast<size_t *>(m_rcstr));   
-    if (0 == GetCounter(m_rcstr))
-    {
-        delete[] m_rcstr;
-        m_rcstr = NULL;
-    }
-    m_rcstr = buffer;
-    return (is >> m_rcstr);
+    return is;
 }
 
 } // namespace ilrd

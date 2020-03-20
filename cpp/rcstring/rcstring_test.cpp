@@ -49,6 +49,9 @@ static void CtorTest()
     RCString s7;
     RUN_TEST(0 == strcmp("", s7.GetCStr()), "default ctor");
     
+    s1 = s1;
+    RUN_TEST(0 == strcmp("hello", s1.GetCStr()), "self assignment");
+    
     printf("\n");
 }
 
@@ -97,13 +100,36 @@ static void OperatorTest()
     std::cout << s6 << "\n";
     std::cout << s6 << s10 << "\n";
     
+    RCString s11 = "QQQQQQ";
+    printf("Enter string: ");
+    std::cin >> s11 >> s8;
+    std::cout << s11 << "\n";
+    std::cout << s8 << "\n";
+    
     printf("\n");
 }
 
+static void ProxyTest()
+{
+    printf("Proxy Test: \n");
+    
+    RCString s1("hello");
+    RCString s2("AAKKQQJJ");  
+    RCString s3(s2);
+    RCString s4(s3);
+    
+//    char& c = s1[3]; error: cannot bind non-const lvalue reference of type ‘char&’ to an rvalue of type ‘char’
+
+    std::cout << s1[2] << "\n"; 
+    s2[0] = 'u';   
+    std::cout << s2 << "\n";
+    printf("\n");  
+}
 
 int main()
 {
     CtorTest();
     OperatorTest();
+    ProxyTest();
 	return 0;
 }

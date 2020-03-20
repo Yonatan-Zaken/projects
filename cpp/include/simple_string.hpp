@@ -14,7 +14,7 @@ bool operator<(const String& str1, const String& str2);
 class String
 {
 public:
-    explicit String(const char* ); // ctor
+    String(const char* = ""); // ctor
     String(const String& other_); // cctor
     String& operator=(const String& other_); // assignment operator
     ~String(); //dtor

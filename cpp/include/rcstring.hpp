@@ -17,29 +17,46 @@ namespace ilrd
 
 class RCString
 {
-public:
-    RCString(const char *str = ""); // implicit convertor constructor
-    ~RCString() noexcept; // dtor
-    RCString(const RCString& other); // cctor
-    RCString& operator=(const RCString& other);  // copy assignment
 
-    std::size_t Length() const;
-    const char *GetCStr() const;          
+class CharProxy;
+public:
+    RCString(const char *str = ""); // implicit convertor 
+    ~RCString() noexcept; // dtor
+    RCString(const RCString& other) noexcept; // cctor
+    RCString& operator=(const RCString& other);  // assignment operator
+
+    std::size_t Length() const noexcept;
+    const char *GetCStr() const noexcept;          
     
     RCString& operator+=(const RCString& other); 
-    char& operator[](std::size_t index);
-    char operator[](std::size_t index) const;
+    CharProxy operator[](std::size_t index);
+    char operator[](std::size_t index) const noexcept;
     
 private:
     char *m_rcstr;
+    
+    class CharProxy
+    {
+    public: 
+        CharProxy(RCString& ,size_t index); // ctor
+        CharProxy& operator=(char c); // assignment operator
+        operator char(); // convertor operator 
+        // using compiler generated cctor
+        // using compiler generated dtor
+    
+    private:
+        RCString& m_prx_rcstr;
+        size_t m_prx_index;
+    };
+    
 };
 
-std::ostream& operator<<(std::ostream& os, const RCString& rcstr);
+std::ostream& operator<<(std::ostream& os, const RCString& rcstr) noexcept;
 std::istream& operator>>(std::istream& is, RCString& rcstr);
-bool operator==(const RCString& lhs, const RCString& rhs);
-bool operator!=(const RCString& lhs, const RCString& rhs);
-bool operator>(const RCString& lhs, const RCString& rhs);
-bool operator<(const RCString& lhs, const RCString& rhs);
+bool operator==(const RCString& lhs, const RCString& rhs) noexcept;
+bool operator!=(const RCString& lhs, const RCString& rhs) noexcept;
+bool operator>(const RCString& lhs, const RCString& rhs) noexcept;
+bool operator<(const RCString& lhs, const RCString& rhs) noexcept;
 const RCString operator+(const RCString& lhs, const RCString& rhs);
 
 } // namespace ilrd
