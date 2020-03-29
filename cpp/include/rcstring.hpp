@@ -17,8 +17,9 @@ namespace ilrd
 
 class RCString
 {
-
-class CharProxy;
+private:
+    class CharProxy;
+    
 public:
     RCString(const char *str = ""); // implicit convertor 
     ~RCString() noexcept; // dtor
@@ -31,6 +32,8 @@ public:
     RCString& operator+=(const RCString& other); 
     CharProxy operator[](std::size_t index);
     char operator[](std::size_t index) const noexcept;
+    
+    static const size_t RCSTR_BUFFER_SIZE = 75;
     
 private:
     char *m_rcstr;

@@ -5,7 +5,20 @@
 #define noexcept throw()
 #endif
 
-#define ONE 1
+namespace ilrd
+{
+
+class Uncopyable
+{
+protected:
+    Uncopyable() {}
+    ~Uncopyable() {}
+    
+private:
+    Uncopyable(const Uncopyable&);
+    Uncopyable& operator=(const Uncopyable&);
+};
+} // namespace ilrd
 
 #endif // ILRD_RD8081_UTILITY_HPP
 

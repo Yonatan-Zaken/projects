@@ -16,8 +16,6 @@ static size_t GetCounter(char *str);
 static char* RCStrdup(const char *str);
 /******************************************************************************/
 
-const size_t RCSTR_BUFFER_SIZE = 75;
-
 namespace ilrd
 {
 
@@ -93,9 +91,10 @@ RCString& RCString::operator+=(const RCString& other)
     size_t length_other = strlen(GoToString(other.m_rcstr)) + 1;
     
     char *concat_string = new char[length_member + length_other + sizeof(size_t)];
-    memcpy(GoToString(concat_string), GoToString(m_rcstr), length_member);
-    memcpy(GoToString(concat_string) + length_member, 
-                                GoToString(other.m_rcstr) , length_other);
+    memcpy(GoToString(concat_string), GoToString(m_rcstr), 
+                            sizeof(char) * length_member);
+    memcpy(GoToString(concat_string) + length_member, GoToString(other.m_rcstr),       
+                                                   sizeof(char) * length_other);
     
     (*reinterpret_cast<size_t *>(concat_string)) = 1;
     this->~RCString();
@@ -156,7 +155,7 @@ std::ostream& operator<<(std::ostream& os, const RCString& rcstr) noexcept
 
 std::istream& operator>>(std::istream& is, RCString& rcstr)
 {
-    char *buffer = new char[RCSTR_BUFFER_SIZE];
+    char *buffer = new char[RCString::RCSTR_BUFFER_SIZE];
     is >> buffer;
     rcstr = buffer;   
     delete[] buffer;
