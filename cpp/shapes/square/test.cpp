@@ -1,6 +1,7 @@
 #include <iostream> // cout
 
-#include "circle.hpp"
+#include "glut_utils.h"
+#include "square.hpp"
 
 using namespace ilrd;
 
@@ -25,12 +26,8 @@ using namespace ilrd;
 
 static void Test()
 {
-    Point p0(400, 600);
-    Point p1(400, 400);
-    Circle c1(p1, 0, COLOR_YELLOW, 50);
-    c1.Drawing();
-    c1.Revolve(p0, 90);
-    c1.Drawing();
+    Point p0(500, 500);
+    Square s1(p0, 0, COLOR_WHITE, 300);
     
 }
 

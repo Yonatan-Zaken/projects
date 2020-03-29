@@ -1,6 +1,7 @@
 #include <iostream> // cout
 
-#include "line.hpp"
+#include "glut_utils.h"
+#include "rectangle.hpp"
 
 using namespace ilrd;
 
@@ -25,16 +26,16 @@ using namespace ilrd;
 
 static void Test()
 {
-    Point p1;
-    Point p2(0, -5);
-    Line l1(4, 0, p2);
-    l1.Rotate(45);
-    l1.Revolve(p1, 90);
+    Point p0(500, 500);
+    Rectangle r1(p0, 0, COLOR_MAGENTA,300, 200);
+    r1.SetWidth(50);
+    r1.SetHeight(40);
     
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    Test();
+    DrawInit(argc, argv, 1200, 1200, Test); 
+    DrawMainLoop(); 
     return 0;
 }

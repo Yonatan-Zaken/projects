@@ -8,7 +8,6 @@
 #ifndef ILRD_RD8081_SHAPE_HPP
 #define ILRD_RD8081_SHAPE_HPP
 
-#include <iosfwd>
 #include "point.hpp"
 
 namespace ilrd
@@ -16,18 +15,20 @@ namespace ilrd
 
 class Shape
 {
+
 public:
     Shape(Point center, double angle);
-    virtual ~Shape();
+    virtual ~Shape() =0;
     //Shape(const Point&) = default;
     //Shape& operator=(const Point&) = default;
     
-    virtual Shape& Rotate(double angle) =0;
-    virtual Shape& Revolve(const Point& pivot, double angle) =0;
+    virtual Shape& Rotate(double angle);
+    virtual Shape& Revolve(const Point& pivot, double angle);
     virtual const Point& GetPosition() const;
-    virtual void SetPosition(const Point& other) =0;
+    virtual void SetPosition(const Point& other);
     virtual const double& GetAngle() const;
     virtual void SetAngle(double new_angle);
+    static const double PI; 
     
 private:
     Point m_center_position;

@@ -8,27 +8,24 @@
 #ifndef ILRD_RD8081_LINE_HPP
 #define ILRD_RD8081_LINE_HPP
 
-#include <iosfwd>
+#include "draw.hpp"
 #include "shapes.hpp"
 
 namespace ilrd
 {
 
-class Line : public Shape
+class Line : public Shape, public Draw
 {
 
 public:
-    Line(double length, double angle, Point center);
+    Line(Point center, double angle, COLORS color, double length);
     //~Line() = default;
     //Line(const Point&) = default;
     //Line& operator=(const Point&) = default;
     
-    virtual Shape& Rotate(double angle);
-    virtual Shape& Revolve(const Point& pivot, double angle);
-//    virtual const Point& GetPosition() const;
-    virtual void SetPosition(const Point& other);
-//    virtual const double& GetAngle() const;
-//    virtual void SetAngle(double new_angle);
+    void SetLength(double length);
+    double GetLength() const;
+    virtual void Drawing() const;
     
 private:
     double m_length;

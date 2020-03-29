@@ -10,6 +10,8 @@
 namespace ilrd
 {
 
+const double Shape::PI = 3.14159265;
+
 Shape::Shape(Point center, double angle):
 m_center_position(center), m_angle(angle)
 {

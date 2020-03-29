@@ -5,24 +5,32 @@
     ILRD - RD8081               
 *******************************/
 
+#include <cmath> // sin()
+
+#include "glut_utils.h" // DrawCircle
 #include "circle.hpp"
 
 namespace ilrd
 {
 
-Circle::Circle(double radius, double angle, Point center): 
-Shape(center, angle), m_radius(radius)
+Circle::Circle(Point center, double angle, COLORS color, double radius): 
+Shape(center, angle), Draw(color), m_radius(radius)
 {
 }
 
-Shape& Circle::Revolve(const Point& pivot, double angle)
+void Circle::SetRadius(double radius)
 {
-    
+    m_radius = radius;
 }
 
-void Circle::SetPosition(const Point& other)
+double Circle::GetRadius() const
 {
-    
+    return m_radius;    
+}
+
+void Circle::Drawing() const
+{
+    DrawCircle(GetColor(), GetPosition().GetX(), GetPosition().GetY(), m_radius);
 }
 
 } // namespace ilrd

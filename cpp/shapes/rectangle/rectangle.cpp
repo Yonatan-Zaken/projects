@@ -5,22 +5,40 @@
     ILRD - RD8081               
 *******************************/
 
+#include <cmath> // sin()
+
+#include "glut_utils.h" // DrawPolygon
 #include "rectangle.hpp"
 
 namespace ilrd
 {
 
-Rectangle::Rectangle(double width, double height, double angle, Point center): 
-Shape(center, angle), m_width(width), m_height(height)
+Rectangle::Rectangle(Point center, double angle, COLORS color, double width, double height): 
+Shape(center, angle), Draw(color), m_width(width), m_height(height)
 {
 }
 
-Shape& Rectangle::Revolve(const Point& pivot, double angle)
+double Rectangle::GetWidth() const
 {
-    
+    return m_width;
 }
 
-void Rectangle::SetPosition(const Point& other)
+double Rectangle::GetHeight() const
+{
+    return m_height;
+}
+
+void Rectangle::SetWidth(double width)
+{
+    m_width = width;
+}
+
+void Rectangle::SetHeight(double height)
+{
+    m_height = height;
+}
+
+void Rectangle::Drawing() const
 {
     
 }

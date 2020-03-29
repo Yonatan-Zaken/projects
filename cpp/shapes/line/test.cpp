@@ -2,6 +2,8 @@
 
 #include "line.hpp"
 
+#define PI 3.1415927
+
 using namespace ilrd;
 
 #define NORMAL "\033[0m"
@@ -25,16 +27,20 @@ using namespace ilrd;
 
 static void Test()
 {
-    Point p1;
-    Point p2(0, -5);
-    Line l1(4, 0, p2);
+    Point p1(500, 1000);
+    Point p2(500, 500);
+    Line l1(p2, 0, COLOR_RED, 300);
+    l1.Drawing();
     l1.Rotate(45);
+    l1.Drawing();
     l1.Revolve(p1, 90);
-    
+    l1.Drawing(); 
+
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    Test();
+    DrawInit(argc, argv, 1200, 1200, Test); 
+    DrawMainLoop();  
     return 0;
 }

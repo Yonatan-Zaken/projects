@@ -6,31 +6,29 @@
 *******************************/
 
 #ifndef ILRD_RD8081_CIRCLE_HPP
-#define ILRD_RD8081_CIRCLE_HPP
+#define ILRD_RD8081_CIRCLEe_HPP
 
-#include <iosfwd>
-#include "Circles.hpp"
+#include "draw.hpp"
+#include "shapes.hpp"
 
 namespace ilrd
 {
 
-class Circle : public Shape
+class Circle : public Shape, public Draw
 {
 
 public:
-    Circle(double radius, double angle, Point center);
-    //virtual ~Circle();
+    Circle(Point center, double angle, COLORS color, double radius);
+    //~Circle() = default;
     //Circle(const Point&) = default;
     //Circle& operator=(const Point&) = default;
     
-    virtual Circle& Revolve(const Point& pivot, double angle) =0;
-//    virtual const Point& GetPosition() const;
-    virtual void SetPosition(const Point& other) =0;
-//    virtual const double& GetAngle() const;
-//    virtual void SetAngle(double new_angle);
+    void SetRadius(double length);
+    double GetRadius() const;
+    void Drawing() const;
     
 private:
-    m_double radius;
+    double m_radius;
 };
 
 } //namespae ilrd
