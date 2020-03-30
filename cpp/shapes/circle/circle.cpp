@@ -30,7 +30,7 @@ double Circle::GetRadius() const
 
 void Circle::Drawing() const
 {
-    DrawCircle(GetColor(), GetPosition().GetX(), GetPosition().GetY(), m_radius);
+    DrawCircle(GetColor(), GetPosition().GetX(), GetPosition().GetY(), GetRadius());
 }
 
 } // namespace ilrd

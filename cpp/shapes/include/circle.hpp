@@ -18,7 +18,7 @@ class Circle : public Shape, public Draw
 {
 
 public:
-    Circle(Point center, double angle, COLORS color, double radius);
+    explicit Circle(Point center, double angle, COLORS color, double radius);
     //~Circle() = default;
     //Circle(const Point&) = default;
     //Circle& operator=(const Point&) = default;

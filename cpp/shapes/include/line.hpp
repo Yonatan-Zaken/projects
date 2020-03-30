@@ -18,14 +18,14 @@ class Line : public Shape, public Draw
 {
 
 public:
-    Line(Point center, double angle, COLORS color, double length);
+    explicit Line(Point center, double angle, COLORS color, double length);
     //~Line() = default;
     //Line(const Point&) = default;
     //Line& operator=(const Point&) = default;
     
     void SetLength(double length);
     double GetLength() const;
-    virtual void Drawing() const;
+    void Drawing() const;
     
 private:
     double m_length;

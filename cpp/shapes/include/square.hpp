@@ -17,7 +17,7 @@ namespace ilrd
 class Square : public Shape, public Draw
 {
 public:
-    Square(Point center, double angle, COLORS color, double length);
+    explicit Square(Point center, double angle, COLORS color, double length);
     //~Shape() = default;
     //Shape(const Point&) = default;
     //Shape& operator=(const Point&) = default;

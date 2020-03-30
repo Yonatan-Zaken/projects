@@ -22,13 +22,13 @@ public:
     //Shape(const Point&) = default;
     //Shape& operator=(const Point&) = default;
     
-    virtual Shape& Rotate(double angle);
-    virtual Shape& Revolve(const Point& pivot, double angle);
-    virtual const Point& GetPosition() const;
-    virtual void SetPosition(const Point& other);
-    virtual const double& GetAngle() const;
-    virtual void SetAngle(double new_angle);
-    static const double PI; 
+    void Rotate(double angle);
+    void Revolve(const Point& pivot, double angle);
+    Point GetPosition() const;
+    void SetPosition(const Point& other);
+    double GetAngle() const;
+    void SetAngle(double new_angle);
+   
     
 private:
     Point m_center_position;

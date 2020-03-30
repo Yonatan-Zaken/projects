@@ -30,10 +30,16 @@ double Line::GetLength() const
 
 void Line::Drawing() const
 {
-    double x1 = GetPosition().GetX() - (m_length / 2) * cos(GetAngle() * (PI / 180));
-    double y1 = GetPosition().GetY() + (m_length / 2) * sin(GetAngle() * (PI / 180));
-    double x2 = GetPosition().GetX() + (m_length / 2) * cos(GetAngle() * (PI / 180));
-    double y2 = GetPosition().GetY() - (m_length / 2) * sin(GetAngle() * (PI / 180));
+    double convert_to_rad = PI / 180;
+    double half_length = m_length / 2;
+    double x = GetPosition().GetX();
+    double y = GetPosition().GetY();
+    double angle = GetAngle();
+    
+    double x1 = x - half_length * cos(angle * convert_to_rad);
+    double y1 = y + half_length * sin(angle * convert_to_rad);
+    double x2 = x + half_length * cos(angle * convert_to_rad);
+    double y2 = y - half_length * sin(angle * convert_to_rad);
     
     DrawPolygon(GetColor(), 2, (int)x1, (int)y1, (int)x2, (int)y2);
 }

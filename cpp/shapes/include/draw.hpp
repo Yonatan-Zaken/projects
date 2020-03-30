@@ -17,7 +17,7 @@ class Draw
 {
 
 public:
-    explicit Draw(COLORS color);
+    Draw(COLORS color = COLOR_WHITE);
     virtual ~Draw();
     //Draw(const Point&) = default;
     //Draw& operator=(const Point&) = default;
@@ -25,6 +25,8 @@ public:
     void SetColor(COLORS color);
     COLORS GetColor() const;
     virtual void Drawing() const =0;
+    
+    static const double PI; 
     
 private:
     COLORS m_color;

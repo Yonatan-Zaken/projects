@@ -17,7 +17,7 @@ namespace ilrd
 class Rectangle : public Shape, public Draw
 {
 public:
-    Rectangle(Point center, double angle, COLORS color, double width, double height);
+    explicit Rectangle(Point center, double angle, COLORS color, double width, double height);
     //virtual ~Rectangle() = defualt;
     //Rectangle(const Point&) = default;
     //Rectangle& operator=(const Point&) = default;

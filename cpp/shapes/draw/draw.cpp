@@ -10,6 +10,8 @@
 namespace ilrd
 {
 
+const double Draw::PI = 3.14159265;
+
 Draw::Draw(COLORS color): m_color(color)
 {
 }
