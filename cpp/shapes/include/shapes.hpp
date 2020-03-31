@@ -8,6 +8,7 @@
 #ifndef ILRD_RD8081_SHAPE_HPP
 #define ILRD_RD8081_SHAPE_HPP
 
+#include "utility.hpp" // noexcept
 #include "point.hpp"
 
 namespace ilrd
@@ -17,19 +18,18 @@ class Shape
 {
 
 public:
-    Shape(Point center, double angle);
-    virtual ~Shape() =0;
+    Shape(Point center, double angle) noexcept;
+    virtual ~Shape() noexcept =0;
     //Shape(const Point&) = default;
     //Shape& operator=(const Point&) = default;
     
-    void Rotate(double angle);
-    void Revolve(const Point& pivot, double angle);
-    Point GetPosition() const;
-    void SetPosition(const Point& other);
-    double GetAngle() const;
-    void SetAngle(double new_angle);
+    void Rotate(double angle) noexcept;
+    void Revolve(const Point& pivot, double angle) noexcept;
+    Point GetPosition() const noexcept;
+    void SetPosition(const Point& other) noexcept;
+    double GetAngle() const noexcept;
+    void SetAngle(double new_angle) noexcept;
    
-    
 private:
     Point m_center_position;
     double m_angle;

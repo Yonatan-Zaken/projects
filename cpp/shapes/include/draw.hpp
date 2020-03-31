@@ -8,6 +8,7 @@
 #ifndef ILRD_RD8081_DRAW_HPP
 #define ILRD_RD8081_DRAW_HPP
 
+#include "utility.hpp" // noexcept
 #include "glut_utils.h"
 
 namespace ilrd
@@ -17,13 +18,13 @@ class Draw
 {
 
 public:
-    Draw(COLORS color = COLOR_WHITE);
-    virtual ~Draw();
+    Draw(COLORS color = COLOR_WHITE) noexcept;
+    virtual ~Draw() noexcept;
     //Draw(const Point&) = default;
     //Draw& operator=(const Point&) = default;
     
-    void SetColor(COLORS color);
-    COLORS GetColor() const;
+    void SetColor(COLORS color) noexcept;
+    COLORS GetColor() const noexcept;
     virtual void Drawing() const =0;
     
     static const double PI; 

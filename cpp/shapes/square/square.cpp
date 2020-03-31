@@ -14,9 +14,10 @@ namespace ilrd
 {
 
 Square::Square(Point center, double angle, COLORS color, double length): 
-Shape(center, angle), Draw(color), m_length(length)
-{
-}
+Shape(center, angle), 
+Draw(color), 
+m_length(length)
+{}
 
 double Square::GetLength() const
 {

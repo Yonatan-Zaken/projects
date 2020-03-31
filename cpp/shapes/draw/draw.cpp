@@ -12,20 +12,18 @@ namespace ilrd
 
 const double Draw::PI = 3.14159265;
 
-Draw::Draw(COLORS color): m_color(color)
-{
-}
+Draw::Draw(COLORS color) noexcept: m_color(color) 
+{}
 
-Draw::~Draw()
-{
-}
+Draw::~Draw() noexcept
+{}
     
-void Draw::SetColor(COLORS color)
+void Draw::SetColor(COLORS color) noexcept
 {
     m_color = color;
 }
 
-COLORS Draw::GetColor() const
+COLORS Draw::GetColor() const noexcept
 {
     return m_color;
 }

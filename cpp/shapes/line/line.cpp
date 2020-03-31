@@ -14,9 +14,10 @@ namespace ilrd
 {
 
 Line::Line(Point center, double angle, COLORS color, double length): 
-Shape(center, angle), Draw(color), m_length(length)
-{
-}
+Shape(center, angle), 
+Draw(color), 
+m_length(length)
+{}
 
 void Line::SetLength(double length)
 {

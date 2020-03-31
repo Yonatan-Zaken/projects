@@ -14,9 +14,11 @@ namespace ilrd
 {
 
 Rectangle::Rectangle(Point center, double angle, COLORS color, double width, double height): 
-Shape(center, angle), Draw(color), m_width(width), m_height(height)
-{
-}
+Shape(center, angle), 
+Draw(color), 
+m_width(width), 
+m_height(height)
+{}
 
 double Rectangle::GetWidth() const
 {

@@ -14,9 +14,10 @@ namespace ilrd
 {
 
 Circle::Circle(Point center, double angle, COLORS color, double radius): 
-Shape(center, angle), Draw(color), m_radius(radius)
-{
-}
+Shape(center, angle), 
+Draw(color), 
+m_radius(radius)
+{}
 
 void Circle::SetRadius(double radius)
 {
