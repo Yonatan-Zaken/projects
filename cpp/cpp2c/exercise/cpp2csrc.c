@@ -15,7 +15,7 @@ typedef struct Minibus Minibus_t;
 typedef struct Taxi Taxi_t;
 typedef struct SpecialTaxi SpecialTaxi_t;
 
-int s_count;
+int PublicTransport_g_s_count;
 
 /**************************PublicTransport Structs*****************************/
 
@@ -89,8 +89,10 @@ void Taxi__Display_this(Taxi_t *this_);
 
 struct Taxi__vtbl g_Taxi_vtbl = 
 {
-    {(void(*)(PublicTransport_t*))&Taxi__dtor,
-     (void(*)(PublicTransport_t*))&Taxi__Display_this}
+    {
+     (void(*)(PublicTransport_t*))&Taxi__dtor,
+     (void(*)(PublicTransport_t*))&Taxi__Display_this
+    }
 };
 
 /*************************** Special Taxi Structs *****************************/
@@ -112,8 +114,12 @@ void SpecialTaxi__Display_this(SpecialTaxi_t *this_);
 
 struct SpecialTaxi__vtbl g_SpecialTaxi_vtbl = 
 {
-    {{(void(*)(PublicTransport_t*))&SpecialTaxi__dtor,
-      (void(*)(PublicTransport_t*))&SpecialTaxi__Display_this}}
+    {
+        {   
+            (void(*)(PublicTransport_t*))&SpecialTaxi__dtor,
+            (void(*)(PublicTransport_t*))&SpecialTaxi__Display_this
+        }   
+    }
 };
 
 /************************** PublicTransport Funcs *****************************/
@@ -121,19 +127,20 @@ struct SpecialTaxi__vtbl g_SpecialTaxi_vtbl =
 void PublicTransport__ctor(PublicTransport_t *mem_)
 {
     mem_->v_ptr = (&g_PublicTransport_vtbl);
-    mem_->m_license_plate = ++s_count;
+    mem_->m_license_plate = ++PublicTransport_g_s_count;
     printf("PublicTransport::Ctor()%d\n", mem_->m_license_plate); 
 }
 
 void PublicTransport__dtor(PublicTransport_t *this_)
 {
-    --s_count;
+    this_->v_ptr = (&g_PublicTransport_vtbl);
+    --PublicTransport_g_s_count;
     printf("PublicTransport::Dtor()%d\n", this_->m_license_plate);
 }
 
 void PublicTransport__cctor(PublicTransport_t *mem_, PublicTransport_t *other_)
 {
-    mem_->m_license_plate = ++s_count;
+    mem_->m_license_plate = ++PublicTransport_g_s_count;
     mem_->v_ptr = (&g_PublicTransport_vtbl);
     printf("PublicTransport::CCtor()%d\n", mem_->m_license_plate);
 }
@@ -145,10 +152,10 @@ void PublicTransport__Display_this(PublicTransport_t *this_)
 
 void PublicTransport__PrintCount()
 {
-    printf("s_count: %d\n", s_count);
+    printf("s_count: %d\n", PublicTransport_g_s_count);
 }
 
-static int PublicTransport__GetID_this(PublicTransport_t *this_)
+int PublicTransport__GetID_this(PublicTransport_t *this_)
 {
     return this_->m_license_plate;    
 }
@@ -158,21 +165,22 @@ static int PublicTransport__GetID_this(PublicTransport_t *this_)
 void Minibus__ctor(Minibus_t *mem_)
 {
     PublicTransport__ctor(&(mem_->base));
-    mem_->m_numSeats = NUM_SEATS;
     (*(struct Minibus__vtbl**)mem_) = &g_Minibus_vtbl;
+    mem_->m_numSeats = NUM_SEATS;
     printf("Minibus::Ctor()\n");
 }
 
 void Minibus__cctor(Minibus_t *mem_, Minibus_t *other_)
 {
     PublicTransport__cctor(&(mem_->base), &(other_->base));
-    mem_->m_numSeats = other_->m_numSeats;
     (*(struct Minibus__vtbl**)mem_) = &g_Minibus_vtbl;
+    mem_->m_numSeats = other_->m_numSeats;
     printf("Minibus::CCtor()\n");
 }
 
 void Minibus__dtor(Minibus_t *this_)
 {
+    (*(struct Minibus__vtbl**)this_) = &g_Minibus_vtbl;
     printf("Minibus::Dtor()\n");
     PublicTransport__dtor(&(this_->base));
 }
@@ -200,6 +208,7 @@ void Taxi__ctor(Taxi_t *mem_)
 
 void Taxi__dtor(Taxi_t *this_)
 {
+    (*(struct Taxi__vtbl**)this_) = &g_Taxi_vtbl;
     printf("Taxi::Dtor()\n");
     PublicTransport__dtor(&(this_->base));
 }
@@ -227,6 +236,7 @@ void SpecialTaxi__ctor(SpecialTaxi_t *mem_)
 
 void SpecialTaxi__dtor(SpecialTaxi_t *this_)
 {
+    (*(struct SpecialTaxi__vtbl**)this_) = &g_SpecialTaxi_vtbl;
     printf("SpecialTaxi::Dtor()\n");
     Taxi__dtor(&(this_->base));
 }
@@ -247,7 +257,7 @@ void SpecialTaxi__Display_this(SpecialTaxi_t *this_)
 
 void PrintInfoPublic(PublicTransport_t *a_)
 {
-    (*(struct PublicTransport__vtbl**)a_)->Display_this(a_);
+    a_->v_ptr->Display_this(a_);
 }
 
 void PrintInfoVoid()
@@ -273,13 +283,7 @@ void PrintInfoInt(PublicTransport_t *mem_, int i)
 
 void TaxiDisplay(Taxi_t* t_)
 {
-    t_->base.v_ptr->Display_this((PublicTransport_t *)t_);
-/*    Taxi__Display_this(t_);*/
-}
-
-int MaxFunc(int t1, int t2)
-{
-    return ((t1 > t2) ? t1 : t2);
+    Taxi__Display_this(t_);
 }
 
 /******************************************************************************/
@@ -295,7 +299,7 @@ int main (int argc, char *argv[], char **envp)
     SpecialTaxi_t st;
     Taxi_t temp;
     
-    Minibus_t *m_arr = NULL;
+    Minibus_t *m_arr[2];
     Taxi_t *t_arr = NULL;
     Taxi_t *t_ptr = NULL;
     
@@ -315,31 +319,25 @@ int main (int argc, char *argv[], char **envp)
     PublicTransport__dtor(&p);
 
 /******************************** 193 - 202 ***********************************/
-    m_arr = (Minibus_t*)malloc(sizeof(Minibus_t) * 2);
-    if (NULL == m_arr)
-    {
-        return 1;
-    }
+    m_arr[0] = (Minibus_t*)malloc(sizeof(Minibus_t));
+    Minibus__ctor(m_arr[0]);
     
     t_arr = (Taxi_t*)malloc(sizeof(Taxi_t));
-    if (NULL == t_arr)
-    {
-        return 1;
-    }
-    
-    Minibus__ctor(m_arr);
     Taxi__ctor(t_arr);
-    Minibus__ctor(m_arr + 1);
+
+    m_arr[1] = (Minibus_t*)malloc(sizeof(Minibus_t));
+    Minibus__ctor(m_arr[1]);
     
-    m_arr->base.v_ptr->Display_this((PublicTransport_t *)m_arr);
+    m_arr[0]->base.v_ptr->Display_this((PublicTransport_t *)m_arr[0]);
     t_arr->base.v_ptr->Display_this((PublicTransport_t *)t_arr);
-    (m_arr + 1)->base.v_ptr->Display_this((PublicTransport_t *)(m_arr + 1));
+    m_arr[1]->base.v_ptr->Display_this((PublicTransport_t *)m_arr[1]);
     
-    Minibus__dtor(m_arr);
+    Minibus__dtor(m_arr[0]);
     Taxi__dtor(t_arr);
-    Minibus__dtor(m_arr + 1);
+    Minibus__dtor(m_arr[1]);
     
-    free(m_arr);
+    free(m_arr[0]);
+    free(m_arr[1]);
     free(t_arr);
 
 /******************************** 203 - 209 ***********************************/
@@ -371,11 +369,7 @@ int main (int argc, char *argv[], char **envp)
     }
     
     t_ptr = (Taxi_t*)malloc(sizeof(Taxi_t) * 4);
-    if (NULL == t_ptr)
-    {
-        return 1;    
-    }
-    
+
     for (i = 0; i < 4; ++i)
     {
         Taxi__ctor(t_ptr + i);
@@ -385,11 +379,12 @@ int main (int argc, char *argv[], char **envp)
     {
         Taxi__dtor(t_ptr + i);
     }
-
-/******************************** 218 - end ***********************************/    
-    printf("%d\n", MaxFunc(1, 2));
-    printf("%d\n", MaxFunc(1, 2.0));
     
+    free(t_ptr);
+    
+/******************************** 218 - end ***********************************/    
+    printf("%d\n", (2 > 1) ? 2 : 1);
+    printf("%d\n", (2.0f > 1) ? 2 : 1);
     
     SpecialTaxi__ctor(&st);
     Taxi__cctor(&temp, &(st.base));
