@@ -10,7 +10,7 @@
 namespace ilrd
 {
 
-Shape::Shape(Point center, double angle) noexcept:
+Shape::Shape(const Point& center, double angle):
 m_center_position(center),
 m_angle(angle)
 {}
@@ -18,7 +18,7 @@ m_angle(angle)
 Shape::~Shape() noexcept
 {}
 
-void Shape::Revolve(const Point& pivot, double angle) noexcept
+void Shape::Revolve(const Point& pivot, double angle) 
 {
     m_center_position.Revolve(pivot, angle);
 }

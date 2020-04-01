@@ -18,14 +18,14 @@ class Circle : public Shape, public Draw
 {
 
 public:
-    explicit Circle(Point center, double angle, COLORS color, double radius);
+    explicit Circle(const Point& center, COLORS color, double radius);
     //~Circle() = default;
     //Circle(const Point&) = default;
     //Circle& operator=(const Point&) = default;
     
     void SetRadius(double length);
     double GetRadius() const;
-    void Drawing() const;
+    virtual void Drawing() const;
     
 private:
     double m_radius;

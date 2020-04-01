@@ -16,12 +16,12 @@ public:
 
     PublicTransport(const PublicTransport &other) : m_license_plate(++s_count)
     {
-        cout << "PublicTransport::CCtor() " << m_license_plate << "\n";
+        cout << "PublicTransport::CCtor()" << m_license_plate << "\n";
     }
 
     virtual void display()
     {
-        cout << "PublicTransport::display(): " << m_license_plate << "\n";
+        cout << "PublicTransport::display():" << m_license_plate << "\n";
     }
 
     static void print_count()

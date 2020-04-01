@@ -18,13 +18,13 @@ class Shape
 {
 
 public:
-    Shape(Point center, double angle) noexcept;
+    Shape(const Point& center, double angle = 0);
     virtual ~Shape() noexcept =0;
     //Shape(const Point&) = default;
     //Shape& operator=(const Point&) = default;
     
     void Rotate(double angle) noexcept;
-    void Revolve(const Point& pivot, double angle) noexcept;
+    void Revolve(const Point& pivot, double angle);
     Point GetPosition() const noexcept;
     void SetPosition(const Point& other) noexcept;
     double GetAngle() const noexcept;
