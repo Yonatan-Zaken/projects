@@ -273,7 +273,8 @@ void PrintInfoInt(PublicTransport_t *mem_, int i)
 
 void TaxiDisplay(Taxi_t* t_)
 {
-    Taxi__Display_this(t_);
+    t_->base.v_ptr->Display_this((PublicTransport_t *)t_);
+/*    Taxi__Display_this(t_);*/
 }
 
 int MaxFunc(int t1, int t2)
@@ -330,9 +331,9 @@ int main (int argc, char *argv[], char **envp)
     Taxi__ctor(t_arr);
     Minibus__ctor(m_arr + 1);
     
-    Minibus__Display_this(m_arr);
-    Taxi__Display_this(t_arr);
-    Minibus__Display_this(m_arr + 1);
+    m_arr->base.v_ptr->Display_this((PublicTransport_t *)m_arr);
+    t_arr->base.v_ptr->Display_this((PublicTransport_t *)t_arr);
+    (m_arr + 1)->base.v_ptr->Display_this((PublicTransport_t *)(m_arr + 1));
     
     Minibus__dtor(m_arr);
     Taxi__dtor(t_arr);
