@@ -21,7 +21,7 @@ int s_count;
 
 struct PublicTransport
 {
-    struct PublicTransport__vtbl const *v_ptr;
+    struct PublicTransport__vtbl *v_ptr;
     int m_license_plate;    
 };
 
@@ -37,7 +37,7 @@ void PublicTransport__dtor(PublicTransport_t *this_);
 void PublicTransport__cctor(PublicTransport_t *mem_, PublicTransport_t *other_);
 void PublicTransport__Display_this(PublicTransport_t *this_);
 
-struct PublicTransport__vtbl const g_PublicTransport_vtbl = 
+struct PublicTransport__vtbl g_PublicTransport_vtbl = 
 { 
     &PublicTransport__dtor, 
     &PublicTransport__Display_this 
@@ -63,7 +63,7 @@ void Minibus__cctor(Minibus_t *mem_, Minibus_t *other_);
 void Minibus__Display_this(Minibus_t *this_);
 void Minibus__Wash_this(Minibus_t *this_, int minutes);
 
-struct Minibus__vtbl const g_Minibus_vtbl = 
+struct Minibus__vtbl g_Minibus_vtbl = 
 { 
     {(void(*)(PublicTransport_t*))&Minibus__dtor, 
     (void(*)(PublicTransport_t*))&Minibus__Display_this}, 
@@ -87,7 +87,7 @@ void Taxi__dtor(Taxi_t *this_);
 void Taxi__cctor(Taxi_t *mem_, Taxi_t *other_);
 void Taxi__Display_this(Taxi_t *this_);
 
-struct Taxi__vtbl const g_Taxi_vtbl = 
+struct Taxi__vtbl g_Taxi_vtbl = 
 {
     {(void(*)(PublicTransport_t*))&Taxi__dtor,
      (void(*)(PublicTransport_t*))&Taxi__Display_this}
@@ -110,7 +110,7 @@ void SpecialTaxi__dtor(SpecialTaxi_t *this_);
 void SpecialTaxi__cctor(SpecialTaxi_t *mem_, SpecialTaxi_t *other_);
 void SpecialTaxi__Display_this(SpecialTaxi_t *this_);
 
-struct SpecialTaxi__vtbl const g_SpecialTaxi_vtbl = 
+struct SpecialTaxi__vtbl g_SpecialTaxi_vtbl = 
 {
     {{(void(*)(PublicTransport_t*))&SpecialTaxi__dtor,
       (void(*)(PublicTransport_t*))&SpecialTaxi__Display_this}}
@@ -159,7 +159,7 @@ void Minibus__ctor(Minibus_t *mem_)
 {
     PublicTransport__ctor(&(mem_->base));
     mem_->m_numSeats = NUM_SEATS;
-    (*(struct Minibus__vtbl const**)mem_) = &g_Minibus_vtbl;
+    (*(struct Minibus__vtbl**)mem_) = &g_Minibus_vtbl;
     printf("Minibus::Ctor()\n");
 }
 
@@ -167,7 +167,7 @@ void Minibus__cctor(Minibus_t *mem_, Minibus_t *other_)
 {
     PublicTransport__cctor(&(mem_->base), &(other_->base));
     mem_->m_numSeats = other_->m_numSeats;
-    (*(struct Minibus__vtbl const**)mem_) = &g_Minibus_vtbl;
+    (*(struct Minibus__vtbl**)mem_) = &g_Minibus_vtbl;
     printf("Minibus::CCtor()\n");
 }
 
@@ -194,7 +194,7 @@ PublicTransport__GetID_this(&(this_->base)));
 void Taxi__ctor(Taxi_t *mem_)
 {
     PublicTransport__ctor(&(mem_->base));
-    (*(struct Taxi__vtbl const**)mem_) = &g_Taxi_vtbl;
+    (*(struct Taxi__vtbl**)mem_) = &g_Taxi_vtbl;
     printf("Taxi::Ctor()\n");
 }
 
@@ -207,7 +207,7 @@ void Taxi__dtor(Taxi_t *this_)
 void Taxi__cctor(Taxi_t *mem_, Taxi_t *other_)
 {
     PublicTransport__cctor(&(mem_->base), &(other_->base));
-    (*(struct Taxi__vtbl const**)mem_) = &g_Taxi_vtbl;
+    (*(struct Taxi__vtbl**)mem_) = &g_Taxi_vtbl;
     printf("Taxi::CCtor()\n");
 }
 
@@ -221,7 +221,7 @@ void Taxi__Display_this(Taxi_t *this_)
 void SpecialTaxi__ctor(SpecialTaxi_t *mem_)
 {
     Taxi__ctor(&(mem_->base));
-    (*(struct SpecialTaxi__vtbl const**)mem_) = &g_SpecialTaxi_vtbl;
+    (*(struct SpecialTaxi__vtbl**)mem_) = &g_SpecialTaxi_vtbl;
     printf("SpecialTaxi::Ctor()\n");
 }
 
@@ -233,7 +233,7 @@ void SpecialTaxi__dtor(SpecialTaxi_t *this_)
 void SpecialTaxi__cctor(SpecialTaxi_t *mem_, SpecialTaxi_t *other_)
 {
     Taxi__cctor(&(mem_->base), &(other_->base));
-    (*(struct SpecialTaxi__vtbl const**)mem_) = &g_SpecialTaxi_vtbl;   
+    (*(struct SpecialTaxi__vtbl**)mem_) = &g_SpecialTaxi_vtbl;   
     printf("SpecialTaxi::CCtor()\n");
 }
 
@@ -247,7 +247,7 @@ void SpecialTaxi__Display_this(SpecialTaxi_t *this_)
 
 void PrintInfoPublic(PublicTransport_t *a_)
 {
-    (*(struct PublicTransport__vtbl const **)a_)->Display_this(a_);
+    (*(struct PublicTransport__vtbl**)a_)->Display_this(a_);
 }
 
 void PrintInfoVoid()
@@ -257,7 +257,7 @@ void PrintInfoVoid()
 
 void PrintInfoMinibus(Minibus_t *m_)
 {
-    (*(struct Minibus__vtbl const**)m_)->minibus_wash(m_, 3);
+    (*(struct Minibus__vtbl**)m_)->minibus_wash(m_, 3);
 }
 
 void PrintInfoInt(PublicTransport_t *mem_, int i)

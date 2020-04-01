@@ -73,9 +73,6 @@ void Fifi_Yref( Y*  y_)
 	y_->v_ptr->Foo_this(y_);
 }
 
-
-
-
 void ByVal_Y(struct Y* y_)
 {
 	Y__Foo_this(y_);
