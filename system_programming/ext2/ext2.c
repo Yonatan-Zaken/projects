@@ -12,18 +12,20 @@
 #include <string.h>         /* memcpy              */
 #include <ext2fs/ext2_fs.h> /* second extended filesystem */
 
+#include "ext2.h"
+
 #define BASE_OFFSET 1024                 
 #define ROOT_INODE 2             
 #define BLOCK_OFFSET(block) (BASE_OFFSET+(block-1)*block_size)
 
 static unsigned int block_size = 0;       
 
-enum 
+typedef enum Indirection
 {
-    SUCCESS,
-    FAIL,
-    NOT_EXT2
-};
+    SINGLE = 1,
+    DOUBLE,
+    TRIPLE
+} indirection_t;
 
 /******************************** static functions ****************************/
 
@@ -70,9 +72,8 @@ static void ReadInode(int fd, size_t inode_num , const struct ext2_group_desc *g
 
 /******************************************************************************/
 
-static void ReadDirEntries(int fd, size_t block_num, struct ext2_dir_entry_2 *dir)
+static void ReadBlock(int fd, size_t block_num, void *dir)
 {
-    
 	lseek(fd, BLOCK_OFFSET(block_num), SEEK_SET);
     read(fd, dir, block_size);
 }
@@ -133,9 +134,50 @@ static void PrintGD(const struct ext2_group_desc group, size_t i)
 
 /******************************************************************************/
 
-static void ReadBlock()
+static void RecIndirection(int fd, size_t block_number, indirection_t indirection_level)
 {
+    size_t entry_count = 0;
+    __u32 *entry = NULL;
+    char *buffer = NULL;
+    char *text_holder = NULL;
     
+    if (0 == block_number)
+    {
+        return;
+    }
+    
+    if (0 == indirection_level)
+    {
+        if (NULL == (text_holder = (char *)malloc(sizeof(char) * block_size)))
+        {
+            exit(1);
+        }
+        
+        ReadBlock(fd, block_number, text_holder);
+        printf("%s", text_holder);
+        free(text_holder); text_holder = NULL;
+        
+        return;
+    }
+    
+    if (NULL == (buffer = (char *)malloc(block_size)))
+    {
+        exit(1);    
+    }
+    
+    ReadBlock(fd, block_number, buffer);
+    entry_count = block_size / sizeof(*entry);
+    
+    for (entry = (__u32 *)buffer; --entry_count; ++entry)
+    {
+        if (0 != *entry)
+        {
+            RecIndirection(fd, *entry, indirection_level - 1);
+        }
+    }
+    
+    free(buffer); buffer = NULL;
+    return;
 }
 
 /******************************************************************************/
@@ -154,23 +196,26 @@ static void PrintFile(int fd, const struct ext2_inode* inode)
     
     for (i = 0; i < (inode->i_blocks) / 2 ; ++i)
     {
+        ReadBlock(fd, inode->i_block[i], buffer);
         if (EXT2_NDIR_BLOCKS > i)
         {
-            lseek(fd, BLOCK_OFFSET(inode->i_block[i]), SEEK_SET);
-            read(fd, buffer, block_size);
             printf("%s", buffer);             
         }
         
         else if (EXT2_IND_BLOCK == i)
         {
-            lseek(fd, BLOCK_OFFSET(inode->i_block[i]), SEEK_SET);
-            read(fd, buffer, block_size);
-            for (j = 0; (j < 256) && (0 != *((__u32 *)buffer + j)); ++j)
-            {
-                lseek(fd, BLOCK_OFFSET(*((__u32 *)buffer) + j), SEEK_SET);
-                read(fd, indir_buffer, block_size);
-                printf("%s", indir_buffer); 
-            }
+            RecIndirection(fd, inode->i_block[i], SINGLE);
+
+        }
+        
+        else if (EXT2_DIND_BLOCK == i)
+        {
+            RecIndirection(fd, inode->i_block[i], DOUBLE);    
+        }
+        
+        else if (EXT2_TIND_BLOCK == i)
+        {
+            RecIndirection(fd, inode->i_block[i], TRIPLE);
         }
     }
     
@@ -291,7 +336,7 @@ int PrintFileContent(const char *device, const char *filename)
 	}
 	
 	holder = dir_entry;
-	ReadDirEntries(fd, inode.i_block[0], dir_entry);
+	ReadBlock(fd, inode.i_block[0], dir_entry);
 	dir_entry = SearchFile(&inode, dir_entry, filename);
  
     ReadInode(fd, dir_entry->inode, &group, &inode);
