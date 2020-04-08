@@ -190,7 +190,6 @@ static void PrintFile(int fd, const struct ext2_inode* inode)
     char *buffer = malloc(sizeof(char) * block_size);
     char *indir_buffer = malloc(sizeof(char) * block_size);
     
-    printf("\ni_flags: %u\n", inode->i_flags);
     printf("\ni_size: %u\n", inode->i_size);
     printf("\ni_blocks: %u\n", inode->i_blocks);
     
@@ -319,7 +318,7 @@ int PrintFileContent(const char *device, const char *filename)
     {
         return FAIL;
     }
-    
+     
 	if (NOT_EXT2 == ReadSuperBlock(fd, &super))
 	{
 	    close(fd);
@@ -329,6 +328,7 @@ int PrintFileContent(const char *device, const char *filename)
     block_size = 1024 << super.s_log_block_size;
     ReadGroupDesc(fd, &group, block_size);
 	ReadInode(fd, ROOT_INODE, &group, &inode);
+	
 	if (NULL == (dir_entry = malloc(inode.i_size)))
 	{
 	    close(fd);
