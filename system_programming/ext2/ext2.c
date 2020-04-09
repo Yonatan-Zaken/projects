@@ -188,7 +188,6 @@ static void PrintFile(int fd, const struct ext2_inode* inode)
     size_t j = 0;
     size_t file_size = inode->i_size;
     char *buffer = malloc(sizeof(char) * block_size);
-    char *indir_buffer = malloc(sizeof(char) * block_size);
     
     printf("\ni_size: %u\n", inode->i_size);
     printf("\ni_blocks: %u\n", inode->i_blocks);
@@ -204,7 +203,6 @@ static void PrintFile(int fd, const struct ext2_inode* inode)
         else if (EXT2_IND_BLOCK == i)
         {
             RecIndirection(fd, inode->i_block[i], SINGLE);
-
         }
         
         else if (EXT2_DIND_BLOCK == i)
@@ -219,12 +217,11 @@ static void PrintFile(int fd, const struct ext2_inode* inode)
     }
     
     free(buffer); buffer = NULL;
-    free(indir_buffer); indir_buffer = NULL;
 }
 
 /******************************************************************************/
 
-static void *SearchFile(const struct ext2_inode *inode, struct ext2_dir_entry_2 *dir_entry, const char *user_file)
+static void *TraverseDir(const struct ext2_inode *inode, struct ext2_dir_entry_2 *dir_entry, const char *user_file)
 {
     size_t size = 0;
     char file_name[EXT2_NAME_LEN+1] = {0};
@@ -245,6 +242,50 @@ static void *SearchFile(const struct ext2_inode *inode, struct ext2_dir_entry_2 
     }
     
     return dir_entry;
+}
+
+/******************************************************************************/
+
+static void SearchFile(int fd, struct ext2_group_desc *group, struct ext2_inode *inode, const char *user_file, __u32 inodes_per_grp)
+{
+    char *token = NULL;
+    char *path = NULL;
+    char temp[EXT2_NAME_LEN + 1] = {0};
+    struct ext2_dir_entry_2 *dir_entry = NULL;
+    struct ext2_dir_entry_2 *holder = NULL;
+    
+	if (NULL == (dir_entry = malloc(block_size)))
+	{
+		fprintf(stderr, "Memory error\n");
+		close(fd);
+		exit(1);
+	}
+	
+	holder = dir_entry;
+	ReadBlock(fd, inode->i_block[0], dir_entry);
+    path = strchr(user_file, '/') + 1;
+    strcpy(temp, path);
+    token = strtok(temp, "/");     
+    token = strtok(NULL, "/");
+    
+    dir_entry = TraverseDir(inode, dir_entry, token);
+    ReadGroupDesc(fd, group, (dir_entry->inode / inodes_per_grp) * sizeof(*group) 
+    + block_size);
+    ReadInode(fd, dir_entry->inode - (dir_entry->inode / inodes_per_grp) * inodes_per_grp, group, inode);
+    
+    if (!S_ISDIR(inode->i_mode))
+    {
+        ReadGroupDesc(fd, group, (dir_entry->inode / inodes_per_grp) * sizeof(*group) 
+        + block_size);
+        ReadInode(fd, dir_entry->inode - 
+        (dir_entry->inode / inodes_per_grp) * inodes_per_grp, group, inode);
+        free(holder);
+                
+        return;
+    }
+    
+    free(holder);
+    SearchFile(fd, group, inode, path, inodes_per_grp);
 }
 
 /******************************* API Functions*********************************/
@@ -308,6 +349,7 @@ int PrintGroupDescriptors(const char *device)
 int PrintFileContent(const char *device, const char *filename)
 {
     int fd = 0;
+    __u32 inodes_per_grp = 0;
     struct ext2_super_block super = {0};
     struct ext2_group_desc group = {0}; 
     struct ext2_inode inode = {0};
@@ -325,24 +367,14 @@ int PrintFileContent(const char *device, const char *filename)
 	    return NOT_EXT2;
 	}
 	
+	inodes_per_grp = super.s_inodes_per_group;
     block_size = 1024 << super.s_log_block_size;
+    
     ReadGroupDesc(fd, &group, block_size);
 	ReadInode(fd, ROOT_INODE, &group, &inode);
-	
-	if (NULL == (dir_entry = malloc(inode.i_size)))
-	{
-	    close(fd);
-	    return FAIL;
-	}
-	
-	holder = dir_entry;
-	ReadBlock(fd, inode.i_block[0], dir_entry);
-	dir_entry = SearchFile(&inode, dir_entry, filename);
- 
-    ReadInode(fd, dir_entry->inode, &group, &inode);
+	SearchFile(fd, &group, &inode, filename, inodes_per_grp);
     PrintFile(fd, &inode);
     
-    free(holder); holder = NULL;
 	close(fd);
 	
 	return SUCCESS;
