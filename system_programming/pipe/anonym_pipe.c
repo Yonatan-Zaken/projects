@@ -5,50 +5,71 @@
 #include <stdlib.h>     /* exit   */    
 #include <string.h>     /* strlen */
 
+#define BUFFER_SIZE 10
+
 int main (int argc, char *argv[])
 {
-    int pipefd[2];
+    size_t i = 0;
+    int pipefd_1[2], pipefd_2[2];
     pid_t cpid;
-    char buf;
-
-    if (argc != 2) {
-       fprintf(stderr, "Usage: %s <string>\n", argv[0]);
-       exit(EXIT_FAILURE);
+    char buffer[BUFFER_SIZE] = {0};
+    char ping[] = "ping ";
+    char pong[] = "pong\n";
+    
+    if (-1 == pipe(pipefd_1))
+    {
+        perror("pipe");
+        exit(EXIT_FAILURE);        
     }
-
-    if (pipe(pipefd) == -1) {
+    
+    if (-1 == pipe(pipefd_2)) 
+    {
        perror("pipe");
        exit(EXIT_FAILURE);
     }
-
-    cpid = fork();
-    if (cpid == -1) {
+    
+    if (-1 == (cpid = fork())) 
+    {
        perror("fork");
        exit(EXIT_FAILURE);
     }
 
-    if (cpid == 0) /* Child reads from pipe */
+    if (0 == cpid) 
     {    
-       close(pipefd[1]);          /* Close unused write end */
+        close(pipefd_1[1]);          
+        close(pipefd_2[0]);          
 
-       while (read(pipefd[0], &buf, 1) > 0)
-       {
-           write(STDOUT_FILENO, &buf, 1);
-       }
-       
-       write(STDOUT_FILENO, "\n", 1);
-       close(pipefd[0]);
-       _exit(EXIT_SUCCESS);
+        for (i = 0; i < 50; ++i)
+        {
+            read(pipefd_1[0], buffer, BUFFER_SIZE);
+            write(pipefd_2[1], pong, strlen(pong)); 
+            write(STDOUT_FILENO, buffer, strlen(buffer));
+        }
+                               
+        
 
+        close(pipefd_1[0]);
+        close(pipefd_2[1]);
+
+        _exit(EXIT_SUCCESS);
     }
 
     else       /* Parent writes argv[1] to pipe */
     {            
-       close(pipefd[0]);          /* Close unused read end */
-       write(pipefd[1], argv[1], strlen(argv[1]));
-       close(pipefd[1]);          /* Reader will see EOF */
-       wait(NULL);                /* Wait for child */
-       exit(EXIT_SUCCESS);
+        close(pipefd_1[0]);          /* Close unused read end */
+        close(pipefd_2[1]);          /* Close unused write end */
+    
+        for (i = 0; i < 50; ++i)
+        {
+            write(pipefd_1[1], ping, strlen(ping));
+            read(pipefd_2[0], buffer, BUFFER_SIZE);
+            write(STDOUT_FILENO, buffer, strlen(buffer));
+        }
+        
+        close(pipefd_1[1]);          
+        close(pipefd_2[0]);
+
+        wait(NULL);               
     }
 
     return 0;
