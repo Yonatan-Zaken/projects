@@ -353,8 +353,6 @@ int PrintFileContent(const char *device, const char *filename)
     struct ext2_super_block super = {0};
     struct ext2_group_desc group = {0}; 
     struct ext2_inode inode = {0};
-    struct ext2_dir_entry_2* dir_entry = NULL; 
-    struct ext2_dir_entry_2* holder = NULL;
     
     if (FAIL == (fd = OpenDevice(fd, device)))
     {

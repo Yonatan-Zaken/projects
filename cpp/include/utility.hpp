@@ -5,9 +5,19 @@
 #define noexcept throw()
 #endif
 
+#define HORIZONTAL_TAB 9
+
+enum Status 
+{
+    SUCCESS,
+    FAIL
+};
+
 namespace ilrd
 {
 
+// Implementation of Uncopyable class to 
+// disable copy/assignment constructors
 class Uncopyable
 {
 protected:
@@ -18,6 +28,7 @@ private:
     Uncopyable(const Uncopyable&);
     Uncopyable& operator=(const Uncopyable&);
 };
+
 } // namespace ilrd
 
 #endif // ILRD_RD8081_UTILITY_HPP
