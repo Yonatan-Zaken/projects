@@ -131,13 +131,7 @@ bool operator<(const RCString& lhs, const RCString& rhs) noexcept
 RCString::CharProxy RCString::operator[](std::size_t index) 
 {
     assert(strlen(GoToString(m_rcstr)) >= index);
-    /*   
-    char *duplicate_rcstr = RCStrdup(GoToString(m_rcstr));  
-    this->~RCString();
-    m_rcstr = duplicate_rcstr;
-    
-    return (*(GoToString(m_rcstr) + index));
-    */
+ 
     return RCString::CharProxy(*this, index);
 }
 
