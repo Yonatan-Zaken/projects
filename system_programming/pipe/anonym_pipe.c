@@ -10,19 +10,19 @@
 int main (int argc, char *argv[])
 {
     size_t i = 0;
-    int pipefd_1[2], pipefd_2[2];
+    int pipe_ping[2], pipe_pong[2];
     pid_t cpid;
     char buffer[BUFFER_SIZE] = {0};
     char ping[] = "ping ";
     char pong[] = "pong\n";
     
-    if (-1 == pipe(pipefd_1))
+    if (-1 == pipe(pipe_ping))
     {
         perror("pipe");
         exit(EXIT_FAILURE);        
     }
     
-    if (-1 == pipe(pipefd_2)) 
+    if (-1 == pipe(pipe_pong)) 
     {
        perror("pipe");
        exit(EXIT_FAILURE);
@@ -36,38 +36,36 @@ int main (int argc, char *argv[])
 
     if (0 == cpid) 
     {    
-        close(pipefd_1[1]);          
-        close(pipefd_2[0]);          
+        close(pipe_ping[1]);          
+        close(pipe_pong[0]);          
 
-        for (i = 0; i < 50; ++i)
+        for (i = 0; ; ++i)
         {
-            read(pipefd_1[0], buffer, BUFFER_SIZE);
-            write(pipefd_2[1], pong, strlen(pong)); 
+            read(pipe_ping[0], buffer, BUFFER_SIZE);
             write(STDOUT_FILENO, buffer, strlen(buffer));
+            write(pipe_pong[1], pong, strlen(pong)); 
         }
                                
-        
+        close(pipe_ping[0]);
+        close(pipe_pong[1]);
 
-        close(pipefd_1[0]);
-        close(pipefd_2[1]);
-
-        _exit(EXIT_SUCCESS);
+        exit(EXIT_SUCCESS);
     }
 
     else       /* Parent writes argv[1] to pipe */
     {            
-        close(pipefd_1[0]);          /* Close unused read end */
-        close(pipefd_2[1]);          /* Close unused write end */
+        close(pipe_ping[0]);          /* Close unused read end */
+        close(pipe_pong[1]);          /* Close unused write end */
     
-        for (i = 0; i < 50; ++i)
+        for (i = 0; ; ++i)
         {
-            write(pipefd_1[1], ping, strlen(ping));
-            read(pipefd_2[0], buffer, BUFFER_SIZE);
+            write(pipe_ping[1], ping, strlen(ping));
+            read(pipe_pong[0], buffer, BUFFER_SIZE);
             write(STDOUT_FILENO, buffer, strlen(buffer));
         }
         
-        close(pipefd_1[1]);          
-        close(pipefd_2[0]);
+        close(pipe_ping[1]);          
+        close(pipe_pong[0]);
 
         wait(NULL);               
     }
