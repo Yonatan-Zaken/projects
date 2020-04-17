@@ -14,7 +14,7 @@ public:
     ~String();    
     
     const char *GetCStr() const;
-    size_t GetInstances() const;
+    static size_t GetInstances();
 
 private:
     char *m_cstr;
@@ -49,7 +49,6 @@ int main ()
     String s3("checking");
     s2 = s3;
     std::cout << s2.GetCStr() << "\n";
-    
     std::cout << "num of obj: " << s1.GetInstances() << "\n";
     s2[0] = 'r';
     std::cout << s2.GetCStr() << "\n";
@@ -138,7 +137,7 @@ const char *String::GetCStr() const
 
 /******************************************************************************/
 
-size_t String::GetInstances() const
+size_t String::GetInstances() 
 {
     return counter;
 }
