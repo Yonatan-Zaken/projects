@@ -1,15 +1,13 @@
+#define _POSIX_C_SOURCE 200112L
 #include <stdio.h>          /* printf      */
-#include <stdlib.h>         /* exit        */
 #include <unistd.h>         /* close       */
 #include <errno.h>          /* perror      */
 #include <string.h>         /* memcpy      */
-#include <sys/types.h>      /* ssize_t     */
 #include <sys/socket.h>     /* socket      */
 #include <netdb.h>          /* getaddrinfo */
-#include <arpa/inet.h>      /* inet_ntop   */
 
-#define PORT "3490" // the port users will be connecting to
-#define MAXDATASIZE 100 // max number of bytes we can get at once
+#define PORT "4443" 
+#define MAXDATASIZE 100 
 
 enum status
 {
@@ -24,17 +22,6 @@ enum status
     FAIL = 1
 };
 
-// get sockaddr, IPv4 or IPv6:
-void *get_in_addr(struct sockaddr *sa)
-{
-    if (AF_INET == sa->sa_family) 
-    {
-        return &(((struct sockaddr_in*)sa)->sin_addr);
-    }
-    
-    return &(((struct sockaddr_in6*)sa)->sin6_addr);
-}
-
 /******************************************************************************/
 
 static void InitHints(struct addrinfo *hints)
@@ -48,19 +35,20 @@ static void InitHints(struct addrinfo *hints)
 
 static int GetInternetAddr(struct addrinfo* node)
 {
-    struct addrinfo *p = NULL;
+    struct addrinfo *runner = NULL;
     int sockfd = 0;
     
-    for(p = node; NULL != p; p = p->ai_next) 
+    for(runner = node; NULL != runner; runner = runner->ai_next) 
     {
-        if (-1 == (sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol))) 
+        if (-1 == (sockfd = socket(runner->ai_family, runner->ai_socktype, 
+        runner->ai_protocol))) 
         {
             perror("client: socket");
             sockfd = FAIL_SOCKET;
             continue;
         }
         
-        if (-1 == connect(sockfd, p->ai_addr, p->ai_addrlen)) 
+        if (-1 == connect(sockfd, runner->ai_addr, runner->ai_addrlen)) 
         {
             close(sockfd);
             perror("client: connect");
@@ -71,7 +59,7 @@ static int GetInternetAddr(struct addrinfo* node)
         break;
     }
 
-    if (NULL == p)
+    if (NULL == runner)
     {
         fprintf(stderr, "talker: failed to create socket\n");
         return sockfd;
@@ -120,8 +108,10 @@ int main(int argc, char *argv[])
     if (argc != 2) 
     {
         fprintf(stderr,"usage: client hostname\n");
-        exit(1);
+        return FAIL;
     }
+    
+    InitHints(&hints);
     
     if (0 != (rv = getaddrinfo(argv[1], PORT, &hints, &servinfo)))
     {

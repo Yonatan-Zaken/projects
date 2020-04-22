@@ -8,6 +8,8 @@
 #ifndef ILRD_RD8081_SOCKET_SERVER_HPP
 #define ILRD_RD8081_SOCKET_SERVER_HPP
 
+#include <netdb.h> /* getaddinfo */
+
 typedef enum Flag
 {
     CLIENT,

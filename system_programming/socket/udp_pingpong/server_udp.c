@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 200112L
 #include <stdio.h>          /* printf      */
 #include <unistd.h>         /* close       */
 #include <string.h>         /* memcpy      */
@@ -5,7 +6,7 @@
 
 #include "socket.h"
 
-#define MYPORT "4958"  
+#define MYPORT "4443"  
 #define MAXBUFLEN 100
 
 static int CommunicateWithServer(int sockfd);

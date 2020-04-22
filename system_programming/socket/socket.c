@@ -4,13 +4,13 @@
     Author : Yonatan Zaken
       Date : 05/04/2020          
 *************************/
+#define _POSIX_C_SOURCE 200112L
 #include <stdio.h>          /* stderr      */
 #include <string.h>         /* memset      */
 #include <unistd.h>         /* close       */
 #include <errno.h>          /* perror      */
 #include <sys/socket.h>     /* socket      */
-#include <sys/types.h>      /* struct_addrinfo */
-#include <netdb.h>          
+#include <netdb.h>          /* getaddrinfo */
 
 #include "socket.h"
 
@@ -59,6 +59,3 @@ int GetInternetAddr(struct addrinfo* res, flag_t flag)
     
     return sockfd;
 }
-
-/******************************************************************************/
-

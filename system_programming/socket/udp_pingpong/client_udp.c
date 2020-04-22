@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 200112L
 #include <stdio.h>          /* printf      */
 #include <unistd.h>         /* close       */
 #include <string.h>         /* memcpy      */
@@ -5,7 +6,7 @@
 
 #include "socket.h"
 
-#define SERVERPORT "4958"   
+#define SERVERPORT "4443"   
 #define MAXBUFLEN 100
 
 static int CommunicateWithServer(int sockfd, struct addrinfo* res);
@@ -18,7 +19,6 @@ int main(int argc, char *argv[])
     struct addrinfo hints = {0};
     struct addrinfo *res = NULL;
     int rv = 0;
-    int numbytes = 0;
 
     if (argc != 2) 
     {
@@ -66,7 +66,7 @@ static int CommunicateWithServer(int sockfd, struct addrinfo* res)
             perror("talker: sendto");
             return FAIL;
         }
-
+        
         if (-1 == (recvfrom(sockfd, buf, MAXBUFLEN - 1 , 0,
         res->ai_addr, &res->ai_addrlen))) 
         {

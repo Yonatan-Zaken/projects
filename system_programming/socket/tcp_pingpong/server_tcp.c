@@ -1,15 +1,13 @@
+#define _POSIX_C_SOURCE 200112L
 #include <stdio.h>          /* printf      */
-#include <stdlib.h>         /* exit        */
 #include <unistd.h>         /* close       */
 #include <errno.h>          /* perror      */
 #include <string.h>         /* memcpy      */
-#include <sys/types.h>      /* ssize_t     */
 #include <sys/socket.h>     /* socket      */
 #include <netdb.h>          /* getaddrinfo */
-#include <arpa/inet.h>      /* inet_ntop   */
 #include <sys/wait.h>       /* wait        */
 
-#define PORT "3490"
+#define PORT "4443"
 #define BACKLOG 10 
 #define MAXDATASIZE 100 
 
@@ -25,13 +23,13 @@ enum status
     FAIL_ACCEPT = -1,
     FAIL = 1
 };
-/********************************* Static Funcs *******************************/
-static void InitHints(struct addrinfo *hints);
-static int SearchIntAddr(int sockfd, struct addrinfo* res);
-static int CommunicateWithServer(int sockfd);
+/********************************* Declerations *******************************/
+void InitHints(struct addrinfo *hints);
+int SearchInternetAddr(struct addrinfo* node);
+int CommunicateWithServer(int sockfd);
 /******************************************************************************/
 
-static void InitHints(struct addrinfo *hints)
+void InitHints(struct addrinfo *hints)
 {
     memset(hints, 0, sizeof(*hints));
     hints->ai_family = AF_INET;
@@ -41,16 +39,16 @@ static void InitHints(struct addrinfo *hints)
 
 /******************************************************************************/
 
-static int SearchInternetAddr(struct addrinfo* node)
+int SearchInternetAddr(struct addrinfo* node)
 {
-    struct addrinfo *p = NULL;
+    struct addrinfo *runner = NULL;
     int sockfd = 0;
     int yes = 1;
     
-    // loop through all the results and bind to the first we can
-    for(p = node; p != NULL; p = p->ai_next) 
+    for(runner = node; runner != NULL; runner = runner->ai_next) 
     {
-        if (-1 == (sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol))) 
+        if (-1 == (sockfd = socket(runner->ai_family, runner->ai_socktype, 
+        runner->ai_protocol))) 
         {
             perror("server: socket");
             sockfd = FAIL_SOCKET;
@@ -64,7 +62,7 @@ static int SearchInternetAddr(struct addrinfo* node)
             return sockfd;
         }
         
-        if (-1 == bind(sockfd, p->ai_addr, p->ai_addrlen)) 
+        if (-1 == bind(sockfd, runner->ai_addr, runner->ai_addrlen)) 
         {
             close(sockfd);
             perror("server: bind");
@@ -75,7 +73,7 @@ static int SearchInternetAddr(struct addrinfo* node)
         break;
     }
     
-    if (NULL == p) 
+    if (NULL == runner) 
     {
         fprintf(stderr, "server: failed to bind\n");
         sockfd = FAIL_BIND;
@@ -86,7 +84,7 @@ static int SearchInternetAddr(struct addrinfo* node)
 
 /******************************************************************************/
 
-static int ListenForConnections(int sockfd)
+int ListenForConnections(int sockfd)
 {
     int new_fd = 0;
     struct sockaddr_storage their_addr; 
@@ -114,7 +112,7 @@ static int ListenForConnections(int sockfd)
 
 /******************************************************************************/
 
-static int CommunicateWithServer(int new_fd)
+int CommunicateWithServer(int new_fd)
 {
     char buf[MAXDATASIZE] = {0};
     char pong[5] = "pong";

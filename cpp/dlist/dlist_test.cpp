@@ -135,6 +135,14 @@ static void DListTest3()
     {
         RUN_TEST(d2.PopFront() == d1.PopFront(), "ctor + popfront");
     }
+
+	DList<String> d3;
+
+	d3.PushBack(String("hello"));
+
+	d1 = d2 = d3;
+
+	RUN_TEST(d1.PeekBack() == d3.PeekBack(), "chaining d1 = d2 = d3");
 }
 
 static void DListTest4()

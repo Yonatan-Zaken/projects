@@ -4,13 +4,12 @@
     Author : Yonatan Zaken
       Date : 05/04/2020          
 *************************/
+#define _POSIX_C_SOURCE 200112L
 #include <stdio.h>          /* stderr      */
 #include <string.h>         /* memset      */
 #include <unistd.h>         /* close       */
 #include <errno.h>          /* perror      */
 #include <sys/socket.h>     /* socket      */
-#include <sys/types.h>      /* struct_addrinfo */
-#include <netdb.h>          
 
 #include "socket.h"
 
@@ -28,19 +27,21 @@ void InitHints(struct addrinfo *hints, int family, int socktype, int flags)
 
 int GetInternetAddr(struct addrinfo* res, flag_t flag)
 {
-    struct addrinfo *p = NULL;
+    struct addrinfo *runner = NULL;
     int sockfd = 0;
     
-    for(p = res; NULL != p; p = p->ai_next) 
+    for(runner = res; NULL != runner; runner = runner->ai_next) 
     {
-        if (-1 == (sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)))
+        if (-1 == (sockfd = socket(runner->ai_family, runner->ai_socktype, 
+        runner->ai_protocol)))
         {
             perror("listener: socket");
             sockfd = FAIL_SOCKET;
             continue;
         }
 
-        if ((SERVER == flag) && (-1 == bind(sockfd, p->ai_addr, p->ai_addrlen)))
+        if ((SERVER == flag) && (-1 == bind(sockfd, runner->ai_addr, 
+        runner->ai_addrlen)))
         {
             close(sockfd);
             perror("listener: bind");
@@ -51,7 +52,7 @@ int GetInternetAddr(struct addrinfo* res, flag_t flag)
         break;
     }
     
-    if (NULL == p)
+    if (NULL == runner)
     {
         fprintf(stderr, "talker: failed to create socket\n");
         return FAIL_SOCKET;
@@ -59,6 +60,3 @@ int GetInternetAddr(struct addrinfo* res, flag_t flag)
     
     return sockfd;
 }
-
-/******************************************************************************/
-
