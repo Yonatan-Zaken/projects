@@ -1,6 +1,6 @@
 #include <iostream> // cout
 
-#include "simple_string.hpp"
+#include "simplestring.hpp"
 
 using namespace ilrd;
 

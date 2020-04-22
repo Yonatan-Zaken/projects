@@ -1,4 +1,5 @@
 #include <iostream> //cout
+#include <cstring>  //memcpy
 using namespace std;
 
 class PublicTransport {
@@ -106,7 +107,7 @@ inline T max_func(const T &t1, const T &t2)
     return ((t1 > t2) ? t1 : t2);
 }
 
-/**/class SpecialTaxi: public Taxi {
+class SpecialTaxi: public Taxi {
 public:
     SpecialTaxi()
     {
@@ -130,7 +131,7 @@ public:
 private:
 };
 
-/*class PublicConvoy: public PublicTransport {
+class PublicConvoy: public PublicTransport {
 public:
     PublicConvoy() : m_pt1(new Minibus()), m_pt2(new Taxi())
     {
@@ -140,6 +141,15 @@ public:
     {
         delete m_pt1;
         delete m_pt2;
+    }
+
+    PublicConvoy(const PublicConvoy& other_): 
+        PublicTransport(other_),
+        m_pt1(new Minibus(*dynamic_cast<Minibus*>(other_.m_pt1))),
+        m_pt2(new Taxi(*dynamic_cast<Taxi*>(other_.m_pt2))),
+        m_m(other_.m_m),
+        m_t(other_.m_t)
+    {
     }
 
     void display()
@@ -155,7 +165,7 @@ private:
     PublicTransport *m_pt2;
     Minibus m_m;
     Taxi m_t;
-};*/
+};
 
 void print_info(PublicTransport &a)
 {
@@ -220,13 +230,13 @@ int main(int argc, char **argv, char **envp)
     SpecialTaxi st;
     taxi_display(st);
 
-    /*PublicConvoy *ts1 = new PublicConvoy();
+    PublicConvoy *ts1 = new PublicConvoy();
     PublicConvoy *ts2 = new PublicConvoy(*ts1);
     ts1->display();
     ts2->display();
     delete ts1;
     ts2->display(); // this crashes. fix the bug!
-    delete ts2;*/
+    delete ts2;
 
     return 0;
 }
