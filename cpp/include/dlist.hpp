@@ -105,10 +105,13 @@ DList<T>::DList(const DList& other): m_head(Node(T())), m_tail(Node(T()))
 
 template <typename T>
 DList<T>& DList<T>::operator=(const DList& rhs)
-{    
-    this->Clear();
-    InsertNodes(rhs);
-    
+{   
+    if (this != &rhs)
+    {
+        this->Clear();
+        InsertNodes(rhs);    
+    }
+     
     return *this;
 }
 
@@ -231,7 +234,7 @@ T DList<T>::PeekBack()
 template <typename T>
 void DList<T>::Clear() noexcept
 {
-    while (0 != Size())
+    while (0 == IsEmpty())
     {
          PopBack();
     }
