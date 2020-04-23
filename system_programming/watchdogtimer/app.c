@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     status_t status = 0;
     time_t sleep_delay = 100;
     wd_t *wd = WDStart(
-    "/home/codesila/git/system_programming/watchdogtimer/outdebug/app", &status);
+    "/home/yonatan10/yonatan-zaken/system_programming/watchdogtimer/outdebug/app", &status);
 
     UNUSED(argc);
     UNUSED(argv);

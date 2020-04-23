@@ -10,6 +10,11 @@ typedef enum Status
     SYSCALL_FAIL
 } status_t;
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /* the function recives a pointer to a thread created by the user */
 /* which will hold the tread to be joined in WDStop(). the first argument is the excute filename by path */
 /* this function guards the process from failing postcall. if the process fails, it will be revived. */
@@ -20,4 +25,8 @@ wd_t *WDStart(const char *filename, status_t *status);
 /* it recievs the pointer to the thread created in WDStart() */
 void WDStop(wd_t *wd);
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif /* WD_H */

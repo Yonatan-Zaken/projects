@@ -17,20 +17,19 @@ template <class T, void(T::*acquire)(), void(T::*release)()>
 class ScopeGuard: private Uncopyable
 {
 public:
-    ScopeGuard(T &resource);
+    ScopeGuard(T& resource);
     ~ScopeGuard() noexcept;
 
 private:
     T& m_resource;
 };
 
-/***************** Scopeguard template definitions ****************/
+/********************** Scopeguard template definitions **********************/
 
 template <class T, void(T::*acquire)(), void(T::*release)()>
 ScopeGuard<T, acquire, release>::ScopeGuard(T& resource): 
     m_resource(resource)
 {
-    // exception handle
     (m_resource.*acquire)();
 }
 

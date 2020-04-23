@@ -30,11 +30,11 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(DIR_DEBUG)libdlist.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) $(LDFLAGS_DEBUG) -o $@ $(SRC_TEST) -ldlist -lpoint -lsimple_string
+	$(CC) $(CFLAGS) $(LDFLAGS_DEBUG) -o $@ $(SRC_TEST) -ldlist -lpoint -lsimplestring
 	
 #Release Out	
 $(TARGET_RELEASE): $(DIR_RELEASE)libdlist.so $(SRC_TEST) 
-	$(CC) $(RFLAGS) $(LDFLAGS_RELEASE) -o $@ $(SRC_TEST) -ldlist -lpoint -lsimple_string
+	$(CC) $(RFLAGS) $(LDFLAGS_RELEASE) -o $@ $(SRC_TEST) -ldlist -lpoint -lsimplestring
 
 #Debug SO
 $(DIR_DEBUG)libdlist.so: $(OBJ_DEBUG)

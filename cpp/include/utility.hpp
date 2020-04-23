@@ -10,13 +10,13 @@
 
 #define HORIZONTAL_TAB 9
 #define UNUSED(x) (void)(x)
-
+/*
 enum Status 
 {
     SUCCESS,
     FAIL
 };
-
+*/
 namespace ilrd
 {
 

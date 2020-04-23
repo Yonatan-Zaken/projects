@@ -1,4 +1,4 @@
-#wathcdog makefile
+#sortedlist makefile
 
 #flags
 CC=gcc   

@@ -84,7 +84,7 @@ wd_t *WDStart(const char *filename, status_t *status)
     }
 
     strcpy(wrap->exec_filename, 
-    "/home/codesila/git/system_programming/watchdoghelper/outdebug/main_wd_out");
+    "/home/yonatan10/yonatan-zaken/system_programming/watchdoghelper/outdebug/main_wd_out");
     strcpy(wrap->my_filename, filename);
     
     sem_getvalue(sem_is_wd_up, &sem_wd_up_value);
