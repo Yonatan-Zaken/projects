@@ -7,7 +7,11 @@
 *******************************/
 
 #include "utility.hpp"
-#include "wd.h"
+
+extern "C" 
+{
+    #include "wd.h"
+}
 
 namespace ilrd
 {
@@ -34,7 +38,7 @@ Watchdog::Watchdog():
 void Watchdog::Start()
 {
     m_wd = WDStart(	
-        "/home/yonatan10/yonatan-zaken/cpp/scopeguard/scopeguard_test.cpp", &m_status);
+        "/home/yonatan10/yonatan-zaken/cpp/scopeguard/outdebug/scopeguard", &m_status);
 }
 
 void Watchdog::Stop()

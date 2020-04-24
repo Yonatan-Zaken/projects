@@ -8,10 +8,10 @@
 #ifndef ILRD_RD8081_LIST_HPP
 #define ILRD_RD8081_LIST_HPP
 
-#include <cstddef>      /* size_t   */
-#include <string>       /* string   */
+#include <cstddef>      // size_t   
+#include <string>       // string   
 
-#include "utility.hpp"  /* noexcept */
+#include "utility.hpp"  // noexcept 
 
 namespace ilrd
 {
@@ -38,7 +38,7 @@ public:
 
 private:
     void DummyInitializer() noexcept;
-    void InsertNodes(const DList&); //throw exception
+    void CopyList(const DList&); //throw exception
 
 private:
     struct Node
@@ -98,7 +98,7 @@ template <typename T>
 DList<T>::DList(const DList& other): m_head(Node(T())), m_tail(Node(T()))
 {
     DummyInitializer();
-    InsertNodes(other);
+    CopyList(other);
 }
 
 /***********************************************************************/
@@ -109,7 +109,7 @@ DList<T>& DList<T>::operator=(const DList& rhs)
     if (this != &rhs)
     {
         this->Clear();
-        InsertNodes(rhs);    
+        CopyList(rhs);    
     }
      
     return *this;
@@ -145,8 +145,10 @@ template <typename T>
 void DList<T>::PushBack(const T& value)
 {
     Node *node_holder = new Node(value);
+    
     m_tail.m_prev->m_next = node_holder;
     node_holder->m_prev = m_tail.m_prev;
+    
     m_tail.m_prev = node_holder;
     node_holder->m_next = &m_tail;
 }
@@ -157,8 +159,10 @@ template <typename T>
 void DList<T>::PushFront(const T& value)
 {
     Node *node_holder = new Node(value);
+    
     m_head.m_next->m_prev = node_holder;
     node_holder->m_next = m_head.m_next;
+    
     m_head.m_next = node_holder;
     node_holder->m_prev = &m_head;
 }
@@ -250,7 +254,7 @@ void DList<T>::DummyInitializer() noexcept
 }
 
 template <typename T>
-void DList<T>::InsertNodes(const DList& other)
+void DList<T>::CopyList(const DList& other)
 {
     const Node *runner = &other.m_head;
     while (&other.m_tail != runner->m_next)
