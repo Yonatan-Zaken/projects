@@ -25,7 +25,7 @@ Directory::~Directory() noexcept
 
 void Directory::Display(int level) const noexcept
 {
-    std::string buffer(level, HORIZONTAL_TAB);
+    std::string buffer(level, '\t');
     std::cout << buffer << "\033[1;36m" << m_dirname << "\033[0m\n";    
     unsigned int size = m_entry_list.size();
             

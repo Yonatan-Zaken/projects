@@ -32,7 +32,7 @@ int Tree::RecBuildTree(std::string path, Directory* m_root)
 {
     struct dirent *entry = NULL;
     DIR *dp = NULL;
-    enum Status status = FAIL;
+    int status = FAIL;
     
     if (NULL != (dp = opendir(path.c_str())))
     {

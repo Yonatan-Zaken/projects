@@ -29,8 +29,7 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(SRC_TEST) 
-	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) \
-	$(LDFLAGS_WATCHDOG) -lwd -pthread
+	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_WATCHDOG) -lwd -pthread
 	
 .PHONY: clean
 clean:

@@ -10,25 +10,6 @@ using namespace ilrd;
 #define LOOP 3
 #define BUFFSIZE 500
 
-#define NORMAL "\033[0m"
-#define RED "\033[;031m"
-#define GREEN "\033[;032m"
-
-#define RUN_TEST(test, error_message){\
-    if (test)\
-    {\
-        printf(GREEN);\
-        printf("SUCCESS %s\n", error_message);\
-        printf(NORMAL);\
-    }\
-    else\
-    {\
-        printf(RED);\
-        printf("FAIL %s\n", error_message);\
-        printf(NORMAL);\
-    }\
-}
-
 static void DListTest1()
 {
 	std::cout << "DList Test1 int\n\n";
