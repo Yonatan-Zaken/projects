@@ -4,7 +4,8 @@
 CC=gcc   
 CFLAGS=-ansi -pedantic-errors -Wall -Wextra -g -I../include -D_POSIX_C_SOURCE
 RFLAGS=-ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3 -I../include 
-LDFLAGS_DEBUG=-L../libdebug -Wl,-rpath=../../libdebug
+LDFLAGS_DEBUG=-L/home/yonatan10/yonatan-zaken/system_programming/libdebug \
+-Wl,-rpath=/home/yonatan10/yonatan-zaken/system_programming/libdebug
 LDFLAGS_RELEASE=-L../librelease -Wl,-rpath=../../librelease
 
 #file names
@@ -39,7 +40,7 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libwdhelper.so $(SRC_TEST)
 #Debug SO
 $(DIR_DEBUG)libwdhelper.so: $(OBJ_DEBUG)
 	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug -Wl,-rpath,'$$ORIGIN' \
-	 -lscheduler 
+	-lscheduler 
 
 #Release SO
 $(DIR_RELEASE)libwdhelper.so: $(OBJ_RELEASE)

@@ -36,4 +36,4 @@ void *WDSchedulerRun(void *param);
 /* Destroys the scheduler of both proccesses */
 void WDCleanUp(void *param);
 
-#endif
+#endif /* WD_HELPER */

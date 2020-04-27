@@ -75,9 +75,9 @@ std::ostream& operator<<(std::ostream &out, const BitSet<N> &bit);
 
 /************************************ Masks ***********************************/
 
-const unsigned char mask1 = 0x55
-const unsigned char mask3 = 0x33
-const unsigned char mask5 = 0x0f
+const unsigned char mask1 = 0x55;
+const unsigned char mask3 = 0x33;
+const unsigned char mask5 = 0x0f;
 
 /******************************* Bitset Functors ******************************/
 
@@ -139,23 +139,28 @@ private:
 /******************************************************************************/
 
 template <std::size_t N>
-struct CountOnFunctor
+struct CountFunctor
 {
 public:
-    CountOnFunctor(const BitSet<N>& rhs): m_counter(0)
+    CountFunctor(): m_counter(0), m_sum(0)
     {}
 
     void operator()(byte_t& i)
     {
-        m_counter = (i & mask1) + ((i >> 1) & mask_5);
+        m_counter = (i & mask1) + ((i >> 1) & mask1);
         m_counter = (m_counter & mask3) + ((m_counter >> 2) & mask3);
         m_counter = (m_counter & mask5) + ((m_counter >> 4) & mask5);
+        m_sum += m_counter;
     }
-    
+
+    std::size_t GetCount() const
+    {
+        return m_sum;
+    }
 
 private:
-    size_t m_counter;
-    size_t m_sum;
+    std::size_t m_counter;
+    std::size_t m_sum;
 };
 
 /************************* Bitset template definitions ************************/
@@ -182,7 +187,9 @@ BitSet<N>::BitSet(const std::string &bit_set):
 template <std::size_t N>
 std::size_t BitSet<N>::CountOn() const noexcept
 {
-
+    CountFunctor<N> f();
+    CountFunctor<N> count = std::for_each(m_bits, m_bits + (m_num_of_bytes - 1), f);
+    return count.GetCount();    
 }
 
 /******************************************************************************/

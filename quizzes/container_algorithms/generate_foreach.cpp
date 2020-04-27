@@ -26,7 +26,7 @@ public:
     
     void operator()(int& i)
     {
-        i += 3;
+        m_sum +=i;
     }
 
     int GetSum() const { return m_sum; }    

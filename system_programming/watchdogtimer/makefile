@@ -38,8 +38,7 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libwd.so $(SRC_TEST)
 
 #Debug SO
 $(DIR_DEBUG)libwd.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug -Wl,-rpath,'$$ORIGIN' \
-    -lwdhelper 
+	$(CC) $(CFLAGS) -shared -o $@ $< -L../libdebug -Wl,-rpath,'$$ORIGIN' -lwdhelper  
 
 #Release SO
 $(DIR_RELEASE)libwd.so: $(OBJ_RELEASE)
