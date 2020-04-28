@@ -5,6 +5,12 @@
     27/04/20
     ILRD - RD8081               
 *******************************/
+// NOTES:
+// - N must be positive integer value.
+// - In BitSet(std::string) N must equal length of
+// string and bigger than zero or else string exception 
+// is thrown.
+
 #ifndef ILRD_RD8081_BITSET_HPP
 #define ILRD_RD8081_BITSET_HPP
 
@@ -15,9 +21,10 @@
 #include <string>       // string
 #include <cstring>      // memcpy
 
-#include "utility.hpp"         // noexcept
+#include "utility.hpp"  // noexcept
 
-#define NUM_OF_BYTES(N) ((N / ((sizeof(unsigned char) * BITS_IN_BYTE))) + 1)
+#define NUM_OF_BYTES(N) (((N - 1) / ((sizeof(unsigned char) * BITS_IN_BYTE)))\
++ 1)
 
 namespace ilrd
 {
@@ -67,11 +74,17 @@ public:
     const BitSet operator|(const BitSet &rhs) const;
     const BitSet operator&(const BitSet &rhs) const;
     const BitSet operator^(const BitSet &rhs) const;
+    
+    template <std::size_t U>
+    friend struct AndAssignmentFunctor;
+    template <std::size_t U>
+    friend struct OrAssignmentFunctor;
+    template <std::size_t U>
+    friend struct XorAssignmentFunctor;
 
 private:
     byte_t m_bits[NUM_OF_BYTES(N)];
     std::size_t m_num_of_bytes;
-    void SetLastByte(std::size_t pos);
 };
 
 template<std::size_t N>
@@ -83,6 +96,7 @@ const unsigned char MASK_01 = 0x01;
 const unsigned char MASK_55 = 0x55;
 const unsigned char MASK_33 = 0x33;
 const unsigned char MASK_0f = 0x0f;
+const unsigned char MASK_ff = 0xff;
 const unsigned char ASCII_ZERO = 48;
 
 /***************************** Non member functions ***************************/
@@ -99,8 +113,8 @@ static inline std::size_t ShiftBy(std::size_t pos)
 
 static void CleanByte(byte_t& last_byte, std::size_t pos)
 {
-    std::size_t shift_by = (pos % BITS_IN_BYTE) % BITS_IN_BYTE; 
-    last_byte = last_byte >> shift_by;
+    std::size_t shift_by = (BITS_IN_BYTE - pos % BITS_IN_BYTE) % BITS_IN_BYTE; 
+    last_byte &= (MASK_ff >> shift_by);
 }
 
 /******************************* Bitset Functors ******************************/
@@ -128,27 +142,6 @@ private:
 /******************************************************************************/
 
 template <std::size_t N>
-struct XorFunctor
-{
-public:
-    explicit XorFunctor(const BitSet<N>& rhs): 
-        m_rhs(rhs.m_bits), 
-        m_index(0)
-    {}
-
-    void operator()(byte_t& byte)
-    {
-        byte ^= m_rhs[m_index++];
-    }   
-
-private:
-    byte_t *m_rhs;
-    std::size_t m_index;
-};
-
-/******************************************************************************/
-
-template <std::size_t N>
 struct XorAssignmentFunctor
 {
 public:
@@ -163,7 +156,7 @@ public:
     }   
 
 private:
-    byte_t *m_rhs;
+    const byte_t *m_rhs;
     std::size_t m_index;
 };
 
@@ -184,7 +177,7 @@ public:
     }   
 
 private:
-    byte_t *m_rhs;
+    const byte_t *m_rhs;
     std::size_t m_index;
 };
 
@@ -205,7 +198,7 @@ public:
     }   
 
 private:
-    byte_t *m_rhs;
+    const byte_t *m_rhs;
     std::size_t m_index;
 };
 
@@ -292,9 +285,9 @@ BitSet<N>::BitSet(const std::string &bit_set):
     m_bits(),
     m_num_of_bytes(NUM_OF_BYTES(N))
 {
-    if (N > bit_set.length())
+    if ((N != bit_set.length()) || (N < 0))
     {
-        // throw out_of_range
+        throw std::string("error BitSet(). N is invalid");
     }
     
     BitSet<N> new_set;
@@ -388,6 +381,7 @@ template <std::size_t N>
 BitSet<N>& BitSet<N>::FlipAll() noexcept
 {
     std::for_each(m_bits, m_bits + m_num_of_bytes, FlipAllFunctor());
+    CleanByte(m_bits[GetBitIndex(N)], N);
 
     return *this;
 }
@@ -424,7 +418,10 @@ BitSet<N>& BitSet<N>::SetVal(std::size_t pos, bool value)
 template <std::size_t N>
 BitSet<N> BitSet<N>::operator~() const noexcept
 {
-    FlipAll();
+    BitSet<N> temp_bitset(*this);
+    temp_bitset.FlipAll();
+
+    return temp_bitset;
 }
 
 /******************************************************************************/
@@ -450,6 +447,8 @@ BitSet<N>& BitSet<N>::operator&=(const BitSet& rhs) noexcept
 {
     AndAssignmentFunctor<N> f1(rhs);
     std::for_each(m_bits, m_bits + m_num_of_bytes, f1);
+
+    return *this;
 }
 
 /******************************************************************************/
@@ -459,6 +458,8 @@ BitSet<N>& BitSet<N>::operator|=(const BitSet& rhs) noexcept
 {
     OrAssignmentFunctor<N> f1(rhs);
     std::for_each(m_bits, m_bits + m_num_of_bytes, f1);
+
+    return *this;
 }
 
 /******************************************************************************/
@@ -468,6 +469,8 @@ BitSet<N>& BitSet<N>::operator^=(const BitSet& rhs) noexcept
 {
     XorAssignmentFunctor<N> f1(rhs);
     std::for_each(m_bits, m_bits + m_num_of_bytes, f1);
+
+    return *this;
 }
 
 /******************************************************************************/
