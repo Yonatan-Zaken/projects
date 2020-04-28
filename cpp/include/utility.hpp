@@ -21,7 +21,6 @@ typedef unsigned char byte_t;
 #define UNUSED(x) (void)(x)
 #define SUCCESS 0
 #define FAIL 1
-#define BITS_IN_BYTE 8
 
 // return min of two numbers
 #ifndef MIN
