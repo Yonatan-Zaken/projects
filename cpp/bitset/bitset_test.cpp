@@ -69,7 +69,6 @@ static void BitSetTest2()
 	b1.SetAll();
 	RUN_TEST(24 == b1.CountOn(), "set all");
 	b1.Flip(8);
-	RUN_TEST(0 == b1[8], "operator[]");
 	RUN_TEST(0 == b1.Get(8), "get");
 
 	BitSet<19> b2("0110111011111110000");
@@ -114,16 +113,48 @@ static void BitSetTest3()
 	b7 = b5 ^ b6;
 	RUN_TEST(BitSet<24>("111100110000100100000010") == b7, "operator^");
 	
-	
+	RUN_TEST(b7.ToString() == ("111100110000100100000010"), "to string");
+
+	BitSet<19> b8;
+	(b8.Set(19)).Set(13).Set(8).Set(1);
+	RUN_TEST(b8.ToString() == ("000001000001000010000001"), "to string");
+	cout << b2 << " [ostream]\n";
+	cout << b8 << " [ostream]\n";
+
+	b2[8] = 1;
+	RUN_TEST(1 == b2.IsOn(8), "operator[]");
+	cout << b2 << " [ostream]\n";
+	cout << b2[5] << " operator []\n";
+	b2[7] = b2[6] = b2[1];
+	RUN_TEST(1 == b2.IsOn(7), "chaining operator[]");
+	RUN_TEST(1 == b2.IsOn(6), "chaining operator[]");
+	cout << b2 << " [ostream]\n";
 
 	cout << "\n\n";
 }
 
+static void BitSetTest4()
+{
+	cout << "Bitset test 4\n\n";
+
+	BitSet<12> b1("111000111000");
+	std::fill(b1.Begin(), b1.End(), 0);
+	cout << b1 << "\n";
+	std::fill(b1.Begin(), b1.End(), 1);
+	cout << b1 << "\n";
+
+
+
+	cout << "\n\n";
+
+}
+
 int main()
 {
-	BitsetTest1();
+	/*BitsetTest1();
 	BitSetTest2();
-	BitSetTest3();
+	BitSetTest3();*/
+	BitSetTest4();
 
 	return 0;
 }

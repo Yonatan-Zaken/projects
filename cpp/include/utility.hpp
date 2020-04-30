@@ -1,9 +1,6 @@
 #ifndef ILRD_RD8081_UTILITY_HPP
 #define ILRD_RD8081_UTILITY_HPP
 
-// typedefs
-typedef unsigned char byte_t;
-
 #if __cplusplus<201104 
 #define noexcept throw()
 #define nullptr NULL  
@@ -19,6 +16,7 @@ typedef unsigned char byte_t;
 
 // other
 #define UNUSED(x) (void)(x)
+#define ASCII_SIZE 256
 #define SUCCESS 0
 #define FAIL 1
 
