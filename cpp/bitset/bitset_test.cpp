@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdio>
+#include <cstring>
 
 #include "utility.hpp"
 #include "bitset.hpp"
@@ -139,21 +140,40 @@ static void BitSetTest4()
 
 	BitSet<12> b1("111000111000");
 	std::fill(b1.Begin(), b1.End(), 0);
-	cout << b1 << "\n";
+	cout << b1 << " [iterator]\n";
 	std::fill(b1.Begin(), b1.End(), 1);
-	cout << b1 << "\n";
+	cout << b1 << " [iterator]\n";
 
+	BitSet<12> b2("111000111000");
 
-
+	b1.End() - 1;
+	b1.Begin() + 1;
 	cout << "\n\n";
 
+	b2 >>= 2;
+	cout << b2 << "\n";
+
+	b2 = b2 >> 2;
+	cout << b2 << "\n";
+
+	b2 <<= 7;
+	cout << b2 << "\n";
+
+	b2 = b2 >> 7;
+	cout << b2 << "\n";
+
+	BitSet<18> b3("111010001110101100");
+	cout << b3 << "\n";
+	b3 >>= 10;
+	cout << b3 << "\n";
+	RUN_TEST(("000000000000000011101000") == b3.ToString(), "operator>>=");
 }
 
 int main()
 {
-	/*BitsetTest1();
+	BitsetTest1();
 	BitSetTest2();
-	BitSetTest3();*/
+	BitSetTest3();
 	BitSetTest4();
 
 	return 0;
