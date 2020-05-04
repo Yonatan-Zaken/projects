@@ -167,6 +167,9 @@ static void BitSetTest4()
 	b3 >>= 10;
 	cout << b3 << "\n";
 	RUN_TEST(("000000000000000011101000") == b3.ToString(), "operator>>=");
+
+	
+
 }
 
 int main()

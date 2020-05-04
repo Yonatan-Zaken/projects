@@ -9,7 +9,7 @@
 #ifndef ILRD_RD8081_SHARED_PTR_HPP
 #define ILRD_RD8081__SHARED_PTR_HPP
 
-#include <iostream> // std::size_t
+#include <cstddef> // std::size_t
 
 #include "utility.hpp" // nullptr
 
@@ -26,7 +26,7 @@ public:
     ~SharedPtr() noexcept;
 
     template <class U>
-    SharedPtr(const SharedPtr<U>& other); // non-explicit conversion cctor
+    SharedPtr(const SharedPtr<U>& other); // non-explicit conversion ctor
 
     T& operator*() const noexcept;
     T* operator->() const noexcept;

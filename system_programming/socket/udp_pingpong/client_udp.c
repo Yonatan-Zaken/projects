@@ -57,10 +57,19 @@ static int CommunicateWithServer(int sockfd, struct addrinfo* res)
 {
     char ping[5] = "ping";
     char buf[MAXBUFLEN] = {0};
-    
+    char msg_to_send[30] = {0};
+
     while (1)
     {
-        if (-1 == (sendto(sockfd, ping, strlen(ping), 0, 
+        fgets(msg_to_send, sizeof(msg_to_send), stdin);
+        msg_to_send[strlen(msg_to_send) - 1] = '\0';
+
+        if (0 == strcmp(msg_to_send, "quit"))
+        {
+            break;
+        }
+
+        if (-1 == (sendto(sockfd, msg_to_send, strlen(msg_to_send), 0, 
         res->ai_addr, res->ai_addrlen))) 
         {
             perror("talker: sendto");
@@ -74,6 +83,8 @@ static int CommunicateWithServer(int sockfd, struct addrinfo* res)
             return FAIL;
         }
         
-        printf("client: %s\n", buf);
+        printf("udp client get packet from server: %s\n", buf);
     }
+
+    return 0;
 }

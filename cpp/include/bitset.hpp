@@ -20,11 +20,10 @@
 #include <sys/types.h>  // ssize_t
 #include <iostream>     // ostream
 #include <algorithm>    // algorithm
-#include <string>       // string
-#include <cstring>      // memcpy
 
 #include "utility.hpp"  // noexcept
 
+const std::size_t BITS_IN_BYTE = 8;
 #define NUM_OF_BYTES(N) (((N - 1) / ((sizeof(unsigned char) * BITS_IN_BYTE)))\
 + 1)
 
@@ -32,8 +31,6 @@ typedef unsigned char byte_t;
 
 namespace ilrd
 {
-
-const std::size_t BITS_IN_BYTE = 8;
 
 template<std::size_t N>
 class BitSet
@@ -100,8 +97,8 @@ public:
     friend struct XorAssignmentFunctor;
 
 private:
-    byte_t m_bits[NUM_OF_BYTES(N)];
-    std::size_t m_num_of_bytes;
+    static const std::size_t m_num_of_bytes = NUM_OF_BYTES(N);
+    byte_t m_bits[m_num_of_bytes];
     
     class RFProxy
     {
@@ -110,7 +107,7 @@ private:
         RFProxy& operator=(const RFProxy& other);
         RFProxy& operator=(bool bit);
 
-        operator bool(); 
+        operator bool() const; 
 
     private:
         BitSet& m_prx_bitset;
@@ -141,7 +138,8 @@ public:
         BitsIterator& operator-=(std::size_t move_by);
 
         const BitsIterator operator+(std::size_t inc_by);
-        const BitsIterator operator-(std::size_t dec_by);
+        const BitsIterator operator-(std::size_t dec_by) const;
+        difference_type operator-(const BitsIterator& iter);
         value_type operator[](std::size_t pos);
         value_type operator*();
 
@@ -180,6 +178,7 @@ public:
 
         const BitsConstIterator operator+(std::size_t inc_by);
         const BitsConstIterator operator-(std::size_t dec_by);
+        difference_type operator-(const BitsConstIterator& iter);
         value_type operator[](std::size_t pos);
         value_type operator*();
 
@@ -273,179 +272,6 @@ static void CleanByte(byte_t& last_byte, std::size_t pos)
     last_byte &= (MASK_ff >> shift_by);
 }
 
-/******************************* Bitset Functors ******************************/
-
-template <std::size_t N>
-struct BitsetFunctor
-{
-public:
-    explicit BitsetFunctor(BitSet<N>& bitset): 
-        m_bitset(bitset),
-        m_index(1)
-    {}
-    
-    void operator()(const char& c)
-    {
-        m_bitset.SetVal(m_index, c - ASCII_ZERO);
-        ++m_index;
-    }
-
-private:
-    BitSet<N>& m_bitset;
-    std::size_t m_index;
-};
-
-/******************************************************************************/
-
-template <std::size_t N>
-struct XorAssignmentFunctor
-{
-public:
-    explicit XorAssignmentFunctor(const BitSet<N>& rhs): 
-        m_rhs(rhs.m_bits), 
-        m_index(0)
-    {}
-
-    void operator()(byte_t& byte)
-    {
-        byte ^= m_rhs[m_index++];
-    }   
-
-private:
-    const byte_t *m_rhs;
-    std::size_t m_index;
-};
-
-/******************************************************************************/
-
-template <std::size_t N>
-struct AndAssignmentFunctor
-{
-public:
-    explicit AndAssignmentFunctor(const BitSet<N>& rhs): 
-        m_rhs(rhs.m_bits), 
-        m_index(0)
-    {}
-
-    void operator()(byte_t& byte)
-    {
-        byte &= m_rhs[m_index++];
-    }   
-
-private:
-    const byte_t *m_rhs;
-    std::size_t m_index;
-};
-
-/******************************************************************************/
-
-template <std::size_t N>
-struct OrAssignmentFunctor
-{
-public:
-    explicit OrAssignmentFunctor(const BitSet<N>& rhs):
-        m_rhs(rhs.m_bits), 
-        m_index(0)
-    {}
-
-    void operator()(byte_t& byte)
-    {
-        byte |= m_rhs[m_index++];
-    }   
-
-private:
-    const byte_t *m_rhs;
-    std::size_t m_index;
-};
-
-/******************************************************************************/
-
-struct CountFunctor
-{
-public:
-    explicit CountFunctor() noexcept: m_counter(0), m_sum(0)
-    {}
-
-    void operator()(const byte_t& byte) noexcept
-    {
-        m_counter = (byte & MASK_55) + ((byte >> 1) & MASK_55);
-        m_counter = (m_counter & MASK_33) + ((m_counter >> 2) & MASK_33);
-        m_counter = (m_counter & MASK_0f) + ((m_counter >> 4) & MASK_0f);
-        m_sum += m_counter;
-    }
-
-    std::size_t GetCount() const noexcept
-    {
-        return m_sum;
-    }
-
-private:
-    std::size_t m_counter;
-    std::size_t m_sum;
-};
-
-/******************************************************************************/
-
-struct SetAllFunctor
-{
-public:
-    void operator()(byte_t& byte) noexcept
-    {
-        byte ^= byte;
-        byte = ~byte;
-    }
-};
-
-/******************************************************************************/
-
-struct ResetAllFunctor
-{
-public:
-    void operator()(byte_t& byte) noexcept
-    {
-        byte ^= byte;
-    }
-};
-
-/******************************************************************************/
-
-struct FlipAllFunctor
-{
-public:
-    void operator()(byte_t& byte) noexcept
-    {
-        byte = ~byte;
-    }
-};
-
-/******************************************************************************/
-
-bool BinaryPredicate (const byte_t& lhs, const byte_t& rhs) 
-{
-  return (lhs == rhs);
-}
-
-/******************************************************************************/
-
-struct ToStringFunctor
-{
-public:
-    explicit ToStringFunctor(std::string& to_string): 
-        m_string(to_string),
-        m_temp_string(" ")
-    {}
-
-    void operator()(const byte_t& byte)
-    {
-        m_temp_string = binary_lut[byte];
-        m_string = m_temp_string + m_string;
-    }
-
-private:
-    std::string& m_string;
-    std::string m_temp_string;
-};
-
 /**************************** RFProxy definitions *****************************/
 
 template <std::size_t N>
@@ -478,7 +304,7 @@ typename BitSet<N>::RFProxy& BitSet<N>::RFProxy::operator=(bool bit)
 /******************************************************************************/
 
 template <std::size_t N>
-BitSet<N>::RFProxy::operator bool()
+BitSet<N>::RFProxy::operator bool() const
 {
     return m_prx_bitset.Get(m_prx_pos);
 }
@@ -487,29 +313,79 @@ BitSet<N>::RFProxy::operator bool()
 
 template <std::size_t N>
 BitSet<N>::BitSet():
-    m_bits(),
-    m_num_of_bytes(NUM_OF_BYTES(N))
+    m_bits()
 {
 }
 
 /******************************************************************************/
 
 template <std::size_t N>
-BitSet<N>::BitSet(const std::string &bit_set):
-    m_bits(),
-    m_num_of_bytes(NUM_OF_BYTES(N))
+struct BitFromStrFunctor
 {
-    if ((N != bit_set.length()) || (N < 0))
+public:
+    explicit BitFromStrFunctor(BitSet<N>& bitset): 
+        m_bitset(bitset),
+        m_index(1)
     {
-        throw std::string("error BitSet(). N is invalid");
+    }
+
+    void operator()(const char& c);
+
+private:
+    BitSet<N>& m_bitset;
+    std::size_t m_index;
+};
+
+template <std::size_t N>
+void BitFromStrFunctor<N>::operator()(const char& c)
+{
+        m_bitset.SetVal(m_index, ('1' == c));
+        ++m_index;
+}
+
+template <std::size_t N>
+BitSet<N>::BitSet(const std::string &bit_set):
+    m_bits()
+{   
+    std::size_t found = bit_set.find_first_not_of("01");
+    if (std::string::npos != found)
+    {
+        throw std::string("invalid string");
     }
     
-    BitSet<N> new_set;
-    std::for_each(bit_set.rbegin(), bit_set.rend(), BitsetFunctor<N>(new_set));
-    memcpy(m_bits, new_set.m_bits, GetBitIndex(N) + 1);
+    std::for_each(bit_set.rbegin(), bit_set.rend(), 
+    BitFromStrFunctor<N>(*this));
 }
 
 /******************************************************************************/
+
+struct CountFunctor
+{
+public:
+    explicit CountFunctor() noexcept: m_counter(0), m_sum(0)
+    {
+    }
+
+    void operator()(const byte_t& byte) noexcept;
+    std::size_t GetCount() const noexcept;
+
+private:
+    std::size_t m_counter;
+    std::size_t m_sum;
+};
+
+void CountFunctor::operator()(const byte_t& byte) noexcept
+{
+        m_counter = (byte & MASK_55) + ((byte >> 1) & MASK_55);
+        m_counter = (m_counter & MASK_33) + ((m_counter >> 2) & MASK_33);
+        m_counter = (m_counter & MASK_0f) + ((m_counter >> 4) & MASK_0f);
+        m_sum += m_counter;    
+}
+
+std::size_t CountFunctor::GetCount() const noexcept
+{
+    return m_sum;
+}
 
 template <std::size_t N>
 std::size_t BitSet<N>::CountOn() const noexcept
@@ -529,6 +405,26 @@ std::size_t BitSet<N>::CountOff() const noexcept
 
 /******************************************************************************/
 
+struct ToStringFunctor
+{
+public:
+    explicit ToStringFunctor(std::string& to_string): 
+        m_string(to_string),
+        m_temp_string(" ")
+    {
+    }
+
+    void operator()(const byte_t& byte)
+    {
+        m_temp_string = binary_lut[byte];
+        m_string = m_temp_string + m_string;
+    }
+
+private:
+    std::string& m_string;
+    std::string m_temp_string;
+};
+
 template <std::size_t N>
 std::string BitSet<N>::ToString() const 
 {
@@ -544,7 +440,7 @@ std::string BitSet<N>::ToString() const
 template <std::size_t N>
 bool BitSet<N>::Get(std::size_t pos) const
 {
-    if ((pos > N) || (pos < 0))
+    if (pos > N)
     {
         throw std::out_of_range("error Get. position out of range.");
     }
@@ -557,7 +453,7 @@ bool BitSet<N>::Get(std::size_t pos) const
 template <std::size_t N>
 BitSet<N>& BitSet<N>::SetAll() noexcept
 {
-    std::for_each(m_bits, m_bits + m_num_of_bytes, SetAllFunctor());
+    std::fill(m_bits, m_bits + m_num_of_bytes, MASK_ff);
     CleanByte(m_bits[GetBitIndex(N)], N);
 
     return *this;
@@ -578,7 +474,7 @@ BitSet<N>& BitSet<N>::Set(std::size_t pos) noexcept
 template <std::size_t N>
 BitSet<N>& BitSet<N>::ResetAll() noexcept
 {
-    std::for_each(m_bits, m_bits + m_num_of_bytes, ResetAllFunctor());
+    std::fill(m_bits, m_bits + m_num_of_bytes, 0);
     
     return *this;
 }
@@ -594,6 +490,15 @@ BitSet<N>& BitSet<N>::Reset(std::size_t pos) noexcept
 }
 
 /******************************************************************************/
+
+struct FlipAllFunctor
+{
+public:
+    void operator()(byte_t& byte) noexcept
+    {
+        byte = ~byte;
+    }
+};
 
 template <std::size_t N>
 BitSet<N>& BitSet<N>::FlipAll() noexcept
@@ -619,6 +524,11 @@ BitSet<N>& BitSet<N>::Flip(std::size_t pos) noexcept
 template <std::size_t N>
 BitSet<N>& BitSet<N>::SetVal(std::size_t pos, bool value)
 {
+    if (pos > N)
+    {
+        throw std::out_of_range("error Get. position out of range.");
+    }
+    
     if (1 == value)
     {
         Set(pos);
@@ -647,7 +557,9 @@ BitSet<N> BitSet<N>::operator~() const noexcept
 template <std::size_t N>
 BitSet<N> BitSet<N>::operator<<(std::size_t shift_by) const noexcept
 {
-
+    BitSet<N> new_set(*this);
+    
+    return (new_set <<= shift_by);    
 }
 
 /******************************************************************************/
@@ -655,10 +567,32 @@ BitSet<N> BitSet<N>::operator<<(std::size_t shift_by) const noexcept
 template <std::size_t N>
 BitSet<N> BitSet<N>::operator>>(std::size_t shift_by) const noexcept
 {
-
+    BitSet<N> new_set(*this);
+    
+    return (new_set >>= shift_by);
 }
 
 /******************************************************************************/
+
+template <std::size_t N>
+struct AndAssignmentFunctor
+{
+public:
+    explicit AndAssignmentFunctor(const BitSet<N>& rhs): 
+        m_rhs(rhs.m_bits), 
+        m_index(0)
+    {
+    }
+
+    void operator()(byte_t& byte)
+    {
+        byte &= m_rhs[m_index++];
+    }   
+
+private:
+    const byte_t *m_rhs;
+    std::size_t m_index;
+};
 
 template <std::size_t N>
 BitSet<N>& BitSet<N>::operator&=(const BitSet& rhs) noexcept
@@ -672,6 +606,26 @@ BitSet<N>& BitSet<N>::operator&=(const BitSet& rhs) noexcept
 /******************************************************************************/
 
 template <std::size_t N>
+struct OrAssignmentFunctor
+{
+public:
+    explicit OrAssignmentFunctor(const BitSet<N>& rhs):
+        m_rhs(rhs.m_bits), 
+        m_index(0)
+    {
+    }
+
+    void operator()(byte_t& byte)
+    {
+        byte |= m_rhs[m_index++];
+    }   
+
+private:
+    const byte_t *m_rhs;
+    std::size_t m_index;
+};
+
+template <std::size_t N>
 BitSet<N>& BitSet<N>::operator|=(const BitSet& rhs) noexcept
 {
     OrAssignmentFunctor<N> f1(rhs);
@@ -681,6 +635,26 @@ BitSet<N>& BitSet<N>::operator|=(const BitSet& rhs) noexcept
 }
 
 /******************************************************************************/
+
+template <std::size_t N>
+struct XorAssignmentFunctor
+{
+public:
+    explicit XorAssignmentFunctor(const BitSet<N>& rhs): 
+        m_rhs(rhs.m_bits), 
+        m_index(0)
+    {
+    }
+
+    void operator()(byte_t& byte)
+    {
+        byte ^= m_rhs[m_index++];
+    }   
+
+private:
+    const byte_t *m_rhs;
+    std::size_t m_index;
+};
 
 template <std::size_t N>
 BitSet<N>& BitSet<N>::operator^=(const BitSet& rhs) noexcept
@@ -696,7 +670,18 @@ BitSet<N>& BitSet<N>::operator^=(const BitSet& rhs) noexcept
 template <std::size_t N>
 BitSet<N>& BitSet<N>::operator<<=(std::size_t shift_by) noexcept
 {
-
+    if (N <= shift_by)
+    {
+        ResetAll();
+    }
+    else
+    {
+        BitSet<N> new_set;
+        std::copy(Begin(), Begin() + (N - shift_by), new_set.Begin() + shift_by);
+        *this = new_set;
+    }
+    
+    return *this;
 }
 
 /******************************************************************************/
@@ -704,7 +689,17 @@ BitSet<N>& BitSet<N>::operator<<=(std::size_t shift_by) noexcept
 template <std::size_t N>
 BitSet<N>& BitSet<N>::operator>>=(std::size_t shift_by) noexcept
 {
-
+    if (N <= shift_by)
+    {
+        ResetAll();
+    }
+    else
+    {
+        std::copy(Begin() + shift_by, End(), Begin());
+        std::fill(Begin() + (N- shift_by), End(), 0);
+    }
+    
+    return *this;
 }
 
 /******************************************************************************/
@@ -724,6 +719,11 @@ bool BitSet<N>::IsOff(std::size_t pos) const noexcept
 }
 
 /******************************************************************************/
+
+bool BinaryPredicate(const byte_t& lhs, const byte_t& rhs) 
+{
+  return (lhs == rhs);
+}
 
 template <std::size_t N>
 bool BitSet<N>::operator==(const BitSet& rhs) const noexcept
@@ -752,8 +752,9 @@ bool BitSet<N>::operator[](std::size_t pos) const noexcept
 template <std::size_t N>
 typename BitSet<N>::RFProxy BitSet<N>::operator[](std::size_t pos) noexcept
 {
-    return BitSet<N>::RFProxy(*this, pos);
+    return RFProxy(*this, pos);
 }
+
 /******************************************************************************/
 
 template <std::size_t N>
@@ -928,7 +929,7 @@ const typename BitSet<N>::BitsIterator BitSet<N>::BitsIterator::operator+(std::s
 /******************************************************************************/
 
 template<std::size_t N>
-const typename BitSet<N>::BitsIterator BitSet<N>::BitsIterator::operator-(std::size_t inc_by)
+const typename BitSet<N>::BitsIterator BitSet<N>::BitsIterator::operator-(std::size_t inc_by) const
 {
     BitSet<N>::BitsIterator temp_iter(m_bit_set, m_current_pos); 
     temp_iter -= inc_by;
@@ -941,7 +942,7 @@ const typename BitSet<N>::BitsIterator BitSet<N>::BitsIterator::operator-(std::s
 template<std::size_t N>
 typename BitSet<N>::BitsIterator::value_type BitSet<N>::BitsIterator::operator[](std::size_t pos)
 {   
-    return m_bit_set[pos];
+    return m_bit_set[m_current_pos + pos];
 }
 
 /******************************************************************************/
@@ -998,6 +999,14 @@ template<std::size_t N>
 bool BitSet<N>::BitsIterator::operator>=(const BitsIterator &rhs)
 {
     return (m_current_pos >= rhs.m_current_pos);
+}
+
+/******************************************************************************/
+
+template<std::size_t N>
+typename BitSet<N>::BitsIterator::difference_type BitSet<N>::BitsIterator::operator-(const BitsIterator& iter)
+{
+    return (m_current_pos - iter.m_current_pos);
 }
 
 /************************* BitsConstIterator definitions **********************/
@@ -1071,7 +1080,6 @@ typename BitSet<N>::BitsConstIterator& BitSet<N>::BitsConstIterator::operator-=(
     return *this;
 }
 
-
 /******************************************************************************/
 
 template<std::size_t N>
@@ -1099,7 +1107,7 @@ const typename BitSet<N>::BitsConstIterator BitSet<N>::BitsConstIterator::operat
 template<std::size_t N>
 typename BitSet<N>::BitsConstIterator::value_type BitSet<N>::BitsConstIterator::operator[](std::size_t pos)
 {   
-    return m_bit_set.Get(pos);
+    return m_bit_set.Get(m_current_pos + pos);
 }
 
 /******************************************************************************/
@@ -1158,7 +1166,14 @@ bool BitSet<N>::BitsConstIterator::operator>=(const BitsConstIterator &rhs)
     return (m_current_pos >= rhs.m_current_pos);
 }
 
-
+/******************************************************************************/
+/*
+template<std::size_t N>
+BitSet<N>::BitsConstIterator::operator ssize_t() 
+{
+    return m_current_pos;
+}
+*/
 /******************************************************************************/
 
 }// namespace ilrd

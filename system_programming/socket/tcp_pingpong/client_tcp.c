@@ -73,23 +73,34 @@ static int GetInternetAddr(struct addrinfo* node)
 static int CommunicateWithServer(int new_fd)
 {
     char buf[MAXDATASIZE] = {0};
-    char ping[5] = "ping";
+    char msg_to_send[30] = {0};
     
     while (1)
     {
-        if (-1 == send(new_fd, ping, strlen(ping), 0))
+        fgets(msg_to_send, sizeof(msg_to_send), stdin);
+        msg_to_send[strlen(msg_to_send) - 1] = '\0';
+
+        if (0 == strcmp(msg_to_send, "quit"))
+        {
+            break;
+        }
+
+        if (-1 == send(new_fd, msg_to_send, strlen(msg_to_send), 0))
         {
             perror("send");
             return FAIL_SEND;    
         }    
-
-        printf("server: %s\n", buf);
         
         if (-1 == (recv(new_fd, buf, MAXDATASIZE - 1, 0)))
         {
             perror("recv");
             return FAIL_RECV;    
         }
+
+        buf[MAXDATASIZE] = '\0';
+        
+        printf("tcp client get packet from server: %s\n", buf);
+        
     }
     
     return SUCCESS;
