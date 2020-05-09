@@ -6,14 +6,17 @@
 *************************/
 #define _POSIX_C_SOURCE 200112L
 #include <stdio.h>       /* stderr      */
+#include <stdlib.h>
 #include <string.h>      /* memset      */
 #include <unistd.h>      /* close       */
+#include <sys/types.h>   
 #include <sys/socket.h>  /* socket      */
+#include <netinet/in.h>
 #include <arpa/inet.h>   /* inet_ntop   */
 #include <netdb.h>       /* getaddrinfo */
 #include <sys/select.h>  /* select      */
 
-#define PORT "4443"  
+#define PORT "4443"   /* port we're listening on*/
 #define BACKLOG 10
 #define MAXBUFLEN 50
 
@@ -265,15 +268,15 @@ int UDPDataTransfer(int sockfd)
 
 int MonitorSockets(int listener, int udp_fd)
 {
-    fd_set master = {0};    
-    fd_set read_fds = {0};  
+    fd_set master = {0};
+    fd_set read_fds = {0};
     struct timeval tv = {0};
-    int fdmax = 0;   
+    int fdmax = 0;
     int i = 0;
 
     InitTimeVal(&tv);
 
-    FD_ZERO(&master);    
+    FD_ZERO(&master);
     FD_ZERO(&read_fds);
 
     FD_SET(listener, &master);

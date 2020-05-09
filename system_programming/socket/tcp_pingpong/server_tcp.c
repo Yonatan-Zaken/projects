@@ -38,7 +38,7 @@ void InitHints(struct addrinfo *hints)
 }
 
 /******************************************************************************/
-/*
+
 int SearchInternetAddr(struct addrinfo* node)
 {
     struct addrinfo *runner = NULL;
@@ -81,7 +81,7 @@ int SearchInternetAddr(struct addrinfo* node)
     
     return sockfd;
 }
-*/
+
 /******************************************************************************/
 
 int ListenForConnections(int sockfd)
