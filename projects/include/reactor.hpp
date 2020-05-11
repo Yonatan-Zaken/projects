@@ -25,12 +25,12 @@ public:
     //Reactor& operator=(const Reactor&) = disabled
 
     typedef boost::function<void(void)> callback_t;
-    typedef std::map<FDListener::pair_t, callback_t> map_t;
+    typedef std::map<FDListener::key_t, callback_t> map_t;
 
     void Run();
     void Stop();
     void InsertFD(int fd, FDListener::Operation service, 
-    boost::function<void(void)> callback);
+    callback_t callback);
     void RemoveFD(int fd, FDListener::Operation service);
     
 private:

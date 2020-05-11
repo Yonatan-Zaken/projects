@@ -43,14 +43,16 @@ public:
     public:  
         ErrorExcept(int errno_val);
 
-        const char *what() const noexcept;
+        const char * what() const noexcept;
 
     private:
         int m_errno;
     }; 
-
+    
 private:
     static vector_t MonitorIMP(const vector_t &vector, struct timeval *timeout);
+    
+    static const int MILLISEC_CONVERT = 1000000;
     
 }; // class FDListener
 

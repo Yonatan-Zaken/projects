@@ -12,7 +12,12 @@
 #include <sys/socket.h>     /* socket      */
 #include <netdb.h>          /* getaddrinfo */
 
-#include "socket.h"
+extern "C"
+{
+    #include "socket.h"
+}
+
+#define MAXBUFLEN 50
 
 /******************************************************************************/
 
@@ -103,4 +108,95 @@ static int GetInternetAddr(struct addrinfo* res, protocol_t prot, host_t host)
     }
     
     return sockfd;
+}
+
+/******************************************************************************/
+
+int UDPDataTransfer(int sockfd)
+{
+    struct sockaddr_storage their_addr = {0};
+    socklen_t addr_len;
+    char buffer[MAXBUFLEN] = {0};
+    char pong[5] = "pong";
+    
+    addr_len = sizeof(their_addr);
+
+    if (-1 == (recvfrom(sockfd, buffer, MAXBUFLEN - 1 , 0, 
+    (struct sockaddr *)&their_addr, &addr_len))) 
+    {
+        perror("recvfrom");
+        return -1;
+    }
+
+    printf("message from client: %s\n", buffer);
+    
+    if (-1 == (sendto(sockfd, pong, strlen(pong), 0, 
+    (struct sockaddr *)&their_addr, addr_len))) 
+    {
+        perror("sendto");
+        return -1;
+    }
+
+    return 0;
+}
+
+/******************************************************************************/
+
+void CloseConnection(int num_of_bytes, int index, fd_set *master)
+{
+    if (0 == num_of_bytes) 
+    {
+        printf("selectserver: socket %d hung up\n", index);
+    } 
+    else
+    {
+        perror("recv");
+    }
+
+    close(index); 
+    FD_CLR(index, master); 
+}
+
+/******************************************************************************/
+
+int TCPDataTransfer(int sockfd, fd_set *master)
+{
+    char msg_to_send[MAXBUFLEN] = {0};
+    char buffer[MAXBUFLEN] = {0};   
+    int num_of_bytes = 0;
+    
+    if (STDIN_FILENO == sockfd)
+    {
+        if (-1 == read(STDIN_FILENO, msg_to_send, sizeof(msg_to_send)))
+        {
+            perror("read");
+            return -1;
+        }
+        msg_to_send[strlen(msg_to_send) - 1] = '\0';
+
+        if (-1 == write(STDOUT_FILENO, msg_to_send, strlen(msg_to_send)))
+        {
+            perror("write");
+            return -1;
+        }
+
+        return 0;
+    }
+    
+    if (0 >= (num_of_bytes = recv(sockfd, buffer, sizeof(buffer), 0))) 
+    {
+        CloseConnection(num_of_bytes, sockfd, master);
+    } 
+    
+    else  
+    {
+        printf("message from tcp client: %s\n",buffer);
+        if (-1 == send(sockfd, "pong\0", 5, 0))
+        {
+            perror("send");
+            return -1;    
+        }
+    }
+
+    return 0;   
 }

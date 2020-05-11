@@ -16,13 +16,15 @@
 #include <netdb.h>       /* getaddrinfo */
 #include <sys/select.h>  /* select      */
 
+#include "socket.h"
+
 #define PORT "4443"   /* port we're listening on*/
 #define BACKLOG 10
 #define MAXBUFLEN 50
 
 /******************************* declarations ********************************/
-int GetSocket(int family, int socktype, int flags);
-int SearchInternetAddr(struct addrinfo* node);
+/*int GetSocket(int family, int socktype, int flags);*/
+/*int SearchInternetAddr(struct addrinfo* node);*/
 void InitTimeVal(struct timeval *tv);
 void HandleConnections(fd_set *master, int *fdmax, int listener);
 void CloseConnection(int nbytes, int index, fd_set *master);
@@ -32,12 +34,15 @@ int MonitorSockets(int listener, int udp_fd);
 
 /*****************************************************************************/
 
-int main(void)
+int main(int argc, char *argv[])
 {
     int listener = 0;
     int udp_fd = 0;     
-
-    if (-1 == (listener = GetSocket(AF_INET, SOCK_STREAM, AI_PASSIVE)))
+    struct addrinfo hints = {0};
+    
+    InitHints(&hints, AF_INET, SOCK_STREAM, AI_PASSIVE);
+    
+    if (-1 == (listener = GetSocket("y10", PORT, &hints, TCP, SERVER)))
     {
         return 1;
     }
@@ -49,12 +54,13 @@ int main(void)
         return 1;
     }
 
-    if (-1 == (udp_fd = GetSocket(AF_INET, SOCK_DGRAM, AI_PASSIVE)))
+    InitHints(&hints, AF_INET, SOCK_DGRAM, AI_PASSIVE);
+
+    if (-1 == (udp_fd = GetSocket("y10", PORT, &hints, UDP, SERVER)))
     {
         return 1;
     }
     
-
     if (-1 == MonitorSockets(listener, udp_fd))
     {
         return 1;
@@ -64,7 +70,7 @@ int main(void)
 }
 
 /******************************************************************************/
-
+/*
 int GetSocket(int family, int socktype, int flags)
 {
     struct addrinfo hints = {0};
@@ -92,8 +98,7 @@ int GetSocket(int family, int socktype, int flags)
 
     return socket;
 }
-
-/******************************************************************************/
+*/
 
 void InitTimeVal(struct timeval *tv)
 {
@@ -101,8 +106,7 @@ void InitTimeVal(struct timeval *tv)
     tv->tv_usec = 0;
 }
 
-/******************************************************************************/
-
+/*
 int SearchInternetAddr(struct addrinfo* node)
 {
     struct addrinfo *runner = NULL;
@@ -142,7 +146,7 @@ int SearchInternetAddr(struct addrinfo* node)
     
     return sockfd;
 }
-
+*/
 /******************************************************************************/
 
 void HandleConnections(fd_set *master, int *fdmax, int listener)
