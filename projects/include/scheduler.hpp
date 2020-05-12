@@ -1,10 +1,9 @@
-/*********************
+/*******************************
+    Yonatan Zaken
     Scheduler
-    Header File
-    10/05/2020
+    HPP
     ILRD - RD8081               
-*********************/
-
+*******************************/
 #ifndef ILRD_RD8081_SCHEDULER_HPP
 #define ILRD_RD8081_SCHEDULER_HPP
 

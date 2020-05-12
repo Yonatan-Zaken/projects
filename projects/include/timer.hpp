@@ -1,9 +1,9 @@
-/*********************
+/*******************************
+    Yonatan Zaken
     Timer
-    Header File
-    10/05/2020
+    HPP
     ILRD - RD8081               
-*********************/
+*******************************/
 
 #ifndef ILRD_RD8081_TIMER_HPP
 #define ILRD_RD8081_TIMER_HPP
@@ -34,10 +34,18 @@ public:
     void Arm(nanoseconds runDelay);
     void Disarm();
 
+    class TimerException: public std::exception
+    {
+    public:
+        explicit TimerException(int errno_val);
+        const char *what() const noexcept;
+    private:
+        int m_errno;
+    };
+
 private:
     int timed_fd;
     Reactor& m_reactor;
-    callback_t m_callback;
     callback_t m_schedulerCallBack;
     int TimerFDCreate();
     void CallBack();

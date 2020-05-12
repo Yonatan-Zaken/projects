@@ -5,7 +5,7 @@
     ILRD - RD8081               
 *******************************/
 #include <cassert>   // assert
-
+#include <iostream>
 #include "reactor.hpp"
 
 namespace ilrd
@@ -76,11 +76,12 @@ void Reactor::Run()
         for (FDListener::vector_t::iterator it = readyFDs.begin(); 
             (it != readyFDs.end()) && (!m_stopFlag); ++it)
         {
-            m_handlerMap[*it]();
+            if (m_handlerMap.end() != m_handlerMap.find(*it))
+            {
+                m_handlerMap[*it]();
+            }
         }
     }
-
-    m_handlerMap.clear();
 }
 
 /*****************************************************************************/
@@ -107,6 +108,9 @@ void Reactor::RemoveFD(int fd, FDListener::Operation service)
 {
     FDListener::key_t removePair(fd, service);
     
+    std::cout << removePair.first << "\n";
+    std::cout << removePair.second << "\n";
+
     assert(m_handlerMap.end() != m_handlerMap.find(removePair));
 
     m_handlerMap.erase(removePair);

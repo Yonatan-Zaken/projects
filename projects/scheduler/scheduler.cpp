@@ -20,8 +20,12 @@ Scheduler::Scheduler(Reactor& reactor):
 
 void Scheduler::AddTask(task_func_t taskFunc, nanoseconds expirationTime, nanoseconds interval)
 {
-    m_timer.Arm(expirationTime);
-    m_tasks.push(Task(taskFunc, time_point(expirationTime) , interval));
+    time_point expiration = expirationTime + 
+    boost::chrono::system_clock::now();
+
+    m_tasks.push(Task(taskFunc, expiration, interval));
+  
+    m_timer.Arm(m_tasks.top().m_runTime);
 }
 
 /***********************************************************************/
@@ -38,14 +42,16 @@ void Scheduler::Clear()
 
 void Scheduler::Callback()
 {
-    Scheduler::Task topTask(m_tasks.top().m_taskFunc, m_tasks.top().m_runTime, m_tasks.top().m_interval);
+    Task topTask(m_tasks.top().m_taskFunc, m_tasks.top().m_runTime, m_tasks.top().m_interval);
 
     m_tasks.top().m_taskFunc();
-    m_tasks.pop();
-
+    if (!m_tasks.empty())
+    {
+        m_tasks.pop();
+    }
+    
     if (0 != topTask.m_interval.count())
     {
-        //?????????????
         topTask.m_runTime = boost::chrono::system_clock::now() + topTask.m_interval;
         m_tasks.push(topTask);
     }
@@ -60,7 +66,6 @@ void Scheduler::Callback()
         m_timer.Arm(boost::chrono::system_clock::now() + 
         m_tasks.top().m_interval);
     }
- 
 }
 
 /***********************************************************************/
@@ -77,7 +82,6 @@ nanoseconds interval):
 
 bool Scheduler::Task::operator<(const Scheduler::Task& rhs) const
 {
-    //return (time_point(m_interval) > rhs.m_runTime);
     return (m_runTime > rhs.m_runTime);
 }
 
