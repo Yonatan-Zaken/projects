@@ -10,6 +10,7 @@
 #include <unistd.h>         /* close       */
 #include <errno.h>          /* perror      */
 #include <sys/socket.h>     /* socket      */
+#include <netdb.h>          /* getaddrinfo */
 
 #include "socket.h"
 
@@ -29,19 +30,24 @@ int GetInternetAddr(struct addrinfo* res, flag_t flag)
 {
     struct addrinfo *runner = NULL;
     int sockfd = 0;
+    int yes = 1;
     
     for(runner = res; NULL != runner; runner = runner->ai_next) 
     {
-        if (-1 == (sockfd = socket(runner->ai_family, runner->ai_socktype, 
-        runner->ai_protocol)))
+        if (-1 == (sockfd = socket(runner->ai_family, runner->ai_socktype, runner->ai_protocol)))
         {
             perror("listener: socket");
             sockfd = FAIL_SOCKET;
             continue;
         }
 
-        if ((SERVER == flag) && (-1 == bind(sockfd, runner->ai_addr, 
-        runner->ai_addrlen)))
+        if (-1 == setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int))) 
+        {
+            perror("setsockopt");
+            return -1;
+        }
+
+        if ((SERVER == flag) && (-1 == bind(sockfd, runner->ai_addr, runner->ai_addrlen)))
         {
             close(sockfd);
             perror("listener: bind");
@@ -55,9 +61,8 @@ int GetInternetAddr(struct addrinfo* res, flag_t flag)
     if (NULL == runner)
     {
         fprintf(stderr, "talker: failed to create socket\n");
-        return FAIL_SOCKET;
+        return -1;
     }
     
     return sockfd;
 }
-

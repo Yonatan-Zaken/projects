@@ -12,10 +12,7 @@
 #include <sys/socket.h>     /* socket      */
 #include <netdb.h>          /* getaddrinfo */
 
-extern "C"
-{
-    #include "socket.h"
-}
+#include "socket.h"
 
 #define MAXBUFLEN 50
 
