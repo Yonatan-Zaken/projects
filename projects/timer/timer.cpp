@@ -49,10 +49,7 @@ void TimerFD::Arm(time_point expirationTime)
     newRunTime.it_value.tv_nsec = (expirNano.count() <= 0) ? 1 :
     expirNano.count();
 
-    if(-1 == timerfd_settime(timed_fd, 0, &newRunTime, nullptr))
-    {
-        throw TimerException(errno);
-    }
+    SetTime(&newRunTime);
 }
 
 /******************************************************************************/
@@ -69,12 +66,9 @@ void TimerFD::Arm(nanoseconds expirationTime)
 void TimerFD::Disarm()
 {
     struct itimerspec to_disarm;
-    
     memset(&to_disarm, 0, sizeof(itimerspec));
-    if(-1 == timerfd_settime(timed_fd, 0, &to_disarm, nullptr))
-    {
-        throw TimerException(errno);
-    }
+
+    SetTime(&to_disarm);
 }
 
 /******************************************************************************/
@@ -102,6 +96,16 @@ int TimerFD::TimerFDCreate()
     }
 
     return fd;
+}
+
+/******************************************************************************/
+
+void TimerFD::SetTime(struct itimerspec* timer)
+{
+    if (-1 == timerfd_settime(timed_fd, 0, timer, nullptr))
+    {
+        throw TimerException(errno);
+    }
 }
 
 /**************************** Exception Definition ****************************/

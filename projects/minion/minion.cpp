@@ -1,30 +1,34 @@
 /*******************************
     Yonatan Zaken
-    File Name
-    File Type
-    //
+    Minion
+    CPP
     ILRD - RD8081               
 *******************************/
 #include "minion.hpp"
 
+namespace ilrd
+{
 
-    minion()
+Minion::Minion(boost::shared_ptr<Storage> storage, std::size_t numOfBlocks)
 {
 
 }
-	
-    minion(const minion& other)
+
+Minion::Minion(const Minion& other)
 {
 
 }
-	
-    minion& operator=(const minion& other)
+
+Minion& Minion::operator=(const Minion& other)
 {
 
 }
-	
-    ~minion()
+
+Minion::~Minion()
 {
 
 }
+
+} // namespace ilrd
+
 

@@ -7,24 +7,19 @@
 *******************************/
 #include "connection.hpp"
 
+namespace ilrd
+{
 
-    connection()
+Connection::Connection(Reactor& reactor)
 {
 
 }
-	
-    connection(const connection& other)
+
+Connection::~Connection()
 {
 
 }
-	
-    connection& operator=(const connection& other)
-{
 
-}
-	
-    ~connection()
-{
+} // namespace ilrd
 
-}
 

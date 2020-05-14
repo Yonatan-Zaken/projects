@@ -49,6 +49,7 @@ private:
     callback_t m_schedulerCallBack;
     int TimerFDCreate();
     void CallBack();
+    void SetTime(struct itimerspec* timer);
 };
 
 } // namespace ilrd

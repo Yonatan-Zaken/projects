@@ -1,7 +1,7 @@
 /*******************************
     Yonatan Zaken
-    Scheduler
-    HPP
+    Storage
+    CPP
     ILRD - RD8081               
 *******************************/
 
@@ -12,11 +12,12 @@
 namespace ilrd
 {
 
-		
-HeapStorage::HeapStorage(std::size_t storageSize):
-    m_storage(new char[storageSize])
+HeapStorage::HeapStorage(std::size_t numOfBlocks):
+    m_storage(new char[numOfBlocks * blockSize])
 {
 }
+
+/*****************************************************************************/
 
 HeapStorage::~HeapStorage()
 {
@@ -24,19 +25,18 @@ HeapStorage::~HeapStorage()
     m_storage = nullptr;
 }
 
+/*****************************************************************************/
+
 const char *HeapStorage::Read(std::size_t blockNum)
 {
-    return m_storage + (blockNum * blockSize);
+    return (m_storage + (blockNum * blockSize));
 }
+
+/*****************************************************************************/
 
 void HeapStorage::Write(const char *data, std::size_t blockNum)
 {
     memcpy(m_storage + (blockNum * blockSize), data, blockSize);
-}
-
-std::size_t HeapStorage::GetFreeBlocks() const noexcept
-{
-    return 0;
 }
 
 } // namespace ilrd

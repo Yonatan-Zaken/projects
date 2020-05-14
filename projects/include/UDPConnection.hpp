@@ -23,7 +23,7 @@ public:
     void SendTo();
     void ReceiveFrom();
 
-    static const std::size_t BLOCK_SIZE = 4096;
+    static const std::size_t BLOCK_SIZE = 4113;
 
 private:
     int m_sockfd;

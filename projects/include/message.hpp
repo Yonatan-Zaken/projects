@@ -7,7 +7,7 @@
 #ifndef ILRD_RD8081_MESSAGE_HPP
 #define ILRD_RD8081_MESSAGE_HPP
 
-#include <cinttypes> // intn_t
+#include <inttypes.h> // intn_t
 
 #include "utility.hpp"
 
@@ -23,26 +23,29 @@ public:
         REQUEST_WRITE,
         REPLY_READ,
         REPLY_WRITE
-    } op_t;
+    };
 
+    Message(uint8_t type, uint64_t ID);
+    virtual ~Message() = 0;
     //Message(const message& other); = disabled
     //Message& operator=(const message& other); = disabled	
-    virtual ~Message() = 0;
-    virtual int GetID() const noexcept;
-    virtual op_t GetOperation() const noexcept;
-    virtual std::size_t GetBlockID() const noexcept;
-    virtual std::size_t GetBlockSize() const noexcept;
+
+    virtual uint64_t GetID() const noexcept;
+    virtual uint8_t GetOperation() const noexcept;
+    static const uint64_t blockSize = 4113;
 
 private:
     uint8_t m_type;
     uint64_t m_requestID;
-    static const std::size_t blockSize = 4096;
 }; // class message
 
 /******************************************************************************/
 
 class RequestRead: public Message
 {
+public:
+    RequestRead(uint8_t type, uint64_t ID, uint64_t blockID);
+    uint64_t GetBlockID() const noexcept;
 private:
     uint64_t m_blockID;
 };
@@ -51,24 +54,30 @@ private:
 
 class ReplyRead: public Message
 {
+public:
+    ReplyRead(uint8_t type, uint64_t ID);
 private:
-    char dataBlock[blockSize];
+    char m_dataBlock[blockSize];
 };
 
 /******************************************************************************/
 
 class RequestWrite: public Message
 {
+public:
+    RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID);
+    uint64_t GetBlockID() const noexcept;
 private:
     uint64_t m_blockID;
-    char dataBlock[blockSize];
-}
+    char m_dataBlock[blockSize];
+};
 
 /******************************************************************************/
 
-class ReplyWrite: public message
+class ReplyWrite: public Message
 {
 public:
+    ReplyWrite(uint8_t type, uint64_t ID, uint8_t errorCode);
     bool GetStatus() const noexcept;
 private:
     uint8_t m_errorCode;
