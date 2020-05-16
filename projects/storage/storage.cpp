@@ -8,12 +8,13 @@
 #include <cstring>  // memcpy
 
 #include "storage.hpp"
+#include "logger.hpp"
 
 namespace ilrd
 {
 
-HeapStorage::HeapStorage(std::size_t numOfBlocks):
-    m_storage(new char[numOfBlocks * blockSize])
+HeapStorage::HeapStorage(uint64_t numOfBlocks):
+    m_storage(new char[numOfBlocks * BLOCK_SIZE])
 {
 }
 
@@ -27,16 +28,16 @@ HeapStorage::~HeapStorage()
 
 /*****************************************************************************/
 
-const char *HeapStorage::Read(std::size_t blockNum)
+void HeapStorage::Read(char *buffer, uint64_t blockNum)
 {
-    return (m_storage + (blockNum * blockSize));
+    memcpy(buffer, m_storage + (blockNum * BLOCK_SIZE), BLOCK_SIZE);
 }
 
 /*****************************************************************************/
 
-void HeapStorage::Write(const char *data, std::size_t blockNum)
+void HeapStorage::Write(const char *data, uint64_t blockNum)
 {
-    memcpy(m_storage + (blockNum * blockSize), data, blockSize);
+    memcpy(m_storage + (blockNum * BLOCK_SIZE), data, BLOCK_SIZE);
 }
 
 } // namespace ilrd

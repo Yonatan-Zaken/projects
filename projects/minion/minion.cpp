@@ -9,24 +9,18 @@
 namespace ilrd
 {
 
-Minion::Minion(boost::shared_ptr<Storage> storage, std::size_t numOfBlocks)
+Minion::Minion(boost::shared_ptr<Storage> storage)
 {
-
-}
-
-Minion::Minion(const Minion& other)
-{
-
-}
-
-Minion& Minion::operator=(const Minion& other)
-{
-
+    m_reactor.InsertFD(m_connection.GetFD(), &Minion::Callback);
 }
 
 Minion::~Minion()
 {
-
+}
+ 
+void Minion::Callback()
+{
+    m_connection.CallBack();
 }
 
 } // namespace ilrd

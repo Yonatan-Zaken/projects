@@ -20,16 +20,19 @@ extern "C"
 namespace ilrd
 {
 
-UDPConnection::UDPConnection(const char* port):
-    m_sockfd(GetUDPSocket()),
-    m_port(port)
+UDPConnection::UDPConnection():
+    m_sockfd(GetUDPSocket())
 {
 }
+
+/*****************************************************************************/
 
 UDPConnection::~UDPConnection()
 {
     close(m_sockfd);
 }
+
+/*****************************************************************************/
 
 void UDPConnection::SendTo()
 {
@@ -42,6 +45,8 @@ void UDPConnection::SendTo()
     }
 }
 
+/*****************************************************************************/
+
 void UDPConnection::ReceiveFrom()
 {
     char buffer[BLOCK_SIZE];
@@ -51,8 +56,16 @@ void UDPConnection::ReceiveFrom()
     {
         //throw
     }
-    std::cout << buffer << "\n";
 }
+
+/*****************************************************************************/
+
+int UDPConnection::GetFD() const noexcept
+{
+    return m_sockfd;    
+}
+
+/*****************************************************************************/
 
 int UDPConnection::GetUDPSocket()
 {

@@ -17,14 +17,6 @@ namespace ilrd
 class Message: private Uncopyable
 {
 public:	
-    enum Operation
-    {
-        REQUEST_READ,
-        REQUEST_WRITE,
-        REPLY_READ,
-        REPLY_WRITE
-    };
-
     Message(uint8_t type, uint64_t ID);
     virtual ~Message() = 0;
     //Message(const message& other); = disabled
@@ -55,7 +47,7 @@ private:
 class ReplyRead: public Message
 {
 public:
-    ReplyRead(uint8_t type, uint64_t ID);
+    ReplyRead(uint8_t type, uint64_t ID, char *data);
 private:
     char m_dataBlock[blockSize];
 };
@@ -65,7 +57,7 @@ private:
 class RequestWrite: public Message
 {
 public:
-    RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID);
+    RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID, const char *data);
     uint64_t GetBlockID() const noexcept;
 private:
     uint64_t m_blockID;
@@ -76,6 +68,7 @@ private:
 
 class ReplyWrite: public Message
 {
+
 public:
     ReplyWrite(uint8_t type, uint64_t ID, uint8_t errorCode);
     bool GetStatus() const noexcept;

@@ -2,10 +2,10 @@
 
 #flags
 CC=g++   
-CFLAGS=-std=c++98 -ansi -pedantic-errors -Wall -Wextra -g -I$(INC)
+CFLAGS=-std=c++98 -ansi -pedantic-errors -Wall -Wextra -g -I$(INC) -I./
 RFLAGS=-std=c++98 -ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3 -I$(INC) 
-LDFLAGS_DEBUG=-L$(DIR_DEBUG) -Wl,-rpath=../$(DIR_DEBUG)
-LDFLAGS_RELEASE=-L$(DIR_RELEASE) -Wl,-rpath=../$(DIR_RELEASE)
+LDFLAGS_DEBUG=-L../lib/libdebug -Wl,-rpath=../../lib/libdebug
+LDFLAGS_RELEASE=-L$(DIR_RELEASE) -Wl,-rpath,'$$ORIGIN'
 
 #reactor names
 SRC=reactor.cpp
@@ -30,19 +30,16 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(DIR_DEBUG)libreactor.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) \
-	-L/home/yonatan10/yonatan-zaken/projects/lib/libdebug \
-	-Wl,-rpath=/home/yonatan10/yonatan-zaken/projects/lib/libdebug -lreactor 
+	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lreactor 
 	
 #Release Out	
 $(TARGET_RELEASE): $(DIR_RELEASE)libreactor.so $(SRC_TEST) 
-	$(CC) $(RFLAGS) -o $@ $(SRC_TEST) -L$(DIR_DEBUG) \
-	-Wl,-rpath,'$$ORIGIN' -lreactor
+	$(CC) $(RFLAGS) -o $@ $(SRC_TEST) -L$(DIR_DEBUG) $(LDFLAGS_RELEASE) -lreactor
 	
 #Debug SO
 $(DIR_DEBUG)libreactor.so: $(OBJ_DEBUG)
 	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEBUG) -lfdlistner
-	  
+
 #Release SO
 $(DIR_RELEASE)libreactor.so: $(OBJ_RELEASE) 
 	$(CC) $(RFLAGS) -shared -o $@ $< $(LDFLAGS_DEBUG) -lfdlistner

@@ -6,14 +6,6 @@
 #define nullptr NULL  
 #endif
 
-// stderr macro
-#ifndef NDEBUG 
-#define DEBUG(X) do { cerr << "Debug [" << X << "] " << __FILE__ << " "<<\
-    __LINE__ << "\n"; } while (0)
-#else
-#define DEBUG(X) 
-#endif
-
 // other
 #define UNUSED(x) (void)(x)
 #define ASCII_SIZE 256

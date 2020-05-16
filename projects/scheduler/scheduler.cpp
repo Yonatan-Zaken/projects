@@ -12,7 +12,8 @@ namespace ilrd
 {
 
 Scheduler::Scheduler(Reactor& reactor):
-    m_timer(reactor, boost::bind(&Scheduler::Callback, this))
+    m_timer(reactor, boost::bind(&Scheduler::Callback, this)),
+    m_tasks()
 {
 }
 

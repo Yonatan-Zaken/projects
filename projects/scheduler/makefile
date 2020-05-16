@@ -4,8 +4,8 @@
 CC=g++   
 CFLAGS=-std=c++98 -ansi -pedantic-errors -Wall -Wextra -g -I$(INC)
 RFLAGS=-std=c++98 -ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3 -I$(INC) 
-LDFLAGS_DEBUG=-L$(DIR_DEBUG) -Wl,-rpath=../$(DIR_DEBUG)
-LDFLAGS_RELEASE=-L$(DIR_RELEASE) -Wl,-rpath=../$(DIR_RELEASE)
+LDFLAGS_DEBUG=-L../lib/libdebug -Wl,-rpath=../../lib/libdebug
+LDFLAGS_RELEASE=-L$(DIR_RELEASE) -Wl,-rpath,'$$ORIGIN'
 
 #scheduler names
 SRC=scheduler.cpp
@@ -30,9 +30,7 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(DIR_DEBUG)libscheduler.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) -L/home/yonatan10/yonatan-zaken/projects/lib/libdebug \
-	-Wl,-rpath=/home/yonatan10/yonatan-zaken/projects/lib/libdebug -lscheduler \
-	-ltimer -lreactor -lboost_system -lboost_chrono
+	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lscheduler -lboost_system -lboost_chrono
 	
 #Release Out	
 $(TARGET_RELEASE): $(DIR_RELEASE)libscheduler.so $(SRC_TEST) 
@@ -40,9 +38,8 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libscheduler.so $(SRC_TEST)
 
 #Debug SO
 $(DIR_DEBUG)libscheduler.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEBUG) -ltimer $(LDFLAGS_DEBUG) -lreactor
+	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEBUG) -ltimer
 	
-	  
 #Release SO
 $(DIR_RELEASE)libscheduler.so: $(OBJ_RELEASE)
 	$(CC) $(RFLAGS) -shared -o $@ $< 

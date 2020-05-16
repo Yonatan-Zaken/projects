@@ -22,18 +22,17 @@ public:
     //Connection(const connection& other); = disabled	
     //Connection& operator=(const connection& other); = disabled
 
-    void GetData();
-
-    void Receive(); // run the reactor
-    void Reply();   // create message object and send master
-    int GetFd() const noexcept;
+    int GetFD() const noexcept;
+    void Receive(); 
+    void Reply();   
+    void CallBack();
 
 private:
     UDPConnection m_udp;
     Reactor& m_reactor;
-    int m_fd_connect;
+    int m_fd;
 };
-
+ 
 } // namespace ilrd
 
 #endif

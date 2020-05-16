@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "connection.hpp"
 
 int main()
 {

@@ -47,8 +47,9 @@ uint64_t RequestRead::GetBlockID() const noexcept
 
 /***************************** Reply Read *******************************/
 
-ReplyRead::ReplyRead(uint8_t type, uint64_t ID):
-    Message(type, ID)
+ReplyRead::ReplyRead(uint8_t type, uint64_t ID, char *data):
+    Message(type, ID),
+    data(nullptr)
 {
 }
 

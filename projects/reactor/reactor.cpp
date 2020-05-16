@@ -107,9 +107,6 @@ void Reactor::InsertFD(int fd, FDListener::Operation service, callback_t callbac
 void Reactor::RemoveFD(int fd, FDListener::Operation service)
 {
     FDListener::key_t removePair(fd, service);
-    
-    std::cout << removePair.first << "\n";
-    std::cout << removePair.second << "\n";
 
     assert(m_handlerMap.end() != m_handlerMap.find(removePair));
 
