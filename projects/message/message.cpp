@@ -68,10 +68,11 @@ bool ReplyWrite::GetStatus() const noexcept
 
 /***************************** Request Write *****************************/
 
-RequestWrite::RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID):
+RequestWrite::RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID, const char *src):
     Message(type, ID),
     m_blockID(blockID)
 {
+    memcpy(m_dataBlock, src, )
 }
 
 uint64_t RequestWrite::GetBlockID() const noexcept

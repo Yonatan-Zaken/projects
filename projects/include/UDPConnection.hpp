@@ -20,8 +20,8 @@ class UDPConnection: private Uncopyable
 public:	
     explicit UDPConnection();		
     ~UDPConnection();
-    void SendTo();
-    void ReceiveFrom();
+    void SendTo(const char *buffer) const;
+    void ReceiveFrom(char *buffer);
     int GetFD() const noexcept;
 
     static const uint64_t BLOCK_SIZE = 4113;

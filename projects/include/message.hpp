@@ -57,8 +57,9 @@ private:
 class RequestWrite: public Message
 {
 public:
-    RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID, const char *data);
+    RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID, const char *src);
     uint64_t GetBlockID() const noexcept;
+
 private:
     uint64_t m_blockID;
     char m_dataBlock[blockSize];

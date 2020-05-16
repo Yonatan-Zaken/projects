@@ -7,9 +7,10 @@
 #ifndef ILRD_RD8081_CONNECTION_HPP
 #define ILRD_RD8081_CONNECTION_HPP
 
+#include "utility.hpp"
 #include "reactor.hpp"
 #include "UDPConnection.hpp"
-#include "utility.hpp"
+#include "message.hpp"
 
 namespace ilrd
 {
@@ -25,12 +26,15 @@ public:
     int GetFD() const noexcept;
     void Receive(); 
     void Reply();   
-    void CallBack();
+    void GetIncomingData();
+
+    static const uint64_t BLOCK_SIZE = 4113;
 
 private:
     UDPConnection m_udp;
     Reactor& m_reactor;
     int m_fd;
+    void ProduceRequestMessage();
 };
  
 } // namespace ilrd
