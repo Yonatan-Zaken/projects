@@ -72,7 +72,7 @@ RequestWrite::RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID, const ch
     Message(type, ID),
     m_blockID(blockID)
 {
-    memcpy(m_dataBlock, src, )
+    memcpy(m_dataBlock, src, blockSize);
 }
 
 uint64_t RequestWrite::GetBlockID() const noexcept
