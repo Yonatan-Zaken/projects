@@ -6,6 +6,7 @@ using namespace ilrd;
 
 static void MessageTest()
 {
+	/*
 	RequestRead r1(0, 11, 21);
 	
 	RUN_TEST(r1.GetOperation() == 0, "getop");
@@ -28,7 +29,7 @@ static void MessageTest()
 	RUN_TEST(r4.GetOperation() == 1, "getop");
 	RUN_TEST(r4.GetID() == 255, "getID");
 	RUN_TEST(r4.GetStatus() == 1, "getStatus");
-	
+	*/
 
 }
 

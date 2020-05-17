@@ -1,3 +1,4 @@
+// header
 #include<stdio.h>
 
 float Pow_Ten(int num)

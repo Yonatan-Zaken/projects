@@ -5,6 +5,8 @@
     ILRD - RD8081               
 *******************************/
 
+#include <cstring>  //memcpy
+
 #include "message.hpp"
 
 namespace ilrd
@@ -47,10 +49,11 @@ uint64_t RequestRead::GetBlockID() const noexcept
 
 /***************************** Reply Read *******************************/
 
-ReplyRead::ReplyRead(uint8_t type, uint64_t ID, char *data):
+ReplyRead::ReplyRead(uint8_t type, uint64_t ID, uint8_t errorCode, char *data):
     Message(type, ID),
-    data(nullptr)
+    m_errorCode(errorCode)
 {
+    memcpy(m_dataBlock, data, BLOCK_SIZE);
 }
 
 /***************************** Reply Write *******************************/
@@ -61,7 +64,7 @@ ReplyWrite::ReplyWrite(uint8_t type, uint64_t ID, uint8_t errorCode):
 {
 }
 
-bool ReplyWrite::GetStatus() const noexcept
+uint8_t ReplyWrite::GetStatus() const noexcept
 {
     return m_errorCode;
 }
@@ -72,12 +75,17 @@ RequestWrite::RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID, const ch
     Message(type, ID),
     m_blockID(blockID)
 {
-    memcpy(m_dataBlock, src, blockSize);
+    memcpy(m_dataBlock, src, BLOCK_SIZE);
 }
 
 uint64_t RequestWrite::GetBlockID() const noexcept
 {
     return m_blockID;
+}
+
+char *RequestWrite::DataBlock() noexcept
+{
+    return m_dataBlock;
 }
 
 } // namespace ilrd

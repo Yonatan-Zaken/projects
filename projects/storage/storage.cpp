@@ -28,14 +28,14 @@ HeapStorage::~HeapStorage()
 
 /*****************************************************************************/
 
-void HeapStorage::Read(char *buffer, uint64_t blockNum)
+uint8_t HeapStorage::Read(char *buffer, uint64_t blockNum)
 {
     memcpy(buffer, m_storage + (blockNum * BLOCK_SIZE), BLOCK_SIZE);
 }
 
 /*****************************************************************************/
 
-void HeapStorage::Write(const char *data, uint64_t blockNum)
+uint8_t HeapStorage::Write(const char *data, uint64_t blockNum)
 {
     memcpy(m_storage + (blockNum * BLOCK_SIZE), data, BLOCK_SIZE);
 }
