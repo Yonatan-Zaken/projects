@@ -30,7 +30,7 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(DIR_DEBUG)libtimer.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) $(LDFLAGS_DEBUG) -o $@ $(SRC_TEST) -ltimer -lboost_system -lboost_chrono
+	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -ltimer -lboost_system -lboost_chrono
 	
 #Release Out	
 $(TARGET_RELEASE): $(DIR_RELEASE)libtimer.so $(SRC_TEST) 
@@ -38,7 +38,7 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libtimer.so $(SRC_TEST)
 
 #Debug SO
 $(DIR_DEBUG)libtimer.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $<  $(LDFLAGS_DEBUG) -lreactor
+	$(CC) $(CFLAGS) -shared -o $@ $<  -L$(DIR_DEBUG) -Wl,-rpath,'$$ORIGIN' -lreactor
 	  
 #Release SO
 $(DIR_RELEASE)libtimer.so: $(OBJ_RELEASE)

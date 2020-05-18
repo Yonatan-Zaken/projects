@@ -47,6 +47,16 @@ uint64_t RequestRead::GetBlockID() const noexcept
     return m_blockID;
 }
 
+char *RequestRead::DataBlock() noexcept
+{
+    return nullptr;
+}
+
+uint8_t RequestRead::GetStatusCode() const noexcept
+{
+    return 0;
+}
+
 /***************************** Reply Read *******************************/
 
 ReplyRead::ReplyRead(uint8_t type, uint64_t ID, uint8_t errorCode, char *data):
@@ -54,6 +64,21 @@ ReplyRead::ReplyRead(uint8_t type, uint64_t ID, uint8_t errorCode, char *data):
     m_errorCode(errorCode)
 {
     memcpy(m_dataBlock, data, BLOCK_SIZE);
+}
+
+uint8_t ReplyRead::GetStatusCode() const noexcept
+{
+    return m_errorCode;
+}
+
+uint64_t ReplyRead::GetBlockID() const noexcept
+{
+    return 0;
+}
+
+char *ReplyRead::DataBlock() noexcept
+{
+    return nullptr;
 }
 
 /***************************** Reply Write *******************************/
@@ -64,7 +89,7 @@ ReplyWrite::ReplyWrite(uint8_t type, uint64_t ID, uint8_t errorCode):
 {
 }
 
-uint8_t ReplyWrite::GetStatus() const noexcept
+uint8_t ReplyWrite::GetStatusCode() const noexcept
 {
     return m_errorCode;
 }
@@ -87,6 +112,12 @@ char *RequestWrite::DataBlock() noexcept
 {
     return m_dataBlock;
 }
+
+uint8_t RequestWrite::GetStatusCode() const noexcept
+{
+    return 0;
+}
+
 
 } // namespace ilrd
 

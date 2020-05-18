@@ -20,7 +20,7 @@ namespace ilrd
 class Connection: private Uncopyable
 {
 public:	
-    explicit Connection(Reactor& reactor); 
+    explicit Connection(); 
     ~Connection(); 
     //Connection(const connection& other); = disabled	
     //Connection& operator=(const connection& other); = disabled
@@ -33,7 +33,6 @@ public:
 
 private:
     UDPConnection m_udp;
-    Reactor& m_reactor;
     int m_fd;
 };
 

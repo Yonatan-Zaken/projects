@@ -7,13 +7,15 @@ using namespace ilrd;
 
 int main()
 {
-	UDPConnection udp("4443");
+	char buffer[20] = {0};
+	UDPConnection udp;
+	char buffer2[20] = "haha";
 
 	for (size_t i = 0; i < 4; i++)
 	{
-		udp.ReceiveFrom();
-		udp.SendTo();
+		udp.ReceiveFrom(buffer);
+		udp.SendTo(buffer2);
 	}
-
+	
 	return 0;
 }

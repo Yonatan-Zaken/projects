@@ -7,7 +7,7 @@
 #ifndef ILRD_RD8081_UDPConnection_HPP
 #define ILRD_RD8081_UDPConnection_HPP
 
-#include <iosfwd>
+#include <inttypes.h>   // uintn_t
 #include <sys/socket.h> // struct sockaddr
 
 #include "utility.hpp"
@@ -31,7 +31,6 @@ private:
     struct sockaddr m_sendToAddr;
     socklen_t m_addrLen;
     int GetUDPSocket();
-
 };
 
 } // namespace ilrd

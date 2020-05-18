@@ -34,11 +34,11 @@ $(TARGET_DEBUG): $(DIR_DEBUG)libreactor.so $(SRC_TEST)
 	
 #Release Out	
 $(TARGET_RELEASE): $(DIR_RELEASE)libreactor.so $(SRC_TEST) 
-	$(CC) $(RFLAGS) -o $@ $(SRC_TEST) -L$(DIR_DEBUG) $(LDFLAGS_RELEASE) -lreactor
+	$(CC) $(RFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_RELEASE) -lreactor
 	
 #Debug SO
 $(DIR_DEBUG)libreactor.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEBUG) -lfdlistner
+	$(CC) $(CFLAGS) -shared -o $@ $< -L$(DIR_DEBUG) -Wl,-rpath,'$$ORIGIN' -lfdlistner
 
 #Release SO
 $(DIR_RELEASE)libreactor.so: $(OBJ_RELEASE) 

@@ -24,7 +24,8 @@ public:
     Minion(boost::shared_ptr<Storage> storage);	
     ~Minion();
     //Minion(const minion& other); = disabled	
-    //Minion& operator=(const minion& other); = disabled	
+    //Minion& operator=(const minion& other); = disabled
+    void MinionStart();	
     void Callback();
     static const uint64_t BLOCK_SIZE = 4096;
 

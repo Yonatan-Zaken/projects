@@ -25,6 +25,7 @@ public:
     virtual uint64_t GetID() const noexcept;
     virtual uint8_t GetOperation() const noexcept;
     virtual uint64_t GetBlockID() const noexcept = 0;
+    virtual uint8_t GetStatusCode() const noexcept = 0;
     virtual char *DataBlock() noexcept = 0;
     static const uint64_t BLOCK_SIZE = 4113;
 
@@ -40,12 +41,12 @@ class RequestRead: public Message
 public:
     RequestRead(uint8_t type, uint64_t ID, uint64_t blockID);
     uint64_t GetBlockID() const noexcept;
+
 private:
     uint64_t m_blockID;
-    char *DataBlock() noexcept
-    {
-        return nullptr;
-    }
+    char *DataBlock() noexcept;
+    uint8_t GetStatusCode() const noexcept;
+
 };
 
 /******************************************************************************/
@@ -54,18 +55,14 @@ class ReplyRead: public Message
 {
 public:
     ReplyRead(uint8_t type, uint64_t ID, uint8_t errorCode, char *data);
+    uint8_t GetStatusCode() const noexcept;
+
 private:
     uint8_t m_errorCode;
     char m_dataBlock[BLOCK_SIZE];
-    uint64_t GetBlockID() const noexcept
-    {
-        return 0;
-    }
-    
-    char *DataBlock() noexcept
-    {
-        return nullptr;
-    }
+    uint64_t GetBlockID() const noexcept;
+    char *DataBlock() noexcept;
+
 };
 
 /******************************************************************************/
@@ -80,6 +77,7 @@ public:
 private:
     uint64_t m_blockID;
     char m_dataBlock[BLOCK_SIZE];
+    uint8_t GetStatusCode() const noexcept;
 };
 
 /******************************************************************************/
@@ -89,7 +87,7 @@ class ReplyWrite: public Message
 
 public:
     ReplyWrite(uint8_t type, uint64_t ID, uint8_t errorCode);
-    uint8_t GetStatus() const noexcept;
+    uint8_t GetStatusCode() const noexcept;
 private:
     uint8_t m_errorCode;
     uint64_t GetBlockID() const noexcept

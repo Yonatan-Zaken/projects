@@ -30,7 +30,6 @@ int GetInternetAddr(struct addrinfo* res, flag_t flag)
 {
     struct addrinfo *runner = NULL;
     int sockfd = 0;
-    int yes = 1;
     
     for(runner = res; NULL != runner; runner = runner->ai_next) 
     {
@@ -40,13 +39,13 @@ int GetInternetAddr(struct addrinfo* res, flag_t flag)
             sockfd = FAIL_SOCKET;
             continue;
         }
-
+/*
         if (-1 == setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int))) 
         {
             perror("setsockopt");
             return -1;
         }
-
+*/
         if ((SERVER == flag) && (-1 == bind(sockfd, runner->ai_addr, runner->ai_addrlen)))
         {
             close(sockfd);

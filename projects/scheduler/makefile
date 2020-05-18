@@ -30,7 +30,7 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(DIR_DEBUG)libscheduler.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lscheduler -lboost_system -lboost_chrono
+	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lscheduler -ltimer -lreactor -lboost_system -lboost_chrono
 	
 #Release Out	
 $(TARGET_RELEASE): $(DIR_RELEASE)libscheduler.so $(SRC_TEST) 
@@ -38,7 +38,7 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libscheduler.so $(SRC_TEST)
 
 #Debug SO
 $(DIR_DEBUG)libscheduler.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEBUG) -ltimer
+	$(CC) $(CFLAGS) -shared -o $@ $< -L$(DIR_DEBUG) -Wl,-rpath,'$$ORIGIN' -ltimer
 	
 #Release SO
 $(DIR_RELEASE)libscheduler.so: $(OBJ_RELEASE)
