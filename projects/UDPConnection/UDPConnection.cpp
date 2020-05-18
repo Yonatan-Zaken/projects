@@ -24,7 +24,6 @@ namespace ilrd
 UDPConnection::UDPConnection():
     m_sockfd(GetUDPSocket())
 {
-    std::cout << "sockfd: " << m_sockfd << "\n";
 }
 
 /*****************************************************************************/
@@ -38,7 +37,9 @@ UDPConnection::~UDPConnection()
 
 void UDPConnection::SendTo(const char *buffer) const
 {
-    if (-1 == (sendto(m_sockfd, buffer, strlen(buffer), 0,
+    uint64_t replySize = (buffer[0] == 0) ? READ_REPLY_SIZE : WRITE_REPLY_SIZE;
+    
+    if (-1 == (sendto(m_sockfd, buffer, replySize, 0,
     &m_sendToAddr, m_addrLen))) 
     {
         LOG_DEBUG("sendto fail");
@@ -50,7 +51,9 @@ void UDPConnection::SendTo(const char *buffer) const
 
 void UDPConnection::ReceiveFrom(char *buffer)
 {
-    if (-1 == (recvfrom(m_sockfd, buffer, BLOCK_SIZE - 1, 0, 
+    m_addrLen = sizeof(m_sendToAddr);
+
+    if (-1 == (recvfrom(m_sockfd, buffer, BLOCK_SIZE, 0, 
     &m_sendToAddr, &m_addrLen))) 
     {
         LOG_DEBUG("recvfrom fail");

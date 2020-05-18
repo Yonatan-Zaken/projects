@@ -16,7 +16,7 @@ namespace ilrd
 
 class Storage: private Uncopyable
 {
-public:	
+public:
     virtual ~Storage()
     {
     }
@@ -39,6 +39,7 @@ public:
 
 private:
     char *m_storage;
+    uint64_t m_numOfBlocks;
 }; // class HeapStorage
 
 } //namespace ilrd

@@ -6,7 +6,7 @@
 *******************************/
 
 #include <boost/bind.hpp> // bind
-
+#include <iostream>
 #include "minion.hpp"
 
 namespace ilrd
@@ -30,19 +30,21 @@ Minion::~Minion()
 void Minion::Callback()
 {
     boost::shared_ptr<Message> request(m_connection.GetIncomingData());
-    
     uint8_t type = request->GetOperation();
     char buffer[BLOCK_SIZE];
+    std::cout << "type of request: " << type << "\n";
 
     switch (type)
     {
     case 0:
     {
+
         uint8_t error_code = m_storage->Read(buffer, request->GetBlockID());
-        
-        boost::shared_ptr<Message> reply(new ReplyRead(request->GetOperation(), request->GetID(), error_code, request->DataBlock()));
-        
+
+        boost::shared_ptr<Message> reply(new ReplyRead(request->GetOperation(), request->GetID(), error_code, buffer));
+
         m_connection.OutputData(reply);
+
         break;
     }
     
@@ -51,7 +53,7 @@ void Minion::Callback()
         uint8_t error_code = m_storage->Write(request->DataBlock(), request->GetBlockID());
 
         boost::shared_ptr<Message> reply(new ReplyWrite(request->GetOperation(), request->GetID(), error_code));
-
+      
         m_connection.OutputData(reply);
         break;
     }
