@@ -24,10 +24,11 @@ public:
     void ReceiveFrom(char *buffer);
     int GetFD() const noexcept;
 
+    static const uint64_t RECV_BLOCK_SIZE = 4113;
     static const uint64_t BLOCK_SIZE = 4096;
-    static const uint64_t READ_REPLY_SIZE = 4106;
     static const uint64_t WRITE_REPLY_SIZE = 2 * sizeof(uint8_t) + sizeof(uint64_t);
-
+    static const uint64_t READ_REPLY_SIZE = BLOCK_SIZE + WRITE_REPLY_SIZE;
+    
 private:
     int m_sockfd;
     struct sockaddr m_sendToAddr;

@@ -1,11 +1,9 @@
 /*******************************
     Yonatan Zaken
-    File Name
-    File Type
-    //
+    Connection
+    CPP
     ILRD - RD8081               
 *******************************/
-
 #include <iostream>
 #include <cstring>  // memcpy
 #include <endian.h> // htobe64
@@ -31,7 +29,7 @@ int Connection::GetFD() const noexcept
 
 boost::shared_ptr<Message> Connection::GetIncomingData() 
 {
-    char buffer[BLOCK_SIZE] = {0};
+    char buffer[RECV_BLOCK_SIZE] = {0};
     m_udp.ReceiveFrom(buffer);
 
     uint8_t requestType = buffer[0];
@@ -42,7 +40,7 @@ boost::shared_ptr<Message> Connection::GetIncomingData()
     {
         case 0:
         {
-            boost::shared_ptr<Message> readReq(new RequestRead(requestType, be64toh(requestID), be64toh(blockID), buffer + 17));
+            boost::shared_ptr<Message> readReq(new RequestRead(requestType, be64toh(requestID), be64toh(blockID)));
 
             return readReq;
         }
@@ -54,7 +52,7 @@ boost::shared_ptr<Message> Connection::GetIncomingData()
 
             return writeReq;
         } 
-    }
+    } // switch-case
 }
 
 void Connection::OutputData(boost::shared_ptr<Message> reply) 
@@ -67,12 +65,12 @@ void Connection::OutputData(boost::shared_ptr<Message> reply)
     {
     case 0:
     {
-        char buffer[BLOCK_SIZE] = {0};
+        char buffer[REPLY_READ_SIZE] = {0};
         
         buffer[0] = replyType;
-        memcpy(&buffer[1], &requestId, sizeof(uint64_t));
-        buffer[10] = errorCode;
-        memcpy(&buffer[11], reply->DataBlock(), 4096);
+        memcpy(buffer + 1, &requestId, sizeof(uint64_t));
+        buffer[9] = errorCode;
+        memcpy(buffer + 10, reply->DataBlock(), DATA_BLOCK_SIZE);
 
         m_udp.SendTo(buffer);
         break;
@@ -81,10 +79,10 @@ void Connection::OutputData(boost::shared_ptr<Message> reply)
     case 1:
     {
         char buffer[2 * sizeof(uint8_t) + sizeof(uint64_t)] = {0};
-        buffer[0] = replyType;
 
-        memcpy(&buffer[1], &requestId, sizeof(uint64_t));
-        buffer[10] = errorCode;
+        buffer[0] = replyType;
+        memcpy(buffer + 1, &requestId, sizeof(uint64_t));
+        buffer[9] = errorCode;
 
         m_udp.SendTo(buffer);
         break;

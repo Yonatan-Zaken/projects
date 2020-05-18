@@ -28,7 +28,9 @@ public:
     boost::shared_ptr<Message> GetIncomingData();
     void OutputData(boost::shared_ptr<Message> reply);
 
-    static const uint64_t BLOCK_SIZE = 4113;
+    static const uint64_t RECV_BLOCK_SIZE = 4113;
+    static const uint64_t DATA_BLOCK_SIZE = 4096;
+    static const uint64_t REPLY_READ_SIZE = 4106;
 
 private:
     UDPConnection m_udp;

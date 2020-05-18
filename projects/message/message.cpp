@@ -36,11 +36,10 @@ uint8_t Message::GetOperation() const noexcept
 
 /**************************** Request Read *****************************/
 
-RequestRead::RequestRead(uint8_t type, uint64_t ID, uint64_t blockID, char *data):
+RequestRead::RequestRead(uint8_t type, uint64_t ID, uint64_t blockID):
     Message(type, ID),
     m_blockID(blockID)
 {
-    memcpy(m_dataBlock, data, BLOCK_SIZE);
 }
 
 uint64_t RequestRead::GetBlockID() const noexcept
@@ -50,7 +49,7 @@ uint64_t RequestRead::GetBlockID() const noexcept
 
 char *RequestRead::DataBlock() noexcept
 {
-    return m_dataBlock;
+    return nullptr;
 }
 
 uint8_t RequestRead::GetStatusCode() const noexcept

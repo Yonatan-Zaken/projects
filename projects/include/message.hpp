@@ -39,7 +39,7 @@ private:
 class RequestRead: public Message
 {
 public:
-    RequestRead(uint8_t type, uint64_t ID, uint64_t blockID, char *data);
+    RequestRead(uint8_t type, uint64_t ID, uint64_t blockID);
     uint64_t GetBlockID() const noexcept;
 
 private:

@@ -53,7 +53,7 @@ void UDPConnection::ReceiveFrom(char *buffer)
 {
     m_addrLen = sizeof(m_sendToAddr);
 
-    if (-1 == (recvfrom(m_sockfd, buffer, BLOCK_SIZE, 0, 
+    if (-1 == (recvfrom(m_sockfd, buffer, RECV_BLOCK_SIZE, 0, 
     &m_sendToAddr, &m_addrLen))) 
     {
         LOG_DEBUG("recvfrom fail");
