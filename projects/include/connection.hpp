@@ -10,7 +10,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "utility.hpp"
-#include "reactor.hpp"
 #include "UDPConnection.hpp"
 #include "message.hpp"
 

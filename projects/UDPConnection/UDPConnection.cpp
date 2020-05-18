@@ -38,7 +38,6 @@ UDPConnection::~UDPConnection()
 
 void UDPConnection::SendTo(const char *buffer) const
 {
-    std::cout << "in send to sockfd is: " << m_sockfd << "\n";
     if (-1 == (sendto(m_sockfd, buffer, strlen(buffer), 0,
     &m_sendToAddr, m_addrLen))) 
     {
@@ -51,13 +50,12 @@ void UDPConnection::SendTo(const char *buffer) const
 
 void UDPConnection::ReceiveFrom(char *buffer)
 {
-    if (-1 == (recvfrom(m_sockfd, buffer, BLOCK_SIZE, 0, 
+    if (-1 == (recvfrom(m_sockfd, buffer, BLOCK_SIZE - 1, 0, 
     &m_sendToAddr, &m_addrLen))) 
     {
         LOG_DEBUG("recvfrom fail");
         //throw
     }
-    LOG_DEBUG("sasasassasasasaa");
 }
 
 /*****************************************************************************/

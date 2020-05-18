@@ -6,6 +6,7 @@
     ILRD - RD8081               
 *******************************/
 
+#include <cstring>  // memcpy
 #include <endian.h> // htobe64
 
 #include "connection.hpp"
