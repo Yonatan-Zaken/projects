@@ -26,7 +26,6 @@ public:
     virtual uint64_t GetBlockID() const noexcept = 0;
     virtual uint8_t GetStatusCode() const noexcept = 0;
     virtual uint8_t *DataBlock() noexcept = 0;
-    static const uint64_t BLOCK_SIZE = 4096;
 
 private:
     uint8_t m_type;
@@ -59,7 +58,7 @@ public:
 
 private:
     uint8_t m_errorCode;
-    uint8_t m_dataBlock[BLOCK_SIZE];
+    uint8_t m_dataBlock[details::BLOCK_SIZE];
     uint64_t GetBlockID() const noexcept;
 
 };
@@ -75,7 +74,7 @@ public:
     
 private:
     uint64_t m_blockID;
-    uint8_t m_dataBlock[BLOCK_SIZE];
+    uint8_t m_dataBlock[details::BLOCK_SIZE];
     uint8_t GetStatusCode() const noexcept;
 };
 

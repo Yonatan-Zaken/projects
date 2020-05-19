@@ -9,9 +9,10 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "utility.hpp"
+#include "reactor.hpp"
 #include "UDPServer.hpp"
 #include "message.hpp"
+#include "utility.hpp"
 
 namespace ilrd
 {
@@ -19,8 +20,10 @@ namespace ilrd
 class Connection: private Uncopyable
 {
 public:	
-    explicit Connection(const char* port); 
-    //~Connection(); = default
+    typedef boost::function <void(void)> callback_t;
+    
+    explicit Connection(const char* port, Reactor& reactor, callback_t callback); 
+    ~Connection() noexcept; 
     //Connection(const connection& other); = disabled	
     //Connection& operator=(const connection& other); = disabled
 
@@ -28,12 +31,10 @@ public:
     boost::shared_ptr<Message> ConstructRequest();
     void SendMessage(boost::shared_ptr<Message> reply);
 
-    static const uint64_t RECV_BLOCK_SIZE = 4113;
-    static const uint64_t DATA_BLOCK_SIZE = 4096;
-    static const uint64_t REPLY_READ_SIZE = 4106;
-
 private:
     UDPServer m_udp;
+    Reactor& m_reactor;
+    callback_t m_callback;
 };
 
 } // namespace ilrd

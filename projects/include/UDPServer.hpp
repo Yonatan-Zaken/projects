@@ -27,17 +27,53 @@ public:
     void ReceiveFrom(uint8_t *buffer);
     int GetFD() const noexcept;
 
-    static const uint64_t RECV_BLOCK_SIZE = 4113;
-    static const uint64_t BLOCK_SIZE = 4096;
-    static const uint64_t WRITE_REPLY_SIZE = 2 * sizeof(uint8_t) + sizeof(uint64_t);
-    static const uint64_t READ_REPLY_SIZE = BLOCK_SIZE + WRITE_REPLY_SIZE;
-    
 private:
     int m_sockfd;
     struct sockaddr m_sendToAddr;
     socklen_t m_addrLen;
     int GetUDPSocket(const char* port);
 };
+
+namespace details
+{
+
+class GetaddrinfoError: public std::exception
+{
+public:
+    virtual const char *what() const noexcept
+    {
+        return ("getaddrinfo error");
+    }
+};
+
+class GetInternetAddressError: public std::exception
+{
+public:
+    virtual const char *what() const noexcept
+    {
+        return ("GetInternetAddress error");
+    }
+};
+
+class SendtoError: public std::exception
+{
+public:
+    virtual const char *what() const noexcept
+    {
+        return ("sendto error");
+    }
+};
+
+class RecvfromError: public std::exception
+{
+public:
+    virtual const char *what() const noexcept
+    {
+        return ("revcfrom error");
+    }
+};
+
+} // namespace details
 
 } // namespace ilrd
 

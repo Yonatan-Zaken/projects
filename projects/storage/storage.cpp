@@ -13,7 +13,7 @@ namespace ilrd
 {
 
 HeapStorage::HeapStorage(uint64_t numOfBlocks):
-    m_storage(new uint8_t[numOfBlocks * BLOCK_SIZE]),
+    m_storage(new uint8_t[numOfBlocks * details::BLOCK_SIZE]),
     m_numOfBlocks(numOfBlocks)
 {
 }
@@ -35,7 +35,7 @@ uint8_t HeapStorage::Read(uint8_t *buffer, uint64_t blockNum)
         return 1;
     }
     
-    memcpy(buffer, m_storage + (blockNum * BLOCK_SIZE), BLOCK_SIZE);
+    memcpy(buffer, m_storage + (blockNum * details::BLOCK_SIZE), details::BLOCK_SIZE);
     return 0;
 }
 
@@ -48,7 +48,7 @@ uint8_t HeapStorage::Write(const uint8_t *data, uint64_t blockNum)
         return 1;
     }
 
-    memcpy(m_storage + (blockNum * BLOCK_SIZE), data, BLOCK_SIZE);
+    memcpy(m_storage + (blockNum * details::BLOCK_SIZE), data, details::BLOCK_SIZE);
     return 0;
 }
 

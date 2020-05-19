@@ -36,8 +36,6 @@ public:
     virtual uint8_t Read(uint8_t *buffer, uint64_t blockNum);
     virtual uint8_t Write(const uint8_t *data, uint64_t blockNum);
     
-    static const uint64_t BLOCK_SIZE = 4096;
-
 private:
     uint8_t *m_storage;
     uint64_t m_numOfBlocks;

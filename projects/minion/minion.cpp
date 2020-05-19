@@ -13,16 +13,11 @@ namespace ilrd
 {
 
 Minion::Minion(boost::shared_ptr<Storage> storage, const char* port):
-    m_connection(port),
-    m_storage(storage)
+    m_storage(storage),
+    m_reactor(),
+    m_connection(port, m_reactor, boost::bind(&Minion::Callback, this))
 {
-    m_reactor.InsertFD(m_connection.GetFD(), FDListener::READ,
-    boost::bind(&Minion::Callback, this));
 }
-
-/*****************************************************************************/
-// Move insert fd to connection!
-//~Minion() noexcept = default;
 
 /*****************************************************************************/
 
@@ -35,7 +30,7 @@ void Minion::Callback()
     {
     case 0:
     {
-        uint8_t buffer[BLOCK_SIZE] = {0};
+        uint8_t buffer[details::BLOCK_SIZE] = {0};
         uint8_t error_code = m_storage->Read(buffer, request->GetBlockID());
 
         boost::shared_ptr<Message> reply(new ReplyRead(request->GetOperation(), request->GetID(), error_code, buffer));
