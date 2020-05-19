@@ -38,7 +38,7 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libconnection.so $(SRC_TEST)
 
 #Debug SO
 $(DIR_DEBUG)libconnection.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< -L$(DIR_DEBUG) -Wl,-rpath,'$$ORIGIN' -lUDPConnection -L$(DIR_DEBUG) -Wl,-rpath,'$$ORIGIN' -lmessage
+	$(CC) $(CFLAGS) -shared -o $@ $< -L$(DIR_DEBUG) -Wl,-rpath,'$$ORIGIN' -lUDPServer -L$(DIR_DEBUG) -Wl,-rpath,'$$ORIGIN' -lmessage
 	
 #Release SO
 $(DIR_RELEASE)libconnection.so: $(OBJ_RELEASE)

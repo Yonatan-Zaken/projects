@@ -30,7 +30,7 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(DIR_DEBUG)libminion.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lminion -lstorage
+	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lminion -lUDPServer -lstorage
 
 #Release Out	
 $(TARGET_RELEASE): $(DIR_RELEASE)libminion.so $(SRC_TEST) 

@@ -4,7 +4,6 @@
     CPP
     ILRD - RD8081               
 *******************************/
-#include <iostream>
 #include <cstring>  // memcpy
 #include <endian.h> // htobe64
 
@@ -13,23 +12,23 @@
 namespace ilrd
 {
 
-Connection::Connection():
-    m_fd(m_udp.GetFD())
+Connection::Connection(const char* port):
+    m_udp(UDPServer(port))
 {
 }
 
-Connection::~Connection()
-{
-}
+/******************************************************************************/
 
 int Connection::GetFD() const noexcept
 {
-    return m_fd;
+    return m_udp.GetFD();
 }
 
-boost::shared_ptr<Message> Connection::GetIncomingData() 
+/******************************************************************************/
+
+boost::shared_ptr<Message> Connection::ConstructRequest() 
 {
-    char buffer[RECV_BLOCK_SIZE] = {0};
+    uint8_t buffer[RECV_BLOCK_SIZE] = {0};
     m_udp.ReceiveFrom(buffer);
 
     uint8_t requestType = buffer[0];
@@ -55,7 +54,9 @@ boost::shared_ptr<Message> Connection::GetIncomingData()
     } // switch-case
 }
 
-void Connection::OutputData(boost::shared_ptr<Message> reply) 
+/******************************************************************************/
+
+void Connection::SendMessage(boost::shared_ptr<Message> reply) 
 {
     uint8_t replyType = reply->GetOperation();
     uint8_t errorCode = reply->GetStatusCode();
@@ -65,7 +66,7 @@ void Connection::OutputData(boost::shared_ptr<Message> reply)
     {
     case 0:
     {
-        char buffer[REPLY_READ_SIZE] = {0};
+        uint8_t buffer[REPLY_READ_SIZE] = {0};
         
         buffer[0] = replyType;
         memcpy(buffer + 1, &requestId, sizeof(uint64_t));
@@ -78,7 +79,7 @@ void Connection::OutputData(boost::shared_ptr<Message> reply)
     
     case 1:
     {
-        char buffer[2 * sizeof(uint8_t) + sizeof(uint64_t)] = {0};
+        uint8_t buffer[2 * sizeof(uint8_t) + sizeof(uint64_t)] = {0};
 
         buffer[0] = replyType;
         memcpy(buffer + 1, &requestId, sizeof(uint64_t));

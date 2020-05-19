@@ -8,20 +8,19 @@
 #include <cstring>  // memcpy
 
 #include "storage.hpp"
-#include "logger.hpp"
 
 namespace ilrd
 {
 
 HeapStorage::HeapStorage(uint64_t numOfBlocks):
-    m_storage(new char[numOfBlocks * BLOCK_SIZE]),
+    m_storage(new uint8_t[numOfBlocks * BLOCK_SIZE]),
     m_numOfBlocks(numOfBlocks)
 {
 }
 
 /*****************************************************************************/
 
-HeapStorage::~HeapStorage()
+HeapStorage::~HeapStorage() noexcept
 {
     delete[] m_storage;
     m_storage = nullptr;
@@ -29,9 +28,9 @@ HeapStorage::~HeapStorage()
 
 /*****************************************************************************/
 
-uint8_t HeapStorage::Read(char *buffer, uint64_t blockNum)
+uint8_t HeapStorage::Read(uint8_t *buffer, uint64_t blockNum)
 {
-    if (blockNum > m_numOfBlocks)
+    if (blockNum >= m_numOfBlocks)
     {
         return 1;
     }
@@ -42,9 +41,9 @@ uint8_t HeapStorage::Read(char *buffer, uint64_t blockNum)
 
 /*****************************************************************************/
 
-uint8_t HeapStorage::Write(const char *data, uint64_t blockNum)
+uint8_t HeapStorage::Write(const uint8_t *data, uint64_t blockNum)
 {
-    if (blockNum > m_numOfBlocks)
+    if (blockNum >= m_numOfBlocks)
     {
         return 1;
     }

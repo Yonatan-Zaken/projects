@@ -44,11 +44,12 @@ private:
 
 } // namespace ilrd
 
+
+// automation macros for tests 
 #define NORMAL "\033[0m"
 #define RED "\033[;031m"
 #define GREEN "\033[;032m"
 
-// automation macros for tests 
 #define RUN_TEST(test, error_message){\
     if (test)\
     {\

@@ -8,7 +8,6 @@
 #define ILRD_RD8081_MESSAGE_HPP
 
 #include <inttypes.h> // intn_t
-
 #include "utility.hpp"
 
 namespace ilrd
@@ -18,7 +17,7 @@ class Message: private Uncopyable
 {
 public:	
     Message(uint8_t type, uint64_t ID);
-    virtual ~Message() = 0;
+    virtual ~Message() noexcept = 0;
     //Message(const message& other); = disabled
     //Message& operator=(const message& other); = disabled	
 
@@ -26,7 +25,7 @@ public:
     virtual uint8_t GetOperation() const noexcept;
     virtual uint64_t GetBlockID() const noexcept = 0;
     virtual uint8_t GetStatusCode() const noexcept = 0;
-    virtual char *DataBlock() noexcept = 0;
+    virtual uint8_t *DataBlock() noexcept = 0;
     static const uint64_t BLOCK_SIZE = 4096;
 
 private:
@@ -44,8 +43,7 @@ public:
 
 private:
     uint64_t m_blockID;
-    char m_dataBlock[BLOCK_SIZE];
-    char *DataBlock() noexcept;
+    uint8_t *DataBlock() noexcept;
     uint8_t GetStatusCode() const noexcept;
 
 };
@@ -55,13 +53,13 @@ private:
 class ReplyRead: public Message
 {
 public:
-    ReplyRead(uint8_t type, uint64_t ID, uint8_t errorCode, char *data);
+    ReplyRead(uint8_t type, uint64_t ID, uint8_t errorCode, uint8_t *data);
     uint8_t GetStatusCode() const noexcept;
-    char *DataBlock() noexcept;
+    uint8_t *DataBlock() noexcept;
 
 private:
     uint8_t m_errorCode;
-    char m_dataBlock[BLOCK_SIZE];
+    uint8_t m_dataBlock[BLOCK_SIZE];
     uint64_t GetBlockID() const noexcept;
 
 };
@@ -71,13 +69,13 @@ private:
 class RequestWrite: public Message
 {
 public:
-    RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID, const char *src);
+    RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID, const uint8_t *src);
     uint64_t GetBlockID() const noexcept;
-    char *DataBlock() noexcept;
+    uint8_t *DataBlock() noexcept;
     
 private:
     uint64_t m_blockID;
-    char m_dataBlock[BLOCK_SIZE];
+    uint8_t m_dataBlock[BLOCK_SIZE];
     uint8_t GetStatusCode() const noexcept;
 };
 
@@ -91,15 +89,8 @@ public:
     uint8_t GetStatusCode() const noexcept;
 private:
     uint8_t m_errorCode;
-    uint64_t GetBlockID() const noexcept
-    {
-        return 0;
-    }
-
-    char *DataBlock() noexcept
-    {
-        return nullptr;
-    }
+    uint64_t GetBlockID() const noexcept;
+    uint8_t *DataBlock() noexcept;
 };
 
 } // namespace ilrd

@@ -9,7 +9,7 @@ int main()
 {
 
 	boost::shared_ptr<HeapStorage> storage(new HeapStorage(4));
-	Minion minion(storage);
+	Minion minion(storage, "4443");
 
 	minion.MinionStart();
 

@@ -4,8 +4,8 @@
     HPP
     ILRD - RD8081               
 *******************************/
-#ifndef ILRD_RD8081_UDPServer_HPP
-#define ILRD_RD8081_UDPServer_HPP
+#ifndef ILRD_RD8081_UDPSERVER_HPP
+#define ILRD_RD8081_UDPSERVER_HPP
 
 #include <inttypes.h>   // uintn_t
 #include <sys/socket.h> // struct sockaddr

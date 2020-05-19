@@ -21,18 +21,19 @@ namespace ilrd
 class Minion: private Uncopyable
 {
 public:	
-    Minion(boost::shared_ptr<Storage> storage);	
-    ~Minion();
+    Minion(boost::shared_ptr<Storage> storage, const char *port);
+    //~Minion() noexcept = default;
     //Minion(const minion& other); = disabled	
     //Minion& operator=(const minion& other); = disabled
+
     void MinionStart();	
-    void Callback();
     static const uint64_t BLOCK_SIZE = 4096;
 
 private:
     Reactor m_reactor;
     Connection m_connection;
     boost::shared_ptr<Storage> m_storage;
+    void Callback();
 };
 
 } // namespace ilrd

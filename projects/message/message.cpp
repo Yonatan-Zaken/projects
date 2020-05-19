@@ -20,7 +20,7 @@ Message::Message(uint8_t type, uint64_t ID):
 {
 }
 
-Message::~Message()
+Message::~Message() noexcept
 {
 }
 
@@ -47,7 +47,7 @@ uint64_t RequestRead::GetBlockID() const noexcept
     return m_blockID;
 }
 
-char *RequestRead::DataBlock() noexcept
+uint8_t *RequestRead::DataBlock() noexcept
 {
     return nullptr;
 }
@@ -59,7 +59,7 @@ uint8_t RequestRead::GetStatusCode() const noexcept
 
 /***************************** Reply Read *******************************/
 
-ReplyRead::ReplyRead(uint8_t type, uint64_t ID, uint8_t errorCode, char *data):
+ReplyRead::ReplyRead(uint8_t type, uint64_t ID, uint8_t errorCode, uint8_t *data):
     Message(type, ID),
     m_errorCode(errorCode)
 {
@@ -71,7 +71,7 @@ uint8_t ReplyRead::GetStatusCode() const noexcept
     return m_errorCode;
 }
 
-char *ReplyRead::DataBlock() noexcept
+uint8_t *ReplyRead::DataBlock() noexcept
 {
     return m_dataBlock;
 }
@@ -94,9 +94,19 @@ uint8_t ReplyWrite::GetStatusCode() const noexcept
     return m_errorCode;
 }
 
+uint64_t ReplyWrite::GetBlockID() const noexcept
+{
+    return 0;
+}
+
+uint8_t *ReplyWrite::DataBlock() noexcept
+{
+    return nullptr;
+}
+
 /***************************** Request Write *****************************/
 
-RequestWrite::RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID, const char *src):
+RequestWrite::RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID, const uint8_t *src):
     Message(type, ID),
     m_blockID(blockID)
 {
@@ -108,7 +118,7 @@ uint64_t RequestWrite::GetBlockID() const noexcept
     return m_blockID;
 }
 
-char *RequestWrite::DataBlock() noexcept
+uint8_t *RequestWrite::DataBlock() noexcept
 {
     return m_dataBlock;
 }

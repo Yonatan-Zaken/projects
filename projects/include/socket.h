@@ -26,8 +26,17 @@ enum status
     FAIL = 1
 };
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 void InitHints(struct addrinfo *hints, int family, int socktype, int flags);
 int GetInternetAddr(struct addrinfo* res, flag_t flag);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif 
 

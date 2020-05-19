@@ -1,76 +1,67 @@
 /*******************************
     Yonatan Zaken
-    File Name
-    File Type
-    //
+    UDPServer
+    CPP
     ILRD - RD8081               
 *******************************/
-
 #include <iostream> // cout
 #include <unistd.h> // close
 #include <cstring>  // memset
 
-extern "C"
-{
-    #include "socket.h"
-}
-
-#include "UDPConnection.hpp"
-#include "logger.hpp"
+#include "socket.h"
+#include "UDPServer.hpp"
 
 namespace ilrd
 {
 
-UDPConnection::UDPConnection():
-    m_sockfd(GetUDPSocket())
+UDPServer::UDPServer(const char* port):
+    m_sockfd(GetUDPSocket(port))
 {
 }
 
 /*****************************************************************************/
 
-UDPConnection::~UDPConnection()
+UDPServer::~UDPServer() noexcept
 {
     close(m_sockfd);
 }
 
 /*****************************************************************************/
 
-void UDPConnection::SendTo(const char *buffer) const
+void UDPServer::SendTo(const uint8_t *buffer) const
 {
     uint64_t replySize = (buffer[0] == 0) ? READ_REPLY_SIZE : WRITE_REPLY_SIZE;
     
     if (-1 == (sendto(m_sockfd, buffer, replySize, 0,
     &m_sendToAddr, m_addrLen))) 
     {
-        LOG_DEBUG("sendto fail");
         //throw
     }
 }
 
 /*****************************************************************************/
 
-void UDPConnection::ReceiveFrom(char *buffer)
+void UDPServer::ReceiveFrom(uint8_t *buffer)
 {
     m_addrLen = sizeof(m_sendToAddr);
 
     if (-1 == (recvfrom(m_sockfd, buffer, RECV_BLOCK_SIZE, 0, 
     &m_sendToAddr, &m_addrLen))) 
     {
-        LOG_DEBUG("recvfrom fail");
         //throw
     }
 }
 
 /*****************************************************************************/
 
-int UDPConnection::GetFD() const noexcept
+int UDPServer::GetFD() const noexcept
 {
     return m_sockfd;    
 }
 
 /*****************************************************************************/
 
-int UDPConnection::GetUDPSocket()
+int UDPServer::GetUDPSocket(const char *port)
 {
     struct addrinfo hints;
     memset(&hints, 0, sizeof(addrinfo));
@@ -78,17 +69,14 @@ int UDPConnection::GetUDPSocket()
 
     InitHints(&hints, AF_INET, SOCK_DGRAM, AI_PASSIVE);    
     
-    int err_val = 0;
-    if (0 != (err_val = getaddrinfo(NULL, "4443", &hints, &servinfo))) 
+    if (0 != getaddrinfo(NULL, port, &hints, &servinfo)) 
     {
-        LOG_DEBUG("getaddrinfo fail");
         //throw
     }
 
     int sockfd = 0;
     if (-1 == (sockfd = GetInternetAddr(servinfo, SERVER)))
     {
-        LOG_DEBUG("getinternetaddr fail");
         //throw
     }
 
