@@ -21,11 +21,13 @@ public:
     static T* GetInstance();
 
 private:
-    Singleton();
-    static void Clean();
     static boost::atomic<T *> m_instance;
     static boost::mutex m_instantiationMutex;
-    static const std::size_t DEADBEEF = 0xDEADBEEF;
+    
+    Singleton();
+    static void Clean();
+    
+    static const std::size_t m_guranteeDestruction = 0xDEADBEEF;
 };
 
 template <class T>
@@ -40,7 +42,11 @@ T* Singleton<T>::GetInstance()
         {
             tmp = new T;
             m_instance.store(tmp, boost::memory_order_release);
-            std::atexit(&Clean);
+            if (-1 == std::atexit(&Clean))
+            {
+                delete tmp;
+                throw details::AtexitError();
+            }
         }
     }
 
@@ -52,8 +58,7 @@ void Singleton<T>::Clean()
 {
     delete m_instance;
 
-    std::size_t gurantee_destruction = 0xDEADBEEF;
-    m_instance.store(reinterpret_cast<T*>(&gurantee_destruction), boost::memory_order_release);
+    m_instance.store(reinterpret_cast<T*>(&m_guranteeDestruction), boost::memory_order_release);
 }
 
 template <class T>
@@ -61,6 +66,20 @@ boost::atomic<T *> Singleton<T>::m_instance(nullptr);
 
 template <class T>
 boost::mutex Singleton<T>::m_instantiationMutex;
+
+namespace details
+{
+
+class AtexitError: public std::exception
+{
+public:
+    const char *what() const noexcept
+    {
+        return ("atexit error");
+    }
+}
+
+} // namespace details
 
 } // namespace ilrd
 

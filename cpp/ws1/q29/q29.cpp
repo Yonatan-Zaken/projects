@@ -69,7 +69,11 @@ int main()
 {
     B *b1 = new B;
     B *b2 = new X;
-    
+    X x1;
+    B *b3 = &x1;
+    B base; 
+    X *d1 = &base;
+
     std::cout << std::endl << "main b1:" << std::endl;
     b1->Print1();      
     b1->Print2();        
@@ -80,6 +84,11 @@ int main()
     b2->Print2();        
     b2->Print3();
     
+    std::cout << "testing something\n";
+
+    b3->Print1();
+    b3->Print2();
+    b3->Print3();
     
     X *xx = static_cast<X*>(b2);
     std::cout << std::endl << "main xx:" << std::endl;

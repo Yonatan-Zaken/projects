@@ -5,25 +5,25 @@
     //
     ILRD - RD8081               
 *******************************/
-#include "logger.hpp"
+#include "priority_queue.hpp"
 
 
-    logger()
+    priority_queue()
 {
 
 }
 	
-    logger(const logger& other)
+    priority_queue(const priority_queue& other)
 {
 
 }
 	
-    logger& operator=(const logger& other)
+    priority_queue& operator=(const priority_queue& other)
 {
 
 }
 	
-    ~logger()
+    ~priority_queue()
 {
 
 }

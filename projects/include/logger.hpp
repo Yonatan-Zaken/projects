@@ -1,64 +1,53 @@
 /*******************************
     Yonatan Zaken
-    LOGGER
-    HPP
-    05/05/20
+    Logger
+    CPP
     ILRD - RD8081               
 *******************************/
+#ifndef ILRD_RD8081_LOGGER_HPP
+#define ILRD_RD8081_LOGGER_HPP
 
-#define NAN      0
-#define ERROR    1
-#define WARNING  2
-#define INFO     3
-#define DEBUG    4
+#include <boost/thread/mutex.hpp>  // boost::mutex
+#include <fstream>  //ofstream
+#include "singleton.hpp"
+#include "utility.hpp"
 
-#if ((LOG_LEVEL > DEBUG) || (LOG_LEVEL < NAN))
-#error Invalid Log Level
-#else 
-#ifndef LOG_ERROR
-#define LOG_ERROR(X) {std::cerr << "ERROR [" << X << "] " << __FILE__ << " " <<\
-__LINE__ <<"\n";}
+namespace ilrd
+{
+
+class Logger
+{
+public:	
+    enum Level
+    {
+        NUN,
+        ERROR,
+        WARNING,
+        INFO,
+        DEBUG,
+        NUM_OF_LEVELS
+    };
+
+    explicit Logger();	
+    ~Logger() noexcept;
+    // Logger(const Logger& other);	
+    // Logger& operator=(const Logger& other); 	
+
+    void Log(const std::string&, Level level);
+    
+    void Error(const std::string&);
+    void Warning(const std::string&);
+    void Info(const std::string&);
+    void Debug(const std::string&);
+
+private:
+    std::ofstream m_file;
+    boost::mutex m_lock;
+};
+
+// FILE *f = Singleton<FILE>::GetInstance();
+
+} // namespace ilrd
+
+
 #endif
-#ifndef LOG_WARNING
-#define LOG_WARNING(X) {std::cerr << "WARNING [" << X << "] " << __FILE__ <<\
- " " << __LINE__ <<"\n";}
-#endif
-#ifndef LOG_INFO
-#define LOG_INFO(X) {std::cerr << "INFO [" << X << "] " << __FILE__ << " " <<\
-__LINE__ <<"\n";}
-#endif
-#ifndef LOG_DEBUG
-#define LOG_DEBUG(X) {std::cerr << "DEBUG [" << X << "] " << __FILE__ << " " <<\
-__LINE__ <<"\n";}
-#endif
-#endif
-
-#if (LOG_LEVEL == INFO) // Info
-    #undef LOG_DEBUG
-    #define LOG_DEBUG(X) {} 
-
-#elif (LOG_LEVEL == WARNING) // Warning
-    #undef LOG_INFO
-    #define LOG_INFO(X) {}
-    #undef LOG_DEBUG
-    #define LOG_DEBUG(X) {}
-
-#elif (LOG_LEVEL == ERROR) // Error
-    #undef LOG_WARNING
-    #define LOG_WARNING(X) {}
-    #undef LOG_INFO
-    #define LOG_INFO(X) {}
-    #undef LOG_DEBUG
-    #define LOG_DEBUG(X) {}
-
-#elif (LOG_LEVEL == NAN)   // NAN
-    #undef LOG_ERROR
-    #define LOG_ERROR(X) {}
-    #undef LOG_WARNING
-    #define LOG_WARNING(X) {}
-    #undef LOG_INFO
-    #define LOG_INFO(X) {}
-    #undef LOG_DEBUG
-    #define LOG_DEBUG(X) {}
-#endif
-

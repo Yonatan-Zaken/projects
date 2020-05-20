@@ -74,7 +74,7 @@ namespace details
 } // namespace details
 
 } // namespace ilrd
-
+/*
 // automation macros for tests 
 #define NORMAL "\033[0m"
 #define RED "\033[;031m"
@@ -94,6 +94,6 @@ namespace details
         printf(NORMAL);\
     }\
 }
-
+*/
 #endif // ILRD_RD8081_UTILITY_HPP
 
