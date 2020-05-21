@@ -7,20 +7,24 @@
 #ifndef ILRD_RD8081_LOGGER_HPP
 #define ILRD_RD8081_LOGGER_HPP
 
-#include <boost/thread/mutex.hpp>  // boost::mutex
-#include <fstream>  //ofstream
+#include <queue>                   // queue
+#include <fstream>                 //ofstream
 #include "singleton.hpp"
+#include "waitqueue.hpp"
 #include "utility.hpp"
+
+// define environment variable ILRD_LOGGER_FILE_PATH
+// define environment variable ILRD_LOGGER_LEVEL
 
 namespace ilrd
 {
 
-class Logger
+class Logger: private Uncopyable
 {
 public:	
     enum Level
     {
-        NUN,
+        NONE,
         ERROR,
         WARNING,
         INFO,
@@ -28,26 +32,26 @@ public:
         NUM_OF_LEVELS
     };
 
-    explicit Logger();	
     ~Logger() noexcept;
-    // Logger(const Logger& other);	
-    // Logger& operator=(const Logger& other); 	
-
-    void Log(const std::string&, Level level);
+    // Logger(const Logger& other);	= disabled
+    // Logger& operator=(const Logger& other); = disabled 	
+    void Log(const std::string& message, Level level);
     
-    void Error(const std::string&);
-    void Warning(const std::string&);
-    void Info(const std::string&);
-    void Debug(const std::string&);
-
 private:
     std::ofstream m_file;
-    boost::mutex m_lock;
+    boost::thread m_thread;
+    Level m_level;
+    WaitableQueue< std::queue <std::string> > m_queue;
+    
+    template<typename Logger>
+    friend class Singleton;
+    
+    explicit Logger();	
+    void ThreadFunc();
+    Level GetLevel() const noexcept;
+
 };
 
-// FILE *f = Singleton<FILE>::GetInstance();
-
 } // namespace ilrd
-
 
 #endif

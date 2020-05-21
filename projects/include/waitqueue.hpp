@@ -119,9 +119,8 @@ WaitableQueue<Q>::~WaitableQueue() noexcept
 template <class Q> 
 void WaitableQueue<Q>::Push(const typename Q::value_type& data)
 {
-    m_lock.lock();
+    boost::mutex::scoped_lock scopedLock(m_lock);
     m_queue.push(data);
-    m_lock.unlock();
    
     if (-1 == sem_post(&m_counter))
     {
@@ -162,11 +161,8 @@ bool WaitableQueue<Q>::Pop(typename Q::reference data, const nanoseconds_t& time
 template <class Q>
 bool WaitableQueue<Q>::IsEmpty() const
 {
-    //return (0 == GetSemCount());
-    
-    m_lock.lock();
+    boost::mutex::scoped_lock scopedLock(m_lock);
     bool isEmpty = m_queue.empty();   
-    m_lock.unlock();
 
     return isEmpty;
 }
@@ -192,7 +188,6 @@ bool WaitableQueue<Q>::SemTimedWait(const nanoseconds_t& timeout)
             return false;
         }
         
-        sem_destroy(&m_counter); 
         throw details::SemtimedwaitError();
     }
 
@@ -202,29 +197,13 @@ bool WaitableQueue<Q>::SemTimedWait(const nanoseconds_t& timeout)
 /*****************************************************************************/
 
 template <class Q>
-std::size_t WaitableQueue<Q>::GetSemCount()
-{
-    int value = 0;
-    if (-1 == sem_getvalue(&m_counter, &value))
-    {
-        sem_destroy(&m_counter); 
-        throw details::SemgetvalueError();
-    }
-
-    return value;
-}
-
-/*****************************************************************************/
-
-template <class Q>
 void WaitableQueue<Q>::SafePop(typename Q::value_type& data)
 {
-    m_lock.lock();
+    boost::mutex::scoped_lock scopedLock(m_lock);
     data = m_queue.front();
     m_queue.pop();
-    m_lock.unlock();
 }
-    
+
 } // namespace ilrd
 
 #endif

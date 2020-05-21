@@ -14,6 +14,20 @@
 namespace ilrd 
 {
 
+namespace details
+{
+
+class AtexitError: public std::exception
+{
+public:
+    const char *what() const noexcept
+    {
+        return ("atexit error");
+    }
+};
+
+} // namespace details
+
 template <class T>
 class Singleton: private Uncopyable
 {
@@ -66,20 +80,6 @@ boost::atomic<T *> Singleton<T>::m_instance(nullptr);
 
 template <class T>
 boost::mutex Singleton<T>::m_instantiationMutex;
-
-namespace details
-{
-
-class AtexitError: public std::exception
-{
-public:
-    const char *what() const noexcept
-    {
-        return ("atexit error");
-    }
-}
-
-} // namespace details
 
 } // namespace ilrd
 
