@@ -5,65 +5,147 @@
     ILRD - RD8081               
 *******************************/
 
-#include <boost/thread/scoped_thread.hpp>
-#include <cstdio>
+#include <iostream>
+#include <boost/bind.hpp>
 #include "logger.hpp"
 
 namespace ilrd
 {
 
-Logger::Logger()
+/********************************** Details ***********************************/
+
+namespace details
 {
-    boost::scoped_thread<> scopedThread(m_thread(ThreadFunc));
-    const char *envPath = std::getenv("ILRD_LOGGER_FILE_PATH");
-    
-    m_file.open("ILRD_LOGGER_FILE_PATH");
+
+class GetEnvError: public std::exception
+{
+public:
+    const char *what() const noexcept
+    {
+        return ("invalid value in ENV variable");
+    }
+};
+
+class OpenLogFileError: public std::exception
+{
+public:
+    const char *what() const noexcept
+    {
+        return ("ofstream fail to open log file");
+    }
+};
+
+} // namespace details
+
+/**************************** LogFile Definitions *****************************/
+
+Logger::LogFile::LogFile(const char *logPath):
+    m_file(logPath)
+{   
+    if (m_file.fail())
+    {
+        throw details::OpenLogFileError();
+    }
 }
+
+/**************************** Logger Definitions ******************************/
+
+Logger::Logger():
+    m_logger(GetEnv("ILRD_LOGGER_FILE_PATH")),
+    m_level(GetLevel("ILRD_LOGGER_LEVEL")),
+    m_queue(),
+    m_stopFlag(true),
+    m_thread(boost::bind(&Logger::ThreadFunc, this))
+{
+}
+
+/******************************************************************************/
 
 Logger::~Logger() noexcept
 {
+    m_stopFlag = false;
+    m_thread.join();
+
+    while (!m_queue.IsEmpty())
+    {
+        WriteToLog();
+    }
 }
+
+/******************************************************************************/
 
 void Logger::Log(const std::string& message, Level level)
 {
-    m_queue.Push(message);
+    if (level <= m_level)
+    {
+        m_queue.Push(message);
+    }
 }
+
+/******************************* Private Functions ****************************/
 
 void Logger::ThreadFunc()
 {
-    std::string messageToWrite;
-    m_queue.Pop(messageToWrite);
-
+    while (m_stopFlag)
+    {
+        WriteToLog();
+    }
 }
 
-Level Logger::GetLevel() const noexcept
-{
-    std::string envLevel(std::getenv("ILRD_LOGGER_LEVEL"));
+/******************************************************************************/
 
-    if (NONE == envLevel)
+const char *Logger::GetEnv(const char *envVal) const
+{
+    const char *env = std::getenv(envVal);
+    if (nullptr == env)
     {
-        return NONE;
+        throw details::GetEnvError();
     }
 
-    else if (ERROR == envLevel)
+    return env;
+}
+
+/******************************************************************************/
+
+Logger::Level Logger::GetLevel(const char *logLevel) const 
+{
+    std::string envLevel(GetEnv(logLevel));
+
+    if ("NONE" == envLevel)
     {
-        return ERROR;
+        return Logger::NONE;
     }
     
-    else if (WARNING == envLevel)
+    else if ("ERROR" == envLevel)
     {
-        return WARNING;
+        return Logger::ERROR;
+    }
+    
+    else if ("WARNING" == envLevel)
+    {
+        return Logger::WARNING;
     }
 
-    else if (INFO == envLevel)
+    else if ("INFO" == envLevel)
     {
-        return INFO;
+        return Logger::INFO;
     }
 
-    else
+    else if("DEBUG" == envLevel)
     {
-        return DEBUG;
+        return Logger::DEBUG;
     }
+
+    throw details::GetEnvError();  
+}
+
+/******************************************************************************/
+
+void Logger::WriteToLog() 
+{
+    std::string messageToWrite;
+    m_queue.Pop(messageToWrite);
+    m_logger.m_file << messageToWrite;
 }
 
 } // namespace ilrd

@@ -7,11 +7,13 @@
 #ifndef ILRD_RD8081_LOGGER_HPP
 #define ILRD_RD8081_LOGGER_HPP
 
-#include <queue>                   // queue
-#include <fstream>                 //ofstream
+#include <queue>    // queue
+#include <fstream>  // ofstream
+#include <boost/thread/scoped_thread.hpp>
+
 #include "singleton.hpp"
 #include "waitqueue.hpp"
-#include "utility.hpp"
+#include "utility.hpp"  // Uncopyable
 
 // define environment variable ILRD_LOGGER_FILE_PATH
 // define environment variable ILRD_LOGGER_LEVEL
@@ -38,18 +40,27 @@ public:
     void Log(const std::string& message, Level level);
     
 private:
-    std::ofstream m_file;
-    boost::thread m_thread;
-    Level m_level;
-    WaitableQueue< std::queue <std::string> > m_queue;
-    
-    template<typename Logger>
-    friend class Singleton;
+    struct LogFile
+    {
+        explicit LogFile(const char *logPath);
+        //~LogFile(); = default
+
+        std::ofstream m_file;
+    };
     
     explicit Logger();	
-    void ThreadFunc();
-    Level GetLevel() const noexcept;
+    friend class Singleton<Logger>;
 
+    LogFile m_logger;
+    Level m_level;
+    WaitableQueue< std::queue <std::string> > m_queue;
+    bool m_stopFlag;
+    boost::thread m_thread;
+    
+    void ThreadFunc();
+    const char *GetEnv(const char *envVal) const;
+    Level GetLevel(const char *logLevel) const;
+    void WriteToLog();
 };
 
 } // namespace ilrd

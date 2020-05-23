@@ -9,7 +9,7 @@
 #include <boost/thread/mutex.hpp>   // boost::scoped_lock
 #include <cstdlib>                  // atexit
 
-#include "utility.hpp"
+#include "utility.hpp"              
 
 namespace ilrd 
 {
@@ -41,8 +41,11 @@ private:
     Singleton();
     static void Clean();
     
-    static const std::size_t m_guranteeDestruction = 0xDEADBEEF;
+    static std::size_t m_guranteeDestruction;
 };
+
+template <class T>
+std::size_t Singleton<T>::m_guranteeDestruction = 0xDEADBEEF;
 
 template <class T>
 T* Singleton<T>::GetInstance()
@@ -71,7 +74,7 @@ template<class T>
 void Singleton<T>::Clean()
 {
     delete m_instance;
-
+    
     m_instance.store(reinterpret_cast<T*>(&m_guranteeDestruction), boost::memory_order_release);
 }
 
