@@ -7,13 +7,14 @@ class Animal
 {
 public:
 	virtual int GetNumLegs() const noexcept = 0;
-}
+};
 
 class Cat: public Animal
 {
 public:
 	explicit Cat(int numLegs): m_legs(numLegs) {}
-	virtual int GetNumLegs() {return m_legs;}
+	virtual int GetNumLegs() const noexcept {return m_legs;}
+
 private:
 	int m_legs;
 };
@@ -25,16 +26,43 @@ public:
 	m_legs(numLegs),
 	m_voice(voice)
 	{}
-	virtual int GetNumLegs() {return m_legs;}
-	std::string GetVoice() {return m_voice;}
+	virtual int GetNumLegs() const noexcept {return m_legs;}
+	std::string GetVoice() const noexcept{return m_voice;}
+
 private:
 	int m_legs;
 	std::string m_voice;
 };
 
+struct Param
+{
+	int m_numLegs;
+	std::string m_voice;
+};
+
+Cat *CreateCat(const Param& param)
+{
+	return (new Cat(param.m_numLegs));
+}
+
+Dog *CreateDog(const Param& param)
+{
+	return (new Dog(param.m_numLegs, param.m_voice));
+}
+
 static void FactoryTest1()
 {
-	
+	Param cat;
+	cat.m_numLegs = 4;
+	Param dog;
+	dog.m_numLegs = 6;
+	dog.m_voice = "wrof!";
+
+	Factory<Animal, std::string, Param> factory;
+	factory.AddRecipe("cat", &CreateCat);
+	factory.AddRecipe("dog", &CreateDog);
+
+
 }
 
 int main()
