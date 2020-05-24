@@ -10,6 +10,7 @@
 
 #include <cassert>  // assert
 #include <boost/function.hpp> // boost::function
+#include <boost/shared_ptr.hpp> // boost::shared_ptr
 #include <map> // std::map
 
 #include "utility.hpp" // Uncopyable
@@ -29,7 +30,7 @@ public:
     void AddRecipe(const KEY& key, recipe_t function);
     // AddRecipe with existing key will replace the recipe
 
-    BASE *Fabricate(const KEY& key, const PARAM& param);
+    boost::shared_ptr<BASE> Fabricate(const KEY& key, const PARAM& param);
    
 private:
     typedef std::map<KEY, recipe_t> recipeList_t;
@@ -42,9 +43,14 @@ private:
 template <class BASE, class KEY, class PARAM>
 void Factory<BASE, KEY, PARAM>::AddRecipe(const KEY& key, recipe_t function)
 {
-    assert(m_recipeList.find(key) == m_recipeList.end());
+    std::pair<KEY, recipe_t> newPair(key, function);
+    std::pair<typename recipeList_t::iterator, bool> ret = 
+    m_recipeList.insert(newPair);
 
-    m_recipeList.insert(key, function);
+    if (false == ret.second)
+    {
+        m_recipeList[newPair.first] = function;
+    }
 }
 
 /******************************************************************************/

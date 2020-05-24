@@ -18,6 +18,7 @@ class Circle : public Shape, public Draw
 {
 
 public:
+    explicit Circle();
     explicit Circle(const Point& center, COLORS color, double radius);
     //~Circle() = default;
     //Circle(const Point&) = default;
@@ -30,6 +31,17 @@ public:
 private:
     double m_radius;
 };
+
+std::ostream& operator<<(std::ostream& os, const Circle& circle)
+{
+    os << "Circle ";
+    os << circle.GetPosition();
+    os << circle.GetColor();
+    os << circle.GetRadius();
+
+    return os;
+}
+
 
 } //namespae ilrd
 

@@ -13,6 +13,10 @@
 namespace ilrd
 {
 
+Square::Square()
+{
+}
+
 Square::Square(Point center, double angle, COLORS color, double length): 
 Shape(center, angle), 
 Draw(color), 

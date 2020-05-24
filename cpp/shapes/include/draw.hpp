@@ -18,6 +18,7 @@ class Draw
 {
 
 public:
+    explicit Draw();
     explicit Draw(COLORS color);
     virtual ~Draw() noexcept;
     //Draw(const Point&) = default;

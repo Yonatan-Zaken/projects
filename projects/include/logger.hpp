@@ -54,7 +54,7 @@ private:
     LogFile m_logger;
     Level m_level;
     WaitableQueue< std::queue <std::string> > m_queue;
-    bool m_stopFlag;
+    bool m_runFlag;
     boost::thread m_thread;
     
     void ThreadFunc();

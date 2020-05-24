@@ -17,6 +17,7 @@ namespace ilrd
 class Square : public Shape, public Draw
 {
 public:
+    explicit Square();
     explicit Square(Point center, double angle, COLORS color, double length);
     //~Shape() = default;
     //Shape(const Point&) = default;
@@ -29,6 +30,17 @@ public:
 private:
     double m_length;
 };
+
+std::ostream& operator<<(std::ostream& os, const Square& square)
+{
+    os << "Squre ";
+    os << square.GetPosition();
+    os << square.GetAngle();
+    os << square.GetColor();
+    os << square.GetLength();
+
+    return os;
+}
 
 } //namespae ilrd
 

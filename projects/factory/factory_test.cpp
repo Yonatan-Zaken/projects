@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "factory.hpp"
+
 using namespace ilrd;
 
 class Animal
@@ -62,6 +63,12 @@ static void FactoryTest1()
 	factory.AddRecipe("cat", &CreateCat);
 	factory.AddRecipe("dog", &CreateDog);
 
+	Animal *animal = factory.Fabricate("dog", dog);
+	std::cout << "num of legs: " << animal->GetNumLegs() << "\n";
+	std::cout << "void: " << animal->GetVoice() << "\n";
+
+	Animal *animal2 = factory.Fabricate("cat", cat);
+	std::cout << "num of legs: " << animal2->GetNumLegs() << "\n";
 
 }
 

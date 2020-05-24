@@ -13,6 +13,10 @@
 namespace ilrd
 {
 
+Circle::Circle()
+{
+}
+
 Circle::Circle(const Point& center, COLORS color, double radius): 
 Shape(center, angle), 
 Draw(color), 
