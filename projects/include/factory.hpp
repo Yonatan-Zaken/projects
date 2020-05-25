@@ -22,7 +22,7 @@ template <class BASE, class KEY, class PARAM>
 class Factory: private Uncopyable
 {
 public:	
-    typedef boost::function<BASE *(PARAM)> recipe_t;
+    typedef boost::function<boost::shared_ptr<BASE> (PARAM)> recipe_t;
 
     // explicit Factory() = default;
     // ~Factory() noexcept = default;
@@ -43,6 +43,8 @@ private:
 template <class BASE, class KEY, class PARAM>
 void Factory<BASE, KEY, PARAM>::AddRecipe(const KEY& key, recipe_t function)
 {
+    std::cout << "AddRecipe key: " << key << "\n";
+    
     std::pair<KEY, recipe_t> newPair(key, function);
     std::pair<typename recipeList_t::iterator, bool> ret = 
     m_recipeList.insert(newPair);
@@ -58,6 +60,7 @@ void Factory<BASE, KEY, PARAM>::AddRecipe(const KEY& key, recipe_t function)
 template <class BASE, class KEY, class PARAM>
 boost::shared_ptr<BASE> Factory<BASE, KEY, PARAM>::Fabricate(const KEY& key, PARAM param)
 {
+    std::cout << "key: " << key << "\n";
     assert(m_recipeList.find(key) != m_recipeList.end());
     
     return boost::shared_ptr<BASE>(m_recipeList[key](param));

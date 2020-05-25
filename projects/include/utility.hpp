@@ -72,11 +72,10 @@ namespace details
     static const uint8_t READ_DATA_BLOCK_OFFSET = 10;
     static const uint8_t WRITE_DATA_BLOCK_OFFSET = 17;
     
-
 } // namespace details
 
 } // namespace ilrd
-/*
+
 // automation macros for tests 
 #define NORMAL "\033[0m"
 #define RED "\033[;031m"
@@ -96,6 +95,6 @@ namespace details
         printf(NORMAL);\
     }\
 }
-*/
+
 #endif // ILRD_RD8081_UTILITY_HPP
 

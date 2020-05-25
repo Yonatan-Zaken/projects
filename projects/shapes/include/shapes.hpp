@@ -30,7 +30,7 @@ public:
     double GetAngle() const noexcept;
     void SetAngle(double new_angle) noexcept;
 
-    virtual std::ostream& operator<<(std::ostream& os) = 0;
+    virtual std::ostream& operator<<(std::ostream& os) const = 0;
    
 private:
     Point m_center_position;

@@ -9,9 +9,10 @@
 #define ILRD_RD8081_SERIALIZER_HPP
 
 #include <string> // std::string
-#include <boost/shared_ptr.hpp> // boost::shared_ptr
 #include <iostream> // ostream
 #include <typeinfo> // typeid
+#include <boost/shared_ptr.hpp> // boost::shared_ptr
+#include <boost/core/demangle.hpp>
 
 #include "utility.hpp" // Uncopyable
 #include "factory.hpp" // Factory
@@ -51,6 +52,7 @@ boost::shared_ptr<BASE> Serializer<BASE>::Deserialize(std::istream& stream)
 {
     std::string name;
     stream >> name;
+    std::cout << "inside deserializer: " << name.c_str() << "#\n";
     return m_factory.Fabricate(name, stream);
 }
 
@@ -60,7 +62,10 @@ template <class BASE>
 template <class DERIVED>
 void Serializer<BASE>::Add(typename Factory<BASE, std::string, std::istream&>::recipe_t recipe)
 {
-    m_factory.AddRecipe(typeid(DERIVED).name(), recipe);
+    std::string str(boost::core::demangle(typeid(DERIVED).name()));
+    
+    std::cout << "Add name: ";
+    m_factory.AddRecipe(str.substr(str.find_last_of(':') + 1), recipe);
 }
 
 } // namespace ilrd

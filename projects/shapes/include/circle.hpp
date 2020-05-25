@@ -9,6 +9,7 @@
 #define ILRD_RD8081_CIRCLEe_HPP
 
 #include <boost/shared_ptr.hpp>
+#include <sstream>
 
 #include "draw.hpp"
 #include "shapes.hpp"
@@ -25,7 +26,7 @@ public:
     //Circle(const Point&) = default;
     //Circle& operator=(const Point&) = default;
     
-    std::ostream& operator<<(std::ostream& os)
+    std::ostream& operator<<(std::ostream& os) const
     {
         os << "Circle ";
         os << GetPosition().GetX() << " ";
@@ -36,23 +37,6 @@ public:
         return os;
     }
 
-    boost::shared_ptr<Circle> CreateCircle(std::istream& is)
-    { 
-        double x;
-        double y;
-        is >> x;
-        is >> y;
-        Point point(x, y);
-
-        int color;
-        is >> color;
-
-        double radius;
-        is >> radius;
-
-        return boost::shared_ptr<Circle>(new Circle(point, (COLORS)color, radius));
-    }
-
     void SetRadius(double length);
     double GetRadius() const;
     virtual void Drawing() const;
@@ -61,8 +45,22 @@ private:
     double m_radius;
 };
 
+boost::shared_ptr<Circle> CreateCircle(std::istream& is)
+{ 
+    double x;
+    double y;
+    is >> x;
+    is >> y;
+    Point point(x, y);
 
+    int color;
+    is >> color;
 
+    double radius;
+    is >> radius;
+
+    return boost::shared_ptr<Circle>(new Circle(point, (COLORS)color, radius));
+}
 
 } //namespae ilrd
 
