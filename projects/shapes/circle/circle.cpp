@@ -18,7 +18,7 @@ Circle::Circle()
 }
 
 Circle::Circle(const Point& center, COLORS color, double radius): 
-Shape(center, angle), 
+Shape(center), 
 Draw(color), 
 m_radius(radius)
 {}

@@ -8,6 +8,8 @@
 #ifndef ILRD_RD8081_CIRCLE_HPP
 #define ILRD_RD8081_CIRCLEe_HPP
 
+#include <boost/shared_ptr.hpp>
+
 #include "draw.hpp"
 #include "shapes.hpp"
 
@@ -18,12 +20,39 @@ class Circle : public Shape, public Draw
 {
 
 public:
-    explicit Circle();
     explicit Circle(const Point& center, COLORS color, double radius);
     //~Circle() = default;
     //Circle(const Point&) = default;
     //Circle& operator=(const Point&) = default;
     
+    std::ostream& operator<<(std::ostream& os)
+    {
+        os << "Circle ";
+        os << GetPosition().GetX() << " ";
+        os << GetPosition().GetY() << " ";
+        os << GetColor() << " ";
+        os << GetRadius() << " ";
+
+        return os;
+    }
+
+    boost::shared_ptr<Circle> CreateCircle(std::istream& is)
+    { 
+        double x;
+        double y;
+        is >> x;
+        is >> y;
+        Point point(x, y);
+
+        int color;
+        is >> color;
+
+        double radius;
+        is >> radius;
+
+        return boost::shared_ptr<Circle>(new Circle(point, (COLORS)color, radius));
+    }
+
     void SetRadius(double length);
     double GetRadius() const;
     virtual void Drawing() const;
@@ -32,15 +61,7 @@ private:
     double m_radius;
 };
 
-std::ostream& operator<<(std::ostream& os, const Circle& circle)
-{
-    os << "Circle ";
-    os << circle.GetPosition();
-    os << circle.GetColor();
-    os << circle.GetRadius();
 
-    return os;
-}
 
 
 } //namespae ilrd

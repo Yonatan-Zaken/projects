@@ -26,7 +26,7 @@ public:
     
     void SetColor(COLORS color) noexcept;
     COLORS GetColor() const noexcept;
-    virtual void Drawing() const =0;
+    virtual void Drawing() const = 0;
     
     static const double PI; 
     

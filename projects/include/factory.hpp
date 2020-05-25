@@ -22,7 +22,7 @@ template <class BASE, class KEY, class PARAM>
 class Factory: private Uncopyable
 {
 public:	
-    typedef boost::function<BASE *(const PARAM&)> recipe_t;
+    typedef boost::function<BASE *(PARAM)> recipe_t;
 
     // explicit Factory() = default;
     // ~Factory() noexcept = default;
@@ -30,7 +30,7 @@ public:
     void AddRecipe(const KEY& key, recipe_t function);
     // AddRecipe with existing key will replace the recipe
 
-    boost::shared_ptr<BASE> Fabricate(const KEY& key, const PARAM& param);
+    boost::shared_ptr<BASE> Fabricate(const KEY& key, PARAM param);
    
 private:
     typedef std::map<KEY, recipe_t> recipeList_t;
@@ -56,11 +56,11 @@ void Factory<BASE, KEY, PARAM>::AddRecipe(const KEY& key, recipe_t function)
 /******************************************************************************/
 
 template <class BASE, class KEY, class PARAM>
-BASE *Factory<BASE, KEY, PARAM>::Fabricate(const KEY& key, const PARAM& param)
+boost::shared_ptr<BASE> Factory<BASE, KEY, PARAM>::Fabricate(const KEY& key, PARAM param)
 {
     assert(m_recipeList.find(key) != m_recipeList.end());
     
-    return m_recipeList[key](param);
+    return boost::shared_ptr<BASE>(m_recipeList[key](param));
 }
 
 } // namespace ilrd

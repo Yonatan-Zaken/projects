@@ -44,6 +44,8 @@ private:
 
 } // namespace ilrd
 
+#include <inttypes.h>
+
 namespace ilrd
 {
 

@@ -10,7 +10,7 @@
 
 #include <string> // std::string
 #include <boost/shared_ptr.hpp> // boost::shared_ptr
-#include <iosfwd> // ostream
+#include <iostream> // ostream
 #include <typeinfo> // typeid
 
 #include "utility.hpp" // Uncopyable
@@ -27,13 +27,13 @@ public:
     // ~Serializer() noexcept = default;
 
     void Serialize(const BASE& objToSerialize, std::ostream& stream);
-    boost::shared_ptr<BASE> Deserialize(const std::istream& stream);
+    boost::shared_ptr<BASE> Deserialize(std::istream& stream);
 
     template <class DERIVED>
-    void Add(Factory::recipe_t recipe);
+    void Add(typename Factory<BASE, std::string, std::istream&>::recipe_t recipe);
 
 private:
-    Factory<BASE, std::string, std::istream> m_factory;
+    Factory<BASE, std::string, std::istream&> m_factory;
 };
 
 /******************************************************************************/
@@ -41,27 +41,26 @@ private:
 template <class BASE>
 void Serializer<BASE>::Serialize(const BASE& objToSerialize, std::ostream& stream)
 {
-    stream << objToSerialize;
+    objToSerialize << stream;
 }
 
 /******************************************************************************/
 
 template <class BASE>
-boost::shared_ptr<BASE> Serializer<BASE>::Deserialize(const std::istream& stream)
+boost::shared_ptr<BASE> Serializer<BASE>::Deserialize(std::istream& stream)
 {
     std::string name;
     stream >> name;
-    return m_factory.Fabricate();   
+    return m_factory.Fabricate(name, stream);
 }
 
 /******************************************************************************/
 
 template <class BASE>
 template <class DERIVED>
-void Serializer<BASE>::Add(Factory::recipe_t recipe)
+void Serializer<BASE>::Add(typename Factory<BASE, std::string, std::istream&>::recipe_t recipe)
 {
-    DERIVED d;
-    m_factory.AddRecipe(typeid(d).name(), recipe);
+    m_factory.AddRecipe(typeid(DERIVED).name(), recipe);
 }
 
 } // namespace ilrd
