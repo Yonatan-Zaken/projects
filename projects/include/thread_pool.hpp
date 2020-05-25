@@ -9,7 +9,6 @@
 #include <queue>    // std::queue
 #include <boost/thread.hpp> // boost::thread
 
-
 #include "utility.hpp"  // Uncopyable
 #include "waitqueue.hpp"
 #include "task.hpp"
