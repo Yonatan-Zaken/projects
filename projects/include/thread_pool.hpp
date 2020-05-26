@@ -78,7 +78,6 @@ private:
     std::vector<boost::shared_ptr<boost::thread> > m_threads;
 
     void ThreadFunc();
-    void DummyTask();
 };
 
 } // namespace ilrd
