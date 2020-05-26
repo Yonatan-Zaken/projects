@@ -20,6 +20,7 @@
 namespace ilrd
 {
 
+// Requirements: BASE must overload operator<<
 template <class BASE>
 class Serializer : private Uncopyable
 {  
@@ -51,8 +52,8 @@ template <class BASE>
 boost::shared_ptr<BASE> Serializer<BASE>::Deserialize(std::istream& stream)
 {
     std::string name;
+    
     stream >> name;
-    std::cout << "inside deserializer: " << name.c_str() << "#\n";
     return m_factory.Fabricate(name, stream);
 }
 
@@ -62,10 +63,7 @@ template <class BASE>
 template <class DERIVED>
 void Serializer<BASE>::Add(typename Factory<BASE, std::string, std::istream&>::recipe_t recipe)
 {
-    std::string str(boost::core::demangle(typeid(DERIVED).name()));
-    
-    std::cout << "Add name: ";
-    m_factory.AddRecipe(str.substr(str.find_last_of(':') + 1), recipe);
+        m_factory.AddRecipe(typeid(DERIVED).name(), recipe);
 }
 
 } // namespace ilrd

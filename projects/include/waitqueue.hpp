@@ -11,6 +11,8 @@
 #include <boost/chrono.hpp> // nanoseconds
 #include <boost/thread/mutex.hpp>   // boost::scoped_lock
 
+#include <iostream>
+
 #include "utility.hpp"
 
 namespace ilrd

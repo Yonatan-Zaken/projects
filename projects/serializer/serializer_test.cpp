@@ -22,15 +22,11 @@ int main()
 
 	s1.Serialize(c1, os);
 
-	std::cout << buffer.str();
-
 	boost::shared_ptr<Shape> basePtr(s1.Deserialize(is));
 
-	//RUN_TEST(basePtr->GetRadius() == 20, "radius test");
 	RUN_TEST(basePtr->GetPosition().GetX() == 50, "x position");
 	RUN_TEST(basePtr->GetPosition().GetY() == 90, "y position");
 	RUN_TEST(basePtr->GetAngle() == 0, "angle test");
-	//RUN_TEST(basePtr->GetColor() == 1, "angle test");
 
 	return 0;
 }

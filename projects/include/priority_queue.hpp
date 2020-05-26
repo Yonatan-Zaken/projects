@@ -8,19 +8,18 @@
 #define ILRD_RD8081_PRIORITY_QUEUE_HPP
 
 #include <queue>    // priority_queue
+#include <vector>   // vector
 
 #include "utility.hpp"
 
 namespace ilrd
 {
 
+//Requirements: T must be comparable
 template <class T>
-class PriorityQueue: private std::priority_queue<T>, private Uncopyable
+class PriorityQueue: private std::priority_queue<T>
 {
 public:	
-    typedef T value_type;
-    typedef T& reference;
-
     // explicit PriorityQueue(); = default
     // ~PriorityQueue(); = default
     // PriorityQueue(const PriorityQueue&) = disabled
@@ -30,17 +29,19 @@ public:
     using std::priority_queue<T>::push;
     using std::priority_queue<T>::empty;
     
-    reference front() const;
+    typedef typename std::priority_queue<T>::value_type value_type;
+    typedef typename std::priority_queue<T>::reference reference;
+    typedef typename std::priority_queue<T>::const_reference const_reference;
+
+    const_reference front() const;
 };
 
 template <class T>
-T& PriorityQueue<T>::front() const
+typename PriorityQueue<T>::const_reference PriorityQueue<T>::front() const
 {
-    return top();
+    return this->top();
 }
 
 } // namespace ilrd
-
-
 
 #endif

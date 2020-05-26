@@ -10,6 +10,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <sstream>
+#include <iostream>
 
 #include "draw.hpp"
 #include "shapes.hpp"
@@ -28,7 +29,7 @@ public:
     
     std::ostream& operator<<(std::ostream& os) const
     {
-        os << "Circle ";
+        os << typeid(Circle).name() << " ";
         os << GetPosition().GetX() << " ";
         os << GetPosition().GetY() << " ";
         os << GetColor() << " ";
