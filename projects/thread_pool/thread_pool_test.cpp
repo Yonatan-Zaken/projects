@@ -5,40 +5,37 @@
 
 using namespace ilrd;
 
-class Task1: public ThreadPool::Task
+class UserTask: public ThreadPool::Task
 {
-	virtual void Run()
-	{
-		std::cout << "Task 1";
-	}
-};
+public:
+	explicit UserTask(int i): m_num(i) {}
 
-class Task2: public ThreadPool::Task
-{
 	virtual void Run()
 	{
-		std::cout << "Task 2";
+		std::cout << "Task " << m_num << "\n";
 	}
-};
-
-class Task3: public ThreadPool::Task
-{
-	virtual void Run()
-	{
-		std::cout << "Task 3";
-	}
+private:
+	int m_num;
 };
 
 static void ThreadPool1()
 {
-	boost::shared_ptr<Task1> task1(new Task1());
-	boost::shared_ptr<Task2> task2(new Task2());
-	boost::shared_ptr<Task3> task3(new Task3());
+	boost::shared_ptr<UserTask> task1(new UserTask(1));
+	boost::shared_ptr<UserTask> task2(new UserTask(2));
+	boost::shared_ptr<UserTask> task3(new UserTask(3));
+	boost::shared_ptr<UserTask> task4(new UserTask(4));
+	boost::shared_ptr<UserTask> task5(new UserTask(5));
+	boost::shared_ptr<UserTask> task6(new UserTask(6));
+	boost::shared_ptr<UserTask> task7(new UserTask(7));
 
 	ThreadPool tp(4);
-	tp.Add(task3, ThreadPool::LOW);
 	tp.Add(task1, ThreadPool::HIGH);
 	tp.Add(task2, ThreadPool::MEDIUM);
+	tp.Add(task3, ThreadPool::LOW);
+	tp.Add(task4, ThreadPool::HIGH);
+	tp.Add(task5, ThreadPool::LOW);
+	tp.Add(task6, ThreadPool::MEDIUM);
+	tp.Add(task7, ThreadPool::LOW);
 
 	tp.Start();
 }

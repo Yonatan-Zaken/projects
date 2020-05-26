@@ -29,7 +29,7 @@ ThreadPool::PrioratizedTask::PrioratizedTask(task_t task, Priority priority):
 
 bool ThreadPool::PrioratizedTask::operator<(const PrioratizedTask& pair)
 {
-    return (m_priority > pair.m_priority);
+    return (m_priority < pair.m_priority);
 }
 
 /*************************** ThreadPool Definitions ***************************/
@@ -82,8 +82,10 @@ void ThreadPool::SetNumOfThreads(std::size_t numOfThreads)
 void ThreadPool::Start()
 {
     std::cout << "notifying...\n";
+    
+    boost::mutex::scoped_lock scopeLock(m_lock);
     m_pauseFlag = false;
-    m_condVar.notify_all();
+    m_condVar.notify_all(); 
 }
 
 /******************************************************************************/
@@ -95,9 +97,31 @@ void ThreadPool::Pause()
 
 /******************************************************************************/
 
-void Stop(const ThreadPool::seconds_t& timeout)
+class DummyTask: public ThreadPool::Task
 {
+    virtual void Run()
+    {
 
+    }
+};
+
+void ThreadPool::Stop(const ThreadPool::seconds_t& timeout)
+{
+    m_runFlag = false;
+    m_pauseFlag = false;
+    
+    boost::shared_ptr<PrioratizedTask> task;
+    while (!m_tasks.IsEmpty())
+    {
+        m_tasks.Pop(task);
+    }
+    
+    //std::for_each(m_threads.begin(), m_threads.end(), DummyTaskFunctor())
+
+    for (size_t i = 0; i < m_numOfThreads; ++i)
+    {
+        ThreadPool::Add(boost::make_shared<DummyTask>(), ThreadPool::HIGH);
+    }
 }
 
 /******************************************************************************/
@@ -111,10 +135,10 @@ std::size_t ThreadPool::GetNumOfThreads() const
 
 void ThreadPool::ThreadFunc()
 {    
-    boost::shared_ptr<PrioratizedTask> task;
     std::cout << "in the ThreadFunc()\n";
     std::cout << "m_runFlag = " << m_runFlag << "\n";
     std::cout << "m_pauseFlag = " << m_pauseFlag << "\n";
+    boost::shared_ptr<PrioratizedTask> task;
     
     while (m_runFlag)
     {

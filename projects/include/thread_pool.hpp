@@ -61,22 +61,24 @@ public:
 private:
     class PrioratizedTask
     {
-    public:
         explicit PrioratizedTask(task_t task, Priority priority);
         bool operator<(const PrioratizedTask& pair);
         task_t m_task;
         Priority m_priority;
     };
 
+    typedef WaitableQueue<PriorityQueue<boost::shared_ptr<PrioratizedTask> > > waitqueue_t;
+
     std::size_t m_numOfThreads;
     boost::atomic<bool> m_runFlag;
-    WaitableQueue<PriorityQueue<boost::shared_ptr<PrioratizedTask> > > m_tasks;
+    waitqueue_t m_tasks;
     bool m_pauseFlag;
     boost::mutex m_lock;
     boost::condition_variable m_condVar;
     std::vector<boost::shared_ptr<boost::thread> > m_threads;
 
     void ThreadFunc();
+    void DummyTask();
 };
 
 } // namespace ilrd
