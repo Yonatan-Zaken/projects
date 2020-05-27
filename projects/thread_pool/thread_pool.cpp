@@ -131,7 +131,7 @@ void ThreadPool::Stop(const ThreadPool::seconds_t& timeout)
         std::cout << "adding dummy task\n";
         m_tasks.Push(PrioratizedTask(boost::make_shared<DummyTask>(), IMP_DUMMY));
     }
-
+    
     for (std::size_t i = 0; i < numOfThreads; ++i)
     {
         if (!m_threads[i]->try_join_for(timeout))
