@@ -19,7 +19,7 @@ class Shape
 
 public:
     Shape(const Point& center, double angle = 0);
-    virtual ~Shape() noexcept = 0;
+    virtual ~Shape() noexcept =0;
     //Shape(const Point&) = default;
     //Shape& operator=(const Point&) = default;
     
@@ -29,8 +29,6 @@ public:
     void SetPosition(const Point& other) noexcept;
     double GetAngle() const noexcept;
     void SetAngle(double new_angle) noexcept;
-
-    virtual std::ostream& operator<<(std::ostream& os) = 0;
    
 private:
     Point m_center_position;

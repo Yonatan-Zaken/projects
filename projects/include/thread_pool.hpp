@@ -7,6 +7,7 @@
 
 #include <vector>   // std::vector
 #include <queue>    // std::queue
+#include <map>      // std::map
 #include <boost/thread.hpp> // boost::thread
 #include <boost/chrono.hpp> 
 #include <boost/shared_ptr.hpp>
@@ -46,7 +47,7 @@ public:
         virtual void Run() = 0;
     };
 
-    explicit ThreadPool(std::size_t numOfThreads);
+    explicit ThreadPool(std::size_t numOfThreads, const seconds_t& timeout);
     ~ThreadPool() noexcept;
     // ThreadPool(const ThreadPool& other) = disabled;
     //ThreadPool& operator=(const ThreadPool& rhs) = disabled; 
@@ -55,19 +56,31 @@ public:
     void SetNumOfThreads(std::size_t numOfThreads);
     void Start();
     void Pause();
+    void Stop();
     void Stop(const seconds_t& timeout);
     std::size_t GetNumOfThreads() const;
 
 private:
-    class PrioratizedTask
+
+    enum IMP_Priority
     {
-        explicit PrioratizedTask(task_t task, Priority priority);
-        bool operator<(const PrioratizedTask& pair);
-        task_t m_task;
-        Priority m_priority;
+        IMP_LOW,
+        IMP_MEDIUM,
+        IMP_HIGH,
+        IMP_DUMMY
     };
 
-    typedef WaitableQueue<PriorityQueue<boost::shared_ptr<PrioratizedTask> > > waitqueue_t;
+    class PrioratizedTask
+    {
+    public:
+        explicit PrioratizedTask();
+        explicit PrioratizedTask(task_t task, IMP_Priority priority);
+        bool operator<(const PrioratizedTask& pair) const;
+        task_t m_task;
+        IMP_Priority m_priority;
+    };
+
+    typedef WaitableQueue<PriorityQueue<PrioratizedTask> > waitqueue_t;
 
     std::size_t m_numOfThreads;
     boost::atomic<bool> m_runFlag;
@@ -75,9 +88,15 @@ private:
     bool m_pauseFlag;
     boost::mutex m_lock;
     boost::condition_variable m_condVar;
+    const seconds_t& m_timeOut;
+    std::map<Priority, IMP_Priority> m_priority;
     std::vector<boost::shared_ptr<boost::thread> > m_threads;
 
+    void InitMap();
+    void InitThreads();
     void ThreadFunc();
+    void Execution();
+    void Wait();
 };
 
 } // namespace ilrd

@@ -30,7 +30,7 @@ public:
     explicit WaitableQueue();
     ~WaitableQueue() noexcept;
 
-    void Push(const typename Q::value_type &data);
+    void Push(const typename Q::value_type& data);
     void Pop(typename Q::reference dest); 
     bool Pop(typename Q::reference dest, const nanoseconds_t &timeout);
     bool IsEmpty() const;
