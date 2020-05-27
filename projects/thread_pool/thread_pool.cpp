@@ -7,11 +7,11 @@
 *******************************/
 #include <algorithm> // for_each
 #include <boost/make_shared.hpp> // boost::make_shared
-#include <boost/bind.hpp> // boost::bind
 
 #include <iostream>
 
 #include "thread_pool.hpp"
+#include "logger_preprocessor.hpp"
 
 namespace ilrd
 {
@@ -21,53 +21,63 @@ namespace ilrd
 
 /******************************* Pair Definitions *****************************/
 
-ThreadPool::PrioratizedTask::PrioratizedTask(task_t task, Priority priority):
+ThreadPool::PrioratizedTask::PrioratizedTask():
+    m_task(),
+    m_priority()
+{
+}
+
+ThreadPool::PrioratizedTask::PrioratizedTask(task_t task, IMP_Priority priority):
     m_task(task),
     m_priority(priority)
 {
 }
 
-bool ThreadPool::PrioratizedTask::operator<(const PrioratizedTask& pair)
+bool ThreadPool::PrioratizedTask::operator<(const PrioratizedTask& pair) const
 {
     return (m_priority < pair.m_priority);
 }
 
 /*************************** ThreadPool Definitions ***************************/
 
-ThreadPool::ThreadPool(std::size_t numOfThreads):
+ThreadPool::ThreadPool(std::size_t numOfThreads, const seconds_t& timeout):
     m_numOfThreads(numOfThreads),
     m_runFlag(true),
     m_tasks(),
     m_pauseFlag(true),
     m_lock(),
     m_condVar(),
-    m_threads(numOfThreads, boost::make_shared<boost::thread>(&ThreadPool::ThreadFunc, this))
+    m_timeOut(timeout),
+    m_priority(),
+    m_threads()
 {
-    std::cout << "ThreaPool ctor\n";
+    InitMap();
+    InitThreads();
 }
 
 /******************************************************************************/
 
-struct JoinFunctor
-{
-    void operator()(const boost::shared_ptr<boost::thread>& thread)
-    {
-        thread->join();
-    }
-};
-
 ThreadPool::~ThreadPool() noexcept
 {
-    std::cout << "ThreaPool dtor\n";
-    std::for_each(m_threads.begin(), m_threads.end(), JoinFunctor());
+    if (m_runFlag)
+    {
+        std::cout << "ThreaPool dtor\n";
+        try
+        {
+            Stop();
+        }
+        catch(...)
+        {
+            LOG_WARNING("error: time out for stop exipred");
+        }   
+    }
 }
 
 /******************************************************************************/
 
 void ThreadPool::Add(task_t task, Priority priority)
-{
-    boost::shared_ptr<PrioratizedTask> priorityTask(new PrioratizedTask(task, priority));
-    m_tasks.Push(priorityTask);
+{ 
+    m_tasks.Push(PrioratizedTask(task, m_priority[priority]));
 }
 
 /******************************************************************************/
@@ -82,8 +92,6 @@ void ThreadPool::SetNumOfThreads(std::size_t numOfThreads)
 void ThreadPool::Start()
 {
     std::cout << "notifying...\n";
-    
-    boost::mutex::scoped_lock scopeLock(m_lock);
     m_pauseFlag = false;
     m_condVar.notify_all(); 
 }
@@ -93,6 +101,13 @@ void ThreadPool::Start()
 void ThreadPool::Pause()
 {
     m_pauseFlag = true;
+}
+
+/******************************************************************************/
+
+void ThreadPool::Stop()
+{
+    Stop(m_timeOut);
 }
 
 /******************************************************************************/
@@ -108,19 +123,21 @@ class DummyTask: public ThreadPool::Task
 void ThreadPool::Stop(const ThreadPool::seconds_t& timeout)
 {
     m_runFlag = false;
-    m_pauseFlag = false;
+    m_pauseFlag = true;
     
-    boost::shared_ptr<PrioratizedTask> task;
-    while (!m_tasks.IsEmpty())
+    std::size_t numOfThreads = GetNumOfThreads();
+    for (std::size_t i = 0; i < numOfThreads; ++i)
     {
-        m_tasks.Pop(task);
+        std::cout << "adding dummy task\n";
+        m_tasks.Push(PrioratizedTask(boost::make_shared<DummyTask>(), IMP_DUMMY));
     }
-    
-    //std::for_each(m_threads.begin(), m_threads.end(), DummyTaskFunctor())
 
-    for (size_t i = 0; i < m_numOfThreads; ++i)
+    for (std::size_t i = 0; i < numOfThreads; ++i)
     {
-        ThreadPool::Add(boost::make_shared<DummyTask>(), ThreadPool::HIGH);
+        if (!m_threads[i]->try_join_for(timeout))
+        {
+            throw ("join error: not all thread have joined\n");    
+        }
     }
 }
 
@@ -133,33 +150,75 @@ std::size_t ThreadPool::GetNumOfThreads() const
 
 /******************************* Private Functions ****************************/
 
+void ThreadPool::InitMap()
+{
+    m_priority[LOW] = IMP_LOW;
+    m_priority[MEDIUM] = IMP_MEDIUM;
+    m_priority[HIGH] = IMP_HIGH;
+}
+
+/******************************************************************************/
+
+void ThreadPool::InitThreads()
+{
+    std::size_t numOfThreads = GetNumOfThreads();
+    for (size_t i = 0; i < numOfThreads; ++i)
+    {
+        m_threads.push_back(boost::make_shared<boost::thread>(&ThreadPool::ThreadFunc, this));
+    }
+}
+
+/******************************************************************************/
+
 void ThreadPool::ThreadFunc()
 {    
-    std::cout << "in the ThreadFunc()\n";
-    std::cout << "m_runFlag = " << m_runFlag << "\n";
-    std::cout << "m_pauseFlag = " << m_pauseFlag << "\n";
-    boost::shared_ptr<PrioratizedTask> task;
+    std::cout << boost::this_thread::get_id() << "\n";
     
     while (m_runFlag)
     {
-        boost::mutex::scoped_lock scopeLock(m_lock);
-        while (m_pauseFlag)
-        {
-            std::cout << "wait cond_var\n";
-            m_condVar.wait(scopeLock);    
-        }
-        scopeLock.unlock();        
+        Wait();
+        Execution();
+    }
+    std::cout << "stop func worked\n";
+}
 
-        while (!m_pauseFlag)
+/******************************************************************************/
+
+void ThreadPool::Wait()
+{
+    boost::mutex::scoped_lock lock(m_lock);
+    while (m_pauseFlag)
+    {
+        std::cout << "wait cond_var\n";
+        m_condVar.wait(lock); 
+    }
+    lock.unlock();
+    std::cout << "out of cond_var\n";    
+}
+
+/******************************************************************************/
+
+void ThreadPool::Execution()
+{
+    PrioratizedTask task;
+
+    while (!m_pauseFlag)
+    {
+        m_tasks.Pop(task);
+        LOG_DEBUG("pop task from queue");
+        try
         {
-            if (m_tasks.Pop(task, seconds_t(1)))
-            {
-                std::cout << "pop task\n";
-                task->m_task->Run();
-            }   
+            task.m_task->Run();
+        }
+
+        catch(...)
+        {
+            LOG_WARNING("task failed in ThreadFunc()");
         }
     }
 }
+
+/******************************************************************************/
 
 } // namespace ilrd
 

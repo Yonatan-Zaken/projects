@@ -4,13 +4,13 @@
 CC=g++   
 CFLAGS=-std=c++98 -ansi -pedantic-errors -Wall -Wextra -g -I$(INC) 
 RFLAGS=-std=c++98 -ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3 -I$(INC) 
-LDFLAGS_DEBUG=-L../lib/libdebug -Wl,-rpath=../../lib/libdebug
+LDFLAGS_DEBUG=-L../lib/libdebug -Wl,-rpath=../lib/libdebug
 LDFLAGS_RELEASE=-L$(DIR_RELEASE) -Wl,-rpath,'$$ORIGIN'
 
 #thread_pool names
 SRC=thread_pool.cpp
 SRC_TEST=thread_pool_test.cpp
-TARGET_DEBUG=./outdebug/thread_pool
+TARGET_DEBUG=./thread_pool
 TARGET_RELEASE=./outrelease/thread_pool
 OBJ_DEBUG=./objdebug/thread_pool.o
 OBJ_RELEASE=./objrelease/thread_pool.o
@@ -30,7 +30,7 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(DIR_DEBUG)libthread_pool.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lthread_pool -lboost_system -lboost_thread
+	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lthread_pool -lboost_thread -lboost_chrono -lboost_system 
 	
 #Release Out	
 $(TARGET_RELEASE): $(DIR_RELEASE)libthread_pool.so $(SRC_TEST) 
@@ -38,11 +38,11 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libthread_pool.so $(SRC_TEST)
 	
 #Debug SO
 $(DIR_DEBUG)libthread_pool.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< 
+	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEBUG) -llogger
 
 #Release SO
 $(DIR_RELEASE)libthread_pool.so: $(OBJ_RELEASE) 
-	$(CC) $(RFLAGS) -shared -o $@ $< $(LDFLAGS_DEBUG) -lfdlistner
+	$(CC) $(RFLAGS) -shared -o $@ $< $(LDFLAGS_DEBUG) 
 	
 #Debug Object
 $(OBJ_DEBUG): $(SRC) $(INC)thread_pool.hpp    
