@@ -61,15 +61,7 @@ ThreadPool::~ThreadPool() noexcept
 {
     if (m_runFlag)
     {
-        std::cout << "ThreaPool dtor\n";
-        try
-        {
-            Stop();
-        }
-        catch(...)
-        {
-            LOG_WARNING("error: time out for stop exipred");
-        }   
+        Stop();
     }
 }
 
@@ -84,7 +76,20 @@ void ThreadPool::Add(task_t task, Priority priority)
 
 void ThreadPool::SetNumOfThreads(std::size_t numOfThreads)
 {
+    Pause();
+
+    std::size_t current = GetNumOfThreads()
+    if (current > numOfThreads)
+    {
+        
+    }
+
+    else if (current < numOfThreads)
+    {
+        
+    }
     
+    Start();
 }
 
 /******************************************************************************/
@@ -107,7 +112,14 @@ void ThreadPool::Pause()
 
 void ThreadPool::Stop()
 {
-    Stop(m_timeOut);
+    try
+    {
+        Stop(m_timeOut);
+    }
+    catch(...)
+    {
+        LOG_WARNING("error: time out for stop exipred");
+    }
 }
 
 /******************************************************************************/
@@ -116,7 +128,7 @@ class DummyTask: public ThreadPool::Task
 {
     virtual void Run()
     {
-
+        
     }
 };
 
@@ -186,14 +198,14 @@ void ThreadPool::ThreadFunc()
 
 void ThreadPool::Wait()
 {
-    boost::mutex::scoped_lock lock(m_lock);
+    boost::unique_lock<boost::mutex> lock(m_lock);
     while (m_pauseFlag)
     {
         std::cout << "wait cond_var\n";
         m_condVar.wait(lock); 
     }
     lock.unlock();
-    std::cout << "out of cond_var\n";    
+    std::cout << boost::this_thread::get_id() << "out of cond_var\n";    
 }
 
 /******************************************************************************/

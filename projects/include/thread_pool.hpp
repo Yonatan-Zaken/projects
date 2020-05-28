@@ -97,6 +97,8 @@ private:
     void ThreadFunc();
     void Execution();
     void Wait();
+
+
 };
 
 } // namespace ilrd
