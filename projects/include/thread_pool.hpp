@@ -8,8 +8,9 @@
 #include <vector>   // std::vector
 #include <queue>    // std::queue
 #include <map>      // std::map
+#include <exception>    //std::exception
 #include <boost/thread.hpp> // boost::thread
-#include <boost/chrono.hpp> 
+#include <boost/chrono.hpp> // seconds
 #include <boost/shared_ptr.hpp>
 #include <boost/atomic.hpp>
 
@@ -19,6 +20,24 @@
 
 namespace ilrd
 {
+
+namespace details
+{
+
+class JoinTimeoutError: public std::exception
+{
+public:
+    virtual const char *what() const noexcept
+    {
+        return ("error: fail to join all threads until timeout");
+    }
+};
+
+class RemoveThreadExcept: public std::exception
+{
+};
+
+} // namespace details
 
 class ThreadPool: private Uncopyable
 {
@@ -61,13 +80,12 @@ public:
     std::size_t GetNumOfThreads() const;
 
 private:
-
     enum IMP_Priority
     {
         IMP_LOW,
         IMP_MEDIUM,
         IMP_HIGH,
-        IMP_DUMMY
+        IMP_SPECIAL
     };
 
     class PrioratizedTask
@@ -80,7 +98,16 @@ private:
         IMP_Priority m_priority;
     };
 
+    class RemoveThreadTask: public ThreadPool::Task
+    {
+    public:
+        virtual void Run();
+    };
+
+    friend class RemoveThreadTask;
+
     typedef WaitableQueue<PriorityQueue<PrioratizedTask> > waitqueue_t;
+    typedef boost::shared_ptr<boost::thread> thread_t;
 
     std::size_t m_numOfThreads;
     boost::atomic<bool> m_runFlag;
@@ -88,17 +115,20 @@ private:
     bool m_pauseFlag;
     boost::mutex m_lock;
     boost::condition_variable m_condVar;
-    const seconds_t& m_timeOut;
+    const seconds_t m_timeOut;
     std::map<Priority, IMP_Priority> m_priority;
-    std::vector<boost::shared_ptr<boost::thread> > m_threads;
+    std::vector<thread_t> m_threads;
 
     void InitMap();
-    void InitThreads();
+    void InitThreads(std::size_t toAdd);
     void ThreadFunc();
     void Execution();
     void Wait();
-
-
+    void AddDummys();
+    void JoinThreads(const seconds_t& timeout);
+    void AddThreads(std::size_t toAdd);
+    void RemoveThreads(std::size_t toRemove);
+    void DetachThread();
 };
 
 } // namespace ilrd

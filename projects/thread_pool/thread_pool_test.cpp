@@ -12,7 +12,7 @@ public:
 
 	virtual void Run()
 	{
-		std::cout << "Task " << m_num << "\n";
+		std::cout << boost::this_thread::get_id() << "Task " << m_num << "\n";
 	}
 private:
 	int m_num;
@@ -37,7 +37,7 @@ static void ThreadPool1()
 	boost::shared_ptr<UserTask> task5(new UserTask(5));
 	boost::shared_ptr<UserTask> task6(new UserTask(6));
 	boost::shared_ptr<UserTask> task7(new UserTask(7));
-	boost::shared_ptr<ExceptionTask> task8(new ExceptionTask());	
+	boost::shared_ptr<ExceptionTask> task8(new ExceptionTask());
 
 	ThreadPool tp(4, boost::chrono::seconds(3));
 	tp.Add(task1, ThreadPool::HIGH);
@@ -51,7 +51,30 @@ static void ThreadPool1()
 
 	tp.Start();
 	sleep(6);
+
+	tp.SetNumOfThreads(2);
+	sleep(3);
+	
+	/*
+	tp.Add(task1, ThreadPool::HIGH);
+	tp.Add(task2, ThreadPool::MEDIUM);
+	tp.Add(task3, ThreadPool::LOW);
+	sleep(2);
+	std::cout << "num of threads: " << tp.GetNumOfThreads() << "\n";
+
 	tp.Stop();
+
+	tp.Pause();
+	
+	tp.Add(task1, ThreadPool::HIGH);
+	tp.Add(task2, ThreadPool::MEDIUM);
+	tp.Add(task3, ThreadPool::LOW);
+	
+	tp.Start();
+	sleep(3);
+
+	tp.Stop();
+*/
 }
 
 int main()

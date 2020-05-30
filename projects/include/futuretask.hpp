@@ -18,10 +18,10 @@ template <class VALUE>
 class FutureTask: public ThreadPool::Task
 {
 public:
-    // explicit FutureTask() = default;
+    explicit FutureTask();
     // virtual ~FutureTask() noexcept = default;
 
-    virtual void TaskFunc() = 0;
+    virtual VALUE TaskFunc() = 0;
     // TaskFunc must beimplemented with the function the task should do
 
     void Run(); 
@@ -31,7 +31,49 @@ public:
 
 private:
     VALUE m_value;
+    bool m_isFinished;
 };
+
+/******************************************************************************/
+
+FutureTask<VALUE>::FutureTask():
+    m_value(),
+    m_isFinished(false)
+{
+}
+
+/******************************************************************************/
+
+void FutureTask<VALUE>::Run()
+{
+    m_value = TaskFunc();
+    m_isFinished = true;
+}
+
+/******************************************************************************/
+
+VALUE FutureTask<VALUE>::GetValue()
+{
+    return m_value;
+}
+
+/******************************************************************************/
+
+VALUE FutureTask<VALUE>::Wait()
+{
+    while (!IsFinished())
+    {
+    }
+
+    return GetValue();
+}
+
+/******************************************************************************/
+
+bool FutureTask<VALUE>::IsFinished()
+{
+    return m_isFinished;
+}
 
 } // namespace ilrd
 

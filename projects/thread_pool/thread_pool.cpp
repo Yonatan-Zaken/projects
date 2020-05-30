@@ -18,7 +18,6 @@ namespace ilrd
 
 /********************************** Details ***********************************/
 
-
 /******************************* Pair Definitions *****************************/
 
 ThreadPool::PrioratizedTask::PrioratizedTask():
@@ -52,7 +51,7 @@ ThreadPool::ThreadPool(std::size_t numOfThreads, const seconds_t& timeout):
     m_threads()
 {
     InitMap();
-    InitThreads();
+    InitThreads(GetNumOfThreads());
 }
 
 /******************************************************************************/
@@ -76,28 +75,27 @@ void ThreadPool::Add(task_t task, Priority priority)
 
 void ThreadPool::SetNumOfThreads(std::size_t numOfThreads)
 {
-    Pause();
-
-    std::size_t current = GetNumOfThreads()
-    if (current > numOfThreads)
+    std::size_t current = GetNumOfThreads();
+    if (current < numOfThreads)
     {
-        
+        AddThreads(numOfThreads - current);
     }
 
-    else if (current < numOfThreads)
+    else if (current > numOfThreads)
     {
-        
+        RemoveThreads(current - numOfThreads);
     }
-    
-    Start();
+
+    m_numOfThreads = numOfThreads;
 }
 
 /******************************************************************************/
 
 void ThreadPool::Start()
 {
-    std::cout << "notifying...\n";
+    boost::unique_lock<boost::mutex> lock(m_lock);
     m_pauseFlag = false;
+    lock.unlock();
     m_condVar.notify_all(); 
 }
 
@@ -106,20 +104,14 @@ void ThreadPool::Start()
 void ThreadPool::Pause()
 {
     m_pauseFlag = true;
+    AddDummys();
 }
 
 /******************************************************************************/
 
 void ThreadPool::Stop()
 {
-    try
-    {
-        Stop(m_timeOut);
-    }
-    catch(...)
-    {
-        LOG_WARNING("error: time out for stop exipred");
-    }
+    Stop(m_timeOut);
 }
 
 /******************************************************************************/
@@ -135,22 +127,10 @@ class DummyTask: public ThreadPool::Task
 void ThreadPool::Stop(const ThreadPool::seconds_t& timeout)
 {
     m_runFlag = false;
-    m_pauseFlag = true;
     
-    std::size_t numOfThreads = GetNumOfThreads();
-    for (std::size_t i = 0; i < numOfThreads; ++i)
-    {
-        std::cout << "adding dummy task\n";
-        m_tasks.Push(PrioratizedTask(boost::make_shared<DummyTask>(), IMP_DUMMY));
-    }
-    
-    for (std::size_t i = 0; i < numOfThreads; ++i)
-    {
-        if (!m_threads[i]->try_join_for(timeout))
-        {
-            throw ("join error: not all thread have joined\n");    
-        }
-    }
+    AddDummys();
+    Start();
+    JoinThreads(timeout);    
 }
 
 /******************************************************************************/
@@ -171,10 +151,9 @@ void ThreadPool::InitMap()
 
 /******************************************************************************/
 
-void ThreadPool::InitThreads()
+void ThreadPool::InitThreads(std::size_t toAdd)
 {
-    std::size_t numOfThreads = GetNumOfThreads();
-    for (size_t i = 0; i < numOfThreads; ++i)
+    for (size_t i = 0; i < toAdd; ++i)
     {
         m_threads.push_back(boost::make_shared<boost::thread>(&ThreadPool::ThreadFunc, this));
     }
@@ -191,21 +170,23 @@ void ThreadPool::ThreadFunc()
         Wait();
         Execution();
     }
-    std::cout << "stop func worked\n";
+    std::cout << boost::this_thread::get_id() << "stop func worked\n";
 }
 
 /******************************************************************************/
 
 void ThreadPool::Wait()
 {
-    boost::unique_lock<boost::mutex> lock(m_lock);
-    while (m_pauseFlag)
+    if (m_pauseFlag)
     {
-        std::cout << "wait cond_var\n";
-        m_condVar.wait(lock); 
+        boost::unique_lock<boost::mutex> lock(m_lock);
+        while (m_pauseFlag)
+        {
+            m_condVar.wait(lock); 
+        }
+        lock.unlock();
+        std::cout << boost::this_thread::get_id() << "out of cond_var\n";    
     }
-    lock.unlock();
-    std::cout << boost::this_thread::get_id() << "out of cond_var\n";    
 }
 
 /******************************************************************************/
@@ -214,19 +195,100 @@ void ThreadPool::Execution()
 {
     PrioratizedTask task;
 
-    while (!m_pauseFlag)
+    m_tasks.Pop(task);
+    LOG_DEBUG("pop task from queue");
+    try
     {
-        m_tasks.Pop(task);
-        LOG_DEBUG("pop task from queue");
-        try
-        {
-            task.m_task->Run();
-        }
+        task.m_task->Run();
+    }
 
-        catch(...)
+    catch(details::RemoveThreadExcept& e)
+    {
+        boost::unique_lock<boost::mutex> lock(m_lock);
+        DetachThread();
+        lock.unlock();
+        return;
+    }
+
+    catch(...)
+    {
+        LOG_WARNING("task failed in ThreadFunc()");
+    }
+}
+
+/******************************************************************************/
+
+void ThreadPool::JoinThreads(const ThreadPool::seconds_t& timeout)
+{
+    std::vector<thread_t>::iterator it;
+    for (it = m_threads.begin(); it != m_threads.end(); ++it)
+    {
+        std::cout << "joining " << ((*it).get())->get_id() << "\n";
+        if (!(((*it).get())->try_join_for(timeout)))
         {
-            LOG_WARNING("task failed in ThreadFunc()");
+            LOG_WARNING("error: time out for stop exipred");
+            throw details::JoinTimeoutError();    
         }
+        
+    }
+    
+/*
+    std::size_t numOfThreads = GetNumOfThreads();
+    for (std::size_t i = 0; i < numOfThreads; ++i)
+    {
+        if (!m_threads[i]->try_join_for(timeout))
+        {
+            LOG_WARNING("error: time out for stop exipred");
+            throw details::JoinTimeoutError();    
+        }
+    }
+*/
+}
+
+/******************************************************************************/
+
+void ThreadPool::AddDummys()
+{
+    std::size_t numOfThreads = GetNumOfThreads();
+    for (std::size_t i = 0; i < numOfThreads; ++i)
+    {
+        m_tasks.Push(PrioratizedTask(boost::make_shared<DummyTask>(), IMP_SPECIAL));
+    }
+}
+
+/******************************************************************************/
+
+void ThreadPool::AddThreads(std::size_t toAdd)
+{
+    InitThreads(toAdd);    
+}
+
+/******************************************************************************/
+
+void ThreadPool::DetachThread()
+{
+    std::vector<thread_t>::iterator it;
+    for (it = m_threads.begin(); ((*it).get())->get_id() != boost::this_thread::get_id(); ++it)
+    {
+    }
+    
+    std::cout << "detaching " << ((*it).get())->get_id() << "\n";
+    ((*it).get())->detach();
+    m_threads.erase(it);
+}
+
+/******************************************************************************/
+
+void ThreadPool::RemoveThreadTask::Run()
+{
+    throw details::RemoveThreadExcept();
+}
+
+void ThreadPool::RemoveThreads(std::size_t toRemove)
+{
+    for (std::size_t i = 0; i < toRemove; ++i)
+    {
+        m_tasks.Push(PrioratizedTask(boost::make_shared<RemoveThreadTask>(), IMP_SPECIAL));
     }
 }
 
