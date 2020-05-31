@@ -7,7 +7,10 @@
 
 #include <boost/bind.hpp> // bind
 #include <iostream>
+
 #include "minion.hpp"
+#include "protocol_consts.hpp"
+
 
 namespace ilrd
 {
@@ -30,7 +33,7 @@ void Minion::Callback()
     {
     case 0:
     {
-        uint8_t buffer[details::BLOCK_SIZE] = {0};
+        uint8_t buffer[protocol::BLOCK_SIZE] = {0};
         uint8_t error_code = m_storage->Read(buffer, request->GetBlockID());
 
         boost::shared_ptr<Message> reply(new ReplyRead(request->GetOperation(), request->GetID(), error_code, buffer));

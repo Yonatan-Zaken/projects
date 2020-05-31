@@ -1,10 +1,9 @@
-/*******************************
-    Yonatan Zaken
-    File Name
-    File Type
-    //
+/*********************
+    Thread Pool
+    CPP File
+    26/05/2020
     ILRD - RD8081               
-*******************************/
+*********************/
 #include <algorithm> // for_each
 #include <boost/make_shared.hpp> // boost::make_shared
 
@@ -51,7 +50,7 @@ ThreadPool::ThreadPool(std::size_t numOfThreads, const seconds_t& timeout):
     m_threads()
 {
     InitMap();
-    InitThreads(GetNumOfThreads());
+    InitThreads(m_numOfThreads);
 }
 
 /******************************************************************************/
@@ -162,15 +161,12 @@ void ThreadPool::InitThreads(std::size_t toAdd)
 /******************************************************************************/
 
 void ThreadPool::ThreadFunc()
-{    
-    std::cout << boost::this_thread::get_id() << "\n";
-    
+{        
     while (m_runFlag)
     {
         Wait();
         Execution();
     }
-    std::cout << boost::this_thread::get_id() << "stop func worked\n";
 }
 
 /******************************************************************************/
@@ -185,7 +181,6 @@ void ThreadPool::Wait()
             m_condVar.wait(lock); 
         }
         lock.unlock();
-        std::cout << boost::this_thread::get_id() << "out of cond_var\n";    
     }
 }
 
@@ -207,7 +202,7 @@ void ThreadPool::Execution()
         boost::unique_lock<boost::mutex> lock(m_lock);
         DetachThread();
         lock.unlock();
-        return;
+        //return;
     }
 
     catch(...)
@@ -223,7 +218,6 @@ void ThreadPool::JoinThreads(const ThreadPool::seconds_t& timeout)
     std::vector<thread_t>::iterator it;
     for (it = m_threads.begin(); it != m_threads.end(); ++it)
     {
-        std::cout << "joining " << ((*it).get())->get_id() << "\n";
         if (!(((*it).get())->try_join_for(timeout)))
         {
             LOG_WARNING("error: time out for stop exipred");
@@ -231,7 +225,7 @@ void ThreadPool::JoinThreads(const ThreadPool::seconds_t& timeout)
         }
         
     }
-    
+
 /*
     std::size_t numOfThreads = GetNumOfThreads();
     for (std::size_t i = 0; i < numOfThreads; ++i)
@@ -249,10 +243,12 @@ void ThreadPool::JoinThreads(const ThreadPool::seconds_t& timeout)
 
 void ThreadPool::AddDummys()
 {
+    task_t dummyTask(new DummyTask);
     std::size_t numOfThreads = GetNumOfThreads();
+
     for (std::size_t i = 0; i < numOfThreads; ++i)
     {
-        m_tasks.Push(PrioratizedTask(boost::make_shared<DummyTask>(), IMP_SPECIAL));
+        m_tasks.Push(PrioratizedTask(dummyTask, IMP_SPECIAL));
     }
 }
 
@@ -265,14 +261,19 @@ void ThreadPool::AddThreads(std::size_t toAdd)
 
 /******************************************************************************/
 
+bool ThreadPool::IsSameThread(boost::shared_ptr<boost::thread> thread) 
+{
+    return (thread.get()->get_id() == boost::this_thread::get_id());
+}
+
 void ThreadPool::DetachThread()
 {
-    std::vector<thread_t>::iterator it;
-    for (it = m_threads.begin(); ((*it).get())->get_id() != boost::this_thread::get_id(); ++it)
+    /*for (it = m_threads.begin(); ((*it).get())->get_id() != boost::this_thread::get_id(); ++it)
     {
-    }
+    }*/
     
-    std::cout << "detaching " << ((*it).get())->get_id() << "\n";
+    std::vector<boost::shared_ptr<boost::thread> >::iterator it = std::find_if(m_threads.begin(), m_threads.end(), IsSameThread);
+
     ((*it).get())->detach();
     m_threads.erase(it);
 }
@@ -286,9 +287,10 @@ void ThreadPool::RemoveThreadTask::Run()
 
 void ThreadPool::RemoveThreads(std::size_t toRemove)
 {
+    task_t taskRemove(new RemoveThreadTask);
     for (std::size_t i = 0; i < toRemove; ++i)
     {
-        m_tasks.Push(PrioratizedTask(boost::make_shared<RemoveThreadTask>(), IMP_SPECIAL));
+        m_tasks.Push(PrioratizedTask(taskRemove, IMP_SPECIAL));
     }
 }
 

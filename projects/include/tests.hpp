@@ -31,6 +31,7 @@ void TestStart(const char *name, int voc);
 void TestEnd(const char *name, int voc);
 void TestBottomLine(const char *name);
 void TestInt(int voc_status, const char *str, int exp, int rec);
+void TestIntApp(int voc_status, const char *str, int exp, int rec, int margin);
 void TestNotInt(int voc_status, const char *str, int exp, int rec);
 void TestIntPos(int voc_status, const char *str, int rec);
 void TestIntNeg(int voc_status, const char *str, int rec);
@@ -41,7 +42,7 @@ void TestSizeTHex(int voc_status, const char *str, size_t exp, size_t rec);
 void TestNotSizeTHex(int voc_status, const char *str, size_t exp, size_t rec);
 void TestNotNull(int voc_status, const char *str, void *rec);
 void TestPtr(int voc_status, const char *str, void *exp, void *rec);
-void TestStr(int voc_status, const char *str, char *exp, char *rec);
+void TestStr(int voc_status, const char *str, const char *exp, const char *rec);
 void TestBytes(int voc_status, const char *str, 
 				const char *exp, const char *rec, size_t bytes);
 void TestIntArr(int voc_status, const char *str, 

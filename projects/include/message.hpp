@@ -8,7 +8,9 @@
 #define ILRD_RD8081_MESSAGE_HPP
 
 #include <inttypes.h> // intn_t
+
 #include "utility.hpp"
+#include "protocol_consts.hpp"
 
 namespace ilrd
 {
@@ -58,7 +60,7 @@ public:
 
 private:
     uint8_t m_errorCode;
-    uint8_t m_dataBlock[details::BLOCK_SIZE];
+    uint8_t m_dataBlock[protocol::BLOCK_SIZE];
     uint64_t GetBlockID() const noexcept;
 
 };
@@ -74,7 +76,7 @@ public:
     
 private:
     uint64_t m_blockID;
-    uint8_t m_dataBlock[details::BLOCK_SIZE];
+    uint8_t m_dataBlock[protocol::BLOCK_SIZE];
     uint8_t GetStatusCode() const noexcept;
 };
 

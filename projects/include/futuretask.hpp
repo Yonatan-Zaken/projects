@@ -32,6 +32,8 @@ public:
 private:
     VALUE m_value;
     bool m_isFinished;
+    boost::mutex m_lock;
+    boost::condition_variable m_condVar;
 };
 
 /******************************************************************************/
@@ -48,6 +50,7 @@ void FutureTask<VALUE>::Run()
 {
     m_value = TaskFunc();
     m_isFinished = true;
+    m_condVar.notify_one();
 }
 
 /******************************************************************************/
@@ -61,9 +64,12 @@ VALUE FutureTask<VALUE>::GetValue()
 
 VALUE FutureTask<VALUE>::Wait()
 {
+    boost::unique_lock<boost::mutex> lock(m_lock);
     while (!IsFinished())
     {
+        m_condVar.wait(lock); 
     }
+    lock.unlock();
 
     return GetValue();
 }

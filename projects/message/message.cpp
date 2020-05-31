@@ -63,7 +63,7 @@ ReplyRead::ReplyRead(uint8_t type, uint64_t ID, uint8_t errorCode, uint8_t *data
     Message(type, ID),
     m_errorCode(errorCode)
 {
-    memcpy(m_dataBlock, data, details::BLOCK_SIZE);
+    memcpy(m_dataBlock, data, protocol::BLOCK_SIZE);
 }
 
 uint8_t ReplyRead::GetStatusCode() const noexcept
@@ -110,7 +110,7 @@ RequestWrite::RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID, const ui
     Message(type, ID),
     m_blockID(blockID)
 {
-    memcpy(m_dataBlock, src, details::BLOCK_SIZE);
+    memcpy(m_dataBlock, src, protocol::BLOCK_SIZE);
 }
 
 uint64_t RequestWrite::GetBlockID() const noexcept

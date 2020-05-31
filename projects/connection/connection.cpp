@@ -8,6 +8,7 @@
 #include <endian.h> // htobe64
 
 #include "connection.hpp"
+#include "protocol_consts.hpp"
 
 namespace ilrd
 {
@@ -38,12 +39,12 @@ int Connection::GetFD() const noexcept
 
 boost::shared_ptr<Message> Connection::ConstructRequest() 
 {
-    uint8_t buffer[details::RECV_BLOCK_SIZE] = {0};
+    uint8_t buffer[protocol::RECV_BLOCK_SIZE] = {0};
     m_udp.ReceiveFrom(buffer);
 
-    uint8_t requestType = buffer[details::OPERATION_TYPE_OFFSET];
-    uint64_t requestID = *(reinterpret_cast<uint64_t *>(buffer + details::REQUEST_ID_OFFSET));
-    uint64_t blockID = *(reinterpret_cast<uint64_t *>(buffer + details::BLOCK_ID_OFFSET));
+    uint8_t requestType = buffer[protocol::OPERATION_TYPE_OFFSET];
+    uint64_t requestID = *(reinterpret_cast<uint64_t *>(buffer + protocol::REQUEST_ID_OFFSET));
+    uint64_t blockID = *(reinterpret_cast<uint64_t *>(buffer + protocol::BLOCK_ID_OFFSET));
     
     switch(requestType)
     {
@@ -57,7 +58,7 @@ boost::shared_ptr<Message> Connection::ConstructRequest()
         case 1:
         {
             boost::shared_ptr<Message> writeReq(new RequestWrite(
-            requestType, be64toh(requestID), be64toh(blockID), buffer + details::WRITE_DATA_BLOCK_OFFSET));
+            requestType, be64toh(requestID), be64toh(blockID), buffer + protocol::WRITE_DATA_BLOCK_OFFSET));
 
             return writeReq;
         } 
@@ -76,14 +77,14 @@ void Connection::SendMessage(boost::shared_ptr<Message> reply)
     {
     case 0:
     {
-        uint8_t buffer[details::REPLY_READ_SIZE] = {0};
+        uint8_t buffer[protocol::REPLY_READ_SIZE] = {0};
         
-        buffer[details::OPERATION_TYPE_OFFSET] = replyType;
+        buffer[protocol::OPERATION_TYPE_OFFSET] = replyType;
         
-        memcpy(buffer + details::REQUEST_ID_OFFSET, &requestId, sizeof(uint64_t));
+        memcpy(buffer + protocol::REQUEST_ID_OFFSET, &requestId, sizeof(uint64_t));
         
-        buffer[details::ERROR_CODE_OFFSET] = errorCode;
-        memcpy(buffer + details::READ_DATA_BLOCK_OFFSET, reply->DataBlock(), details::BLOCK_SIZE);
+        buffer[protocol::ERROR_CODE_OFFSET] = errorCode;
+        memcpy(buffer + protocol::READ_DATA_BLOCK_OFFSET, reply->DataBlock(), protocol::BLOCK_SIZE);
 
         m_udp.SendTo(buffer);
         break;
@@ -91,13 +92,13 @@ void Connection::SendMessage(boost::shared_ptr<Message> reply)
     
     case 1:
     {
-        uint8_t buffer[details::REPLY_WRITE_METADATA_SIZE] = {0};
+        uint8_t buffer[protocol::REPLY_WRITE_METADATA_SIZE] = {0};
 
-        buffer[details::OPERATION_TYPE_OFFSET] = replyType;
+        buffer[protocol::OPERATION_TYPE_OFFSET] = replyType;
         
-        memcpy(buffer + details::REQUEST_ID_OFFSET, &requestId, sizeof(uint64_t));
+        memcpy(buffer + protocol::REQUEST_ID_OFFSET, &requestId, sizeof(uint64_t));
         
-        buffer[details::ERROR_CODE_OFFSET] = errorCode;
+        buffer[protocol::ERROR_CODE_OFFSET] = errorCode;
 
         m_udp.SendTo(buffer);
         break;

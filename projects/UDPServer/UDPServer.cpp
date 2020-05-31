@@ -10,6 +10,7 @@
 
 #include "socket.h"
 #include "UDPServer.hpp"
+#include "protocol_consts.hpp"
 
 namespace ilrd
 {
@@ -30,7 +31,7 @@ UDPServer::~UDPServer() noexcept
 
 void UDPServer::SendTo(const uint8_t *buffer) const
 {
-    uint64_t replySize = (buffer[details::OPERATION_TYPE_OFFSET] == 0) ? details::REPLY_READ_SIZE : details::REPLY_WRITE_SIZE;
+    uint64_t replySize = (buffer[protocol::OPERATION_TYPE_OFFSET] == 0) ? protocol::REPLY_READ_SIZE : protocol::REPLY_WRITE_SIZE;
     
     if (-1 == (sendto(m_sockfd, buffer, replySize, 0,
     &m_sendToAddr, m_addrLen))) 
@@ -45,7 +46,7 @@ void UDPServer::ReceiveFrom(uint8_t *buffer)
 {
     m_addrLen = sizeof(m_sendToAddr);
 
-    if (-1 == (recvfrom(m_sockfd, buffer, details::RECV_BLOCK_SIZE, 0, 
+    if (-1 == (recvfrom(m_sockfd, buffer, protocol::RECV_BLOCK_SIZE, 0, 
     &m_sendToAddr, &m_addrLen))) 
     {
         throw details::RecvfromError();

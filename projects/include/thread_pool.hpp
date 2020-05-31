@@ -33,7 +33,7 @@ public:
     }
 };
 
-class RemoveThreadExcept: public std::exception
+struct  RemoveThreadExcept: public std::exception
 {
 };
 
@@ -129,6 +129,8 @@ private:
     void AddThreads(std::size_t toAdd);
     void RemoveThreads(std::size_t toRemove);
     void DetachThread();
+    static bool IsSameThread(boost::shared_ptr<boost::thread> thread);
+
 };
 
 } // namespace ilrd

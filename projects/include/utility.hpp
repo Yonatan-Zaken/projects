@@ -44,38 +44,7 @@ private:
 
 } // namespace ilrd
 
-#include <inttypes.h>
-
-namespace ilrd
-{
-
-namespace details
-{
-    static const uint64_t BLOCK_SIZE = 4096;
-
-    static const uint8_t REPLY_READ_METADATA_SIZE = 2 * sizeof(uint8_t) + sizeof(uint64_t);
-
-    static const uint8_t REPLY_WRITE_METADATA_SIZE = REPLY_READ_METADATA_SIZE;
-
-    static const uint8_t REQUEST_METADATA_SIZE = sizeof(uint8_t) + 2 * sizeof(uint64_t);
-    
-    static const uint64_t REPLY_READ_SIZE = BLOCK_SIZE + REPLY_READ_METADATA_SIZE;
-    
-    static const uint64_t REPLY_WRITE_SIZE = REPLY_READ_METADATA_SIZE;
-
-    static const uint64_t RECV_BLOCK_SIZE = BLOCK_SIZE + REQUEST_METADATA_SIZE;
-
-    static const uint8_t OPERATION_TYPE_OFFSET = 0;
-    static const uint8_t REQUEST_ID_OFFSET = 1;
-    static const uint8_t BLOCK_ID_OFFSET = 9;
-    static const uint8_t ERROR_CODE_OFFSET = 9;
-    static const uint8_t READ_DATA_BLOCK_OFFSET = 10;
-    static const uint8_t WRITE_DATA_BLOCK_OFFSET = 17;
-    
-} // namespace details
-
-} // namespace ilrd
-
+/*
 // automation macros for tests 
 #define NORMAL "\033[0m"
 #define RED "\033[;031m"
@@ -95,6 +64,6 @@ namespace details
         printf(NORMAL);\
     }\
 }
-
+*/
 #endif // ILRD_RD8081_UTILITY_HPP
 
