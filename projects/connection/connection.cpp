@@ -37,15 +37,20 @@ int Connection::GetFD() const noexcept
 
 /******************************************************************************/
 
-boost::shared_ptr<Message> Connection::ConstructRequest() 
+boost::shared_ptr<RequestMessage> Connection::ConstructRequest() 
 {
     uint8_t buffer[protocol::RECV_BLOCK_SIZE] = {0};
+    //uint8_t *buffer =  new uint8_t[protocol::RECV_BLOCK_SIZE];
     m_udp.ReceiveFrom(buffer);
 
     uint8_t requestType = buffer[protocol::OPERATION_TYPE_OFFSET];
     uint64_t requestID = *(reinterpret_cast<uint64_t *>(buffer + protocol::REQUEST_ID_OFFSET));
     uint64_t blockID = *(reinterpret_cast<uint64_t *>(buffer + protocol::BLOCK_ID_OFFSET));
-    
+
+    boost::shared_ptr<RequestMessage> request(new RequestMessage(requestType, be64toh(requestID), be64toh(blockID), buffer + protocol::WRITE_DATA_BLOCK_OFFSET));
+
+    return request;
+/*
     switch(requestType)
     {
         case 0:
@@ -63,16 +68,27 @@ boost::shared_ptr<Message> Connection::ConstructRequest()
             return writeReq;
         } 
     } // switch-case
+*/
 }
 
 /******************************************************************************/
 
-void Connection::SendMessage(boost::shared_ptr<Message> reply) 
+void Connection::SendMessage(boost::shared_ptr<ReplyMessage> reply) 
 {
     uint8_t replyType = reply->GetOperation();
     uint8_t errorCode = reply->GetStatusCode();
     uint64_t requestId = htobe64(reply->GetID());
+    
+    uint8_t buffer[protocol::REPLY_READ_SIZE] = {0};
+    
+    buffer[protocol::OPERATION_TYPE_OFFSET] = replyType;    
+    memcpy(buffer + protocol::REQUEST_ID_OFFSET, &requestId, sizeof(uint64_t));
+    buffer[protocol::ERROR_CODE_OFFSET] = errorCode;
 
+    memcpy(buffer + protocol::READ_DATA_BLOCK_OFFSET, reply->DataBlock(), protocol::BLOCK_SIZE);
+
+    m_udp.SendTo(buffer);
+/*
     switch (replyType)
     {
     case 0:
@@ -104,6 +120,7 @@ void Connection::SendMessage(boost::shared_ptr<Message> reply)
         break;
     }
     } // switch-case
+    */
 }
 
 } // namespace ilrd

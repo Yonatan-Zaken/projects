@@ -15,6 +15,13 @@ namespace ilrd
 
 namespace protocol
 {
+    enum Operation
+    {
+        READ,
+        WRITE,
+        NUM_OF_OPERATIONS
+    };
+    
     static const uint64_t BLOCK_SIZE = 4096;
 
     static const uint8_t REPLY_READ_METADATA_SIZE = 2 * sizeof(uint8_t) + sizeof(uint64_t);

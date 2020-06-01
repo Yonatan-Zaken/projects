@@ -10,6 +10,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include "storage.hpp"
+#include "message.hpp"
 
 namespace ilrd
 {
@@ -19,7 +20,7 @@ class Command
 public:
     //explicit Command() = default;
     virtual ~Command() {}
-    virtual int Operation() = 0;
+    virtual int Operation(const boost::shared_ptr<Storage>& storage) = 0;
 private:    
 };
 
@@ -28,14 +29,15 @@ private:
 class Read: public Command
 {
 public:
-    explicit Read(const boost::shared_ptr<Storage>& storage);
+    explicit Read(RequestMessage& message);
     // ~Read() = default;
     // Read(const Read&) = default;
     // Read& operator=(const Read&) = default;
-    virtual int Operation();
-    static boost::shared_ptr<Read> CreateRead(const Message& message);
+    virtual int Operation(const boost::shared_ptr<Storage>& storage);
+    static boost::shared_ptr<Read> CreateRead(RequestMessage& message);
 private:
-    boost::shared_ptr<Storage> m_storage;
+    uint64_t m_blockNum;
+    uint8_t *m_buffer;
 };
 
 /******************************************************************************/
@@ -43,17 +45,17 @@ private:
 class Write: public Command
 {
 public:
-    explicit Write(const boost::shared_ptr<Storage>& storage)
+    explicit Write(RequestMessage& message);
     // ~Write() = default;
     // Write(const Write&) = default;
     // Write& operator=(const Write&) = default;
-    virtual int Operation();
-    static boost::shared_ptr<Write> CreateWrite(const Message& message);
+    virtual int Operation(const boost::shared_ptr<Storage>& storage);
+    static boost::shared_ptr<Write> CreateWrite(RequestMessage& message);
 private:
-    boost::shared_ptr<Storage> m_storage;
-}
+    uint64_t m_blockNum;
+    uint8_t m_data[protocol::BLOCK_SIZE];
+};
 
 } // namespace ilrd
-
 
 #endif

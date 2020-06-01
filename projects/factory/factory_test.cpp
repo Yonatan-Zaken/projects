@@ -28,7 +28,7 @@ public:
 	m_voice(voice)
 	{}
 	virtual int GetNumLegs() const noexcept {return m_legs;}
-	std::string GetVoice() const noexcept{return m_voice;}
+	std::string GetVoice() const noexcept {return m_voice;}
 
 private:
 	int m_legs;
@@ -69,7 +69,6 @@ static void FactoryTest1()
 
 	Animal *animal2 = factory.Fabricate("cat", cat);
 	std::cout << "num of legs: " << animal2->GetNumLegs() << "\n";
-
 }
 
 int main()

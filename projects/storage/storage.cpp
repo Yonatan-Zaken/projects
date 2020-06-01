@@ -36,6 +36,7 @@ uint8_t HeapStorage::Read(uint8_t *buffer, uint64_t blockNum)
         return 1;
     }
     
+    //buffer = m_storage + (blockNum * protocol::BLOCK_SIZE);
     memcpy(buffer, m_storage + (blockNum * protocol::BLOCK_SIZE), protocol::BLOCK_SIZE);
     return 0;
 }

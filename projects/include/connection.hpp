@@ -28,8 +28,8 @@ public:
     //Connection& operator=(const connection& other); = disabled
 
     int GetFD() const noexcept;
-    boost::shared_ptr<Message> ConstructRequest();
-    void SendMessage(boost::shared_ptr<Message> reply);
+    boost::shared_ptr<RequestMessage> ConstructRequest();
+    void SendMessage(boost::shared_ptr<ReplyMessage> reply);
 
 private:
     UDPServer m_udp;

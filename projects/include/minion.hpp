@@ -13,6 +13,7 @@
 #include "storage.hpp"
 #include "connection.hpp"
 #include "message.hpp"
+#include "factory_wrap.hpp"
 #include "utility.hpp"
 
 namespace ilrd
@@ -33,6 +34,7 @@ private:
     boost::shared_ptr<Storage> m_storage;
     Reactor m_reactor;
     Connection m_connection;
+    FactoryWrap m_factory;
     void Callback();
 };
 

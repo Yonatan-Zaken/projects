@@ -15,7 +15,7 @@
 namespace ilrd
 {
 
-class Message: private Uncopyable
+class Message
 {
 public:	
     Message(uint8_t type, uint64_t ID);
@@ -25,17 +25,52 @@ public:
 
     virtual uint64_t GetID() const noexcept;
     virtual uint8_t GetOperation() const noexcept;
-    virtual uint64_t GetBlockID() const noexcept = 0;
-    virtual uint8_t GetStatusCode() const noexcept = 0;
-    virtual uint8_t *DataBlock() noexcept = 0;
+    //virtual uint64_t GetBlockID() const noexcept = 0;
+    //virtual uint8_t GetStatusCode() const noexcept = 0;
+    //virtual uint8_t *DataBlock() const noexcept = 0;
 
 private:
     uint8_t m_type;
     uint64_t m_requestID;
-}; // class message
+}; 
 
 /******************************************************************************/
 
+class RequestMessage: public Message
+{
+public:
+    explicit RequestMessage(uint8_t type, uint64_t ID, uint64_t blockID, uint8_t *buffer);
+    uint64_t GetBlockID() const noexcept;
+    uint8_t *DataBlock() noexcept;
+private:
+    uint64_t m_blockId;
+    uint8_t m_dataBlock[protocol::BLOCK_SIZE];
+};
+
+/******************************************************************************/
+
+class ReplyMessage: public Message
+{
+public:
+    explicit ReplyMessage(uint8_t type, uint64_t ID, uint8_t errorCode, const uint8_t *buffer);
+    uint8_t GetStatusCode() const noexcept;
+    uint8_t *DataBlock() noexcept;
+private:
+    uint8_t m_errorCode;
+    uint8_t m_dataBlock[protocol::BLOCK_SIZE];
+};
+
+/******************************************************************************/
+
+/******************************************************************************/
+
+/******************************************************************************/
+
+/******************************************************************************/
+
+/******************************************************************************/
+
+/*
 class RequestRead: public Message
 {
 public:
@@ -44,19 +79,20 @@ public:
 
 private:
     uint64_t m_blockID;
-    uint8_t *DataBlock() noexcept;
+    uint8_t *DataBlock() const noexcept;
     uint8_t GetStatusCode() const noexcept;
-
 };
+*/
 
 /******************************************************************************/
 
+/*
 class ReplyRead: public Message
 {
 public:
     ReplyRead(uint8_t type, uint64_t ID, uint8_t errorCode, uint8_t *data);
     uint8_t GetStatusCode() const noexcept;
-    uint8_t *DataBlock() noexcept;
+    uint8_t *DataBlock() const noexcept;
 
 private:
     uint8_t m_errorCode;
@@ -64,35 +100,39 @@ private:
     uint64_t GetBlockID() const noexcept;
 
 };
+*/
 
 /******************************************************************************/
 
+/*
 class RequestWrite: public Message
 {
 public:
     RequestWrite(uint8_t type, uint64_t ID, uint64_t blockID, const uint8_t *src);
     uint64_t GetBlockID() const noexcept;
-    uint8_t *DataBlock() noexcept;
+    uint8_t *DataBlock() const noexcept;
     
 private:
     uint64_t m_blockID;
     uint8_t m_dataBlock[protocol::BLOCK_SIZE];
     uint8_t GetStatusCode() const noexcept;
 };
+*/
 
 /******************************************************************************/
 
+/*
 class ReplyWrite: public Message
 {
-
 public:
     ReplyWrite(uint8_t type, uint64_t ID, uint8_t errorCode);
     uint8_t GetStatusCode() const noexcept;
 private:
     uint8_t m_errorCode;
     uint64_t GetBlockID() const noexcept;
-    uint8_t *DataBlock() noexcept;
+    uint8_t *DataBlock() const noexcept;
 };
+*/
 
 } // namespace ilrd
 
