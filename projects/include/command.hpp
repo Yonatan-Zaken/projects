@@ -20,7 +20,7 @@ class Command
 public:
     //explicit Command() = default;
     virtual ~Command() {}
-    virtual int Operation(const boost::shared_ptr<Storage>& storage) = 0;
+    virtual int Operation(const boost::shared_ptr<Storage>& storage, uint8_t *buffer) = 0;
 private:    
 };
 
@@ -33,11 +33,10 @@ public:
     // ~Read() = default;
     // Read(const Read&) = default;
     // Read& operator=(const Read&) = default;
-    virtual int Operation(const boost::shared_ptr<Storage>& storage);
+    virtual int Operation(const boost::shared_ptr<Storage>& storage, uint8_t *buffer);
     static boost::shared_ptr<Read> CreateRead(RequestMessage& message);
 private:
-    uint64_t m_blockNum;
-    uint8_t *m_buffer;
+    RequestMessage& m_message;
 };
 
 /******************************************************************************/
@@ -49,11 +48,12 @@ public:
     // ~Write() = default;
     // Write(const Write&) = default;
     // Write& operator=(const Write&) = default;
-    virtual int Operation(const boost::shared_ptr<Storage>& storage);
+    virtual int Operation(const boost::shared_ptr<Storage>& storage, uint8_t *buffer);
     static boost::shared_ptr<Write> CreateWrite(RequestMessage& message);
 private:
-    uint64_t m_blockNum;
-    uint8_t m_data[protocol::BLOCK_SIZE];
+    RequestMessage& m_message;
+    //uint64_t m_blockNum;
+    //uint8_t m_data[protocol::BLOCK_SIZE];
 };
 
 } // namespace ilrd

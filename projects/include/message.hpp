@@ -40,6 +40,7 @@ class RequestMessage: public Message
 {
 public:
     explicit RequestMessage(uint8_t type, uint64_t ID, uint64_t blockID, uint8_t *buffer);
+    
     uint64_t GetBlockID() const noexcept;
     uint8_t *DataBlock() noexcept;
 private:

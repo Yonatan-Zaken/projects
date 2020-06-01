@@ -20,9 +20,9 @@ FactoryWrap::FactoryWrap()
 
 /******************************************************************************/
 
-boost::shared_ptr<Command> FactoryWrap::Fabricate(uint8_t key,  RequestMessage message)
+boost::shared_ptr<Command> FactoryWrap::Fabricate(uint8_t key, boost::shared_ptr<RequestMessage> message)
 { 
-    return (m_factory.Fabricate(key, message));
+    return (m_factory.Fabricate(key, *message));
 }
 
 } // namespace ilrd

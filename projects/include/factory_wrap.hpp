@@ -26,7 +26,7 @@ public:
     //FactoryWrap(const FactoryWrap&) = default;
     //FactoryWrap& operator=(const FactoryWrap&) = default;
 
-    boost::shared_ptr<Command> Fabricate(uint8_t key, RequestMessage message);
+    boost::shared_ptr<Command> Fabricate(uint8_t key, boost::shared_ptr<RequestMessage> message);
 private:
     Factory<Command, uint8_t, RequestMessage> m_factory;
 };

@@ -15,14 +15,13 @@ namespace ilrd
 /************************************ Read *********************************/
 
 Read::Read(RequestMessage& message):
-    m_blockNum(message.GetBlockID()),
-    m_buffer(message.DataBlock())
+    m_message(message)
 {
 }
 
-int Read::Operation(const boost::shared_ptr<Storage>& storage)
+int Read::Operation(const boost::shared_ptr<Storage>& storage, uint8_t *buffer)
 {
-    return storage->Read(m_buffer, m_blockNum);
+    return storage->Read(buffer, m_message.GetBlockID());
 }
 
 boost::shared_ptr<Read> Read::CreateRead(RequestMessage& message)
@@ -33,14 +32,14 @@ boost::shared_ptr<Read> Read::CreateRead(RequestMessage& message)
 /************************************ Write *********************************/
 
 Write::Write(RequestMessage& message):
-    m_blockNum(message.GetBlockID())
+    m_message(message)
 {
-    memcpy(m_data, message.DataBlock(), protocol::BLOCK_SIZE);
+    //memcpy(m_data, message.DataBlock(), protocol::BLOCK_SIZE);
 }
 
-int Write::Operation(const boost::shared_ptr<Storage>& storage)
+int Write::Operation(const boost::shared_ptr<Storage>& storage, uint8_t *buffer)
 {
-    return storage->Write(m_data, m_blockNum);
+    return storage->Write(buffer, m_message.GetBlockID());
 }
 
 boost::shared_ptr<Write> Write::CreateWrite(RequestMessage& message)

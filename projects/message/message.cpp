@@ -40,7 +40,7 @@ RequestMessage::RequestMessage(uint8_t type, uint64_t ID, uint64_t blockID, uint
     Message(type, ID),
     m_blockId(blockID)
 {
-    memcpy(m_dataBlock, data, protocol::BLOCK_SIZE);
+    memcpy(&(m_dataBlock[0]), data, protocol::BLOCK_SIZE);
 }
 
 uint64_t RequestMessage::GetBlockID() const noexcept
@@ -50,7 +50,7 @@ uint64_t RequestMessage::GetBlockID() const noexcept
 
 uint8_t *RequestMessage::DataBlock() noexcept
 {
-    return &m_dataBlock[0];
+    return &(m_dataBlock[0]);
 }
 
 /**************************** Reply Message *****************************/
@@ -59,7 +59,7 @@ ReplyMessage::ReplyMessage(uint8_t type, uint64_t ID, uint8_t errorCode, const u
     Message(type, ID),
     m_errorCode(errorCode)
 {
-    memcpy(m_dataBlock, data, protocol::BLOCK_SIZE);
+    memcpy(&(m_dataBlock[0]), data, protocol::BLOCK_SIZE);
 }
 
 uint8_t ReplyMessage::GetStatusCode() const noexcept
@@ -69,7 +69,7 @@ uint8_t ReplyMessage::GetStatusCode() const noexcept
 
 uint8_t *ReplyMessage::DataBlock() noexcept
 {
-    return &m_dataBlock[0];
+    return &(m_dataBlock[0]);
 }
 
 /**************************** Request Read *****************************/
