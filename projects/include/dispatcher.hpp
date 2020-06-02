@@ -114,6 +114,7 @@ void Dispatcher<OBSERVER, PARAM>::Unsubscribe(OBSERVER *observer)
     typename std::vector<std::pair<OBSERVER*, Validity> >::iterator it;
     it = std::find_if(m_observerList.begin(), m_observerList.end(), IsSameObserver(observer));
     
+    //assert(it != m_observerList.end());
     it->second = UNSUBSCRIBED;
 }
 
@@ -128,7 +129,7 @@ void Dispatcher<OBSERVER, PARAM>::Broadcast(PARAM param)
         m_observerList[i].first->Update(param);
     }
 
-    m_observerList.erase(std::remove_if(m_observerList.begin(), m_observerList.end(), IsUnsubscribed()));
+    m_observerList.erase(std::remove_if(m_observerList.begin(), m_observerList.end(), IsUnsubscribed()), m_observerList.end());
 }
 
 /*************************** ObserverBase Declaration *************************/
