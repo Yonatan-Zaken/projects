@@ -1,166 +1,152 @@
-#include <iostream>
-#include <boost/make_shared.hpp>
-#include <boost/bind.hpp>
+/**********************
+    Dispatcher
+    Test File
+    02/05/2020
+    ILRD - RD8081               
+    Greg Markovsky
+**********************/
 
-#include "dispatcher.hpp"
-#include "tests.hpp"
+#include "logger_preprocessor.hpp"
+#include "tests.hpp" // RUN_TEST
+#include "dispatcher.hpp" // Observer
 
 using namespace ilrd;
 using namespace std;
 
-/******************************************************************************/
-
-int globalVar = 0;
-int indic = 0;
-
-void UpFunc(int)
-{
-    ++globalVar;
-}
-
-void DownFunc()
-{
-    --globalVar;
-}
-
-/******************************************************************************/
-
-void Indicator()
-{
-    indic = 1;
-    --globalVar;
-}
-
-void RemoveFrom(Dispatcher<ObserverBase<int>, int> *, Observer<int> *o)
-{
-    delete o;
-    ++globalVar;
-}
-
-void InsertTo(Dispatcher<ObserverBase<int>, int> *d, Observer<int> **arr)
-{
-    static int i = 0;
-    if(!i)
-    {
-        Observer<int> *o1 = new Observer<int>(d, UpFunc, DownFunc);
-        Observer<int> *o2 = new Observer<int>(d, UpFunc, DownFunc);
-        Observer<int> *o3 = new Observer<int>(d, UpFunc, DownFunc);
-        Observer<int> *o4 = new Observer<int>(d, UpFunc, DownFunc);
-        Observer<int> *o5 = new Observer<int>(d, UpFunc, DownFunc);
-        Observer<int> *o6 = new Observer<int>(d, UpFunc, DownFunc);
-
-        arr[0] = o1; 
-        arr[1] = o2; 
-        arr[2] = o3; 
-        arr[3] = o4; 
-        arr[4] = o5; 
-        arr[5] = o6; 
-    }
-    ++i;
-
-    ++globalVar;
-}
-
-/******************************************************************************/
-
-void basicTest1();
-void basicTest2();
-void basicTest3();
+static void TestBasic(int voc);
+static void TestUnsub(int voc);
+static void TestSub(int voc);
 
 int main()
 {
-    basicTest1();
-    cerr << "\n\n";
-    basicTest2();
-    cerr << "\n\n";
-    basicTest3();
+	/* --- IGNORE - don't run test --------------- */
+	/* --- SILENT - run test without details ----- */
+	/* --- DETAIL - run test with full details --- */
 
-    return 0;
+    SET_LOG_PATHS("logger.txt", "INFO");
+    LOG_INFO("Dispatcher - Observer Test Started");
+
+	RUN_TEST( DETAIL , "Test basic observers", TestBasic);
+    RUN_TEST( DETAIL , "Test unsunb mid broadcast", TestUnsub);
+    RUN_TEST( DETAIL , "Test subscribe mid broadcast", TestSub);
+
+	TestBottomLine("Dispatcher - Observer");
+
+	return 0;
 }
 
-/******************************************************************************/
+static void UpdateInt(int *num);
+static void UpdateUnsub(int *num);
+static void UpdateSub(int *num);
+static void UpdateIntDeath();
 
-void basicTest1()
+typedef ObserverBase<int *> observerBase_t;
+typedef Observer<int *> observer_t;
+typedef Dispatcher<observerBase_t, int *> dispatcher_t;
+
+static int g_deathCount = 0;
+static Observer<int *> *observer = nullptr;
+static dispatcher_t *dispatcher = nullptr;
+
+/* ============================== Test Functions ============================ */
+/* ------------------------------------------------------------ TestBasic --- */
+
+static void TestBasic(int voc)
 {
-    indic = 0;
-    globalVar = 0;
-    {
-        Dispatcher<ObserverBase<int>, int> *d1 = new Dispatcher<ObserverBase<int>, int>;
-        Observer<int> o1(d1, UpFunc, DownFunc);
-        Observer<int> o2(d1, UpFunc, DownFunc);
-        Observer<int> o3(d1, UpFunc, DownFunc);
-        Observer<int> o4(d1, UpFunc, DownFunc);
-        Observer<int> o5(d1, UpFunc, DownFunc);
-        Observer<int> o6(d1, UpFunc, DownFunc);
+    g_deathCount = 0;
 
-        d1->Broadcast(3);
+    dispatcher = new dispatcher_t;
+    observer_t observer_1(dispatcher, &UpdateInt, &UpdateIntDeath);
+    observer_t observer_2(dispatcher, &UpdateInt, &UpdateIntDeath);
 
-        TestInt("Testing Basics Update", 6, globalVar);
-        delete d1;
-    }
-
-    TestInt("Testing Basics UpdateDead", 0, globalVar);   
+    int testInt = 0;
+    dispatcher->Broadcast(&testInt);
+    TestInt(voc, "Simple Broadcast #1", 2, testInt);
+    dispatcher->Broadcast(&testInt);
+    TestInt(voc, "Simple Broadcast #2", 4, testInt);
+    delete dispatcher;
+    dispatcher = nullptr;
+    TestInt(voc, "Destroy Dispatcher", 2, g_deathCount);
 }
 
-/******************************************************************************/
+/* ------------------------------------------------------------ TestUnsub --- */
 
-void basicTest2()
+static void TestUnsub(int voc)
 {
-    indic = 0;
-    globalVar = 0;
-    {
-        Dispatcher<ObserverBase<int>, int> *d1 = new Dispatcher<ObserverBase<int>, int>;
-        Observer<int> o1(d1, UpFunc, DownFunc);
-        Observer<int> *o2 = new Observer<int>(d1, UpFunc, Indicator);
-        Observer<int> o3(d1, boost::bind(RemoveFrom, d1, o2), DownFunc);
-        Observer<int> o4(d1, UpFunc, DownFunc);
-        Observer<int> o5(d1, UpFunc, DownFunc);
-        Observer<int> o6(d1, UpFunc, DownFunc);
+    g_deathCount = 0;
 
-        d1->Broadcast(3);
+    dispatcher = new dispatcher_t;
+    observer_t observer_1(dispatcher, &UpdateInt, &UpdateIntDeath);
+    observer_t observer_2(dispatcher, &UpdateUnsub, &UpdateIntDeath);
+    observer = new observer_t(dispatcher, &UpdateInt, &UpdateIntDeath);
 
-        TestInt("Testing Basics Update", 6, globalVar);
-        TestInt("Testing UnSub from function", 0, indic);
-        delete d1;
-    }
-
-    TestInt("Testing Basics UpdateDead", 1, globalVar);
+    int testInt = 0;
+    dispatcher->Broadcast(&testInt);
+    TestInt(voc, "Broadcast with Unsub #1", 4, testInt);
+    dispatcher->Broadcast(&testInt);
+    TestInt(voc, "Broadcast with Unsub #2", 8, testInt);
+    delete dispatcher;
+    dispatcher = nullptr;
+    TestInt(voc, "Destroy Dispatcher", 2, g_deathCount);
 }
 
-/******************************************************************************/
+/* -------------------------------------------------------------- TestSub --- */
 
-void basicTest3()
+static void TestSub(int voc)
 {
-    indic = 0;
-    globalVar = 0;
+    g_deathCount = 0;
 
-    Observer<int> *arr[6];
-    {
-        Dispatcher<ObserverBase<int>, int> *d1 = new Dispatcher<ObserverBase<int>, int>;
-        Observer<int> o1(d1, UpFunc, DownFunc);
-        Observer<int> o2(d1, UpFunc , DownFunc);
-        Observer<int> o3(d1, boost::bind(InsertTo, d1, arr), DownFunc);
-        Observer<int> o4(d1, UpFunc, DownFunc);
-        Observer<int> o5(d1, UpFunc, DownFunc);
-        Observer<int> o6(d1, UpFunc, DownFunc);
+    dispatcher = new dispatcher_t;
+    observer_t observer_1(dispatcher, &UpdateInt, &UpdateIntDeath);
+    observer_t *observer_2 = new observer_t(dispatcher, &UpdateSub, 
+                                            &UpdateIntDeath);
 
-        d1->Broadcast(3);
-        TestInt("Testing Basics Update", 6, globalVar);
-        d1->Broadcast(3);
-        TestInt("Testing Basics Update", 18, globalVar);
+    int testInt = 0;
+    dispatcher->Broadcast(&testInt);
+    TestInt(voc, "Broadcast with Sub #1", 8, testInt);
 
-        delete d1;
-        for(int i = 0; i < 6; ++i)
-        {
-            delete arr[i];
-        }
-    }
+    delete observer_2;
+    observer_2 = nullptr;
+    dispatcher->Broadcast(&testInt);
+    TestInt(voc, "Broadcast with Sub #2", 10, testInt);
 
-    TestInt("Testing Basics UpdateDead", 6, globalVar);
+    delete dispatcher;
+    dispatcher = nullptr;
+    TestInt(voc, "Destroy Dispatcher", 2, g_deathCount);
+
+    delete observer;
+    observer = nullptr;
 }
 
+/* ============================ Service Functions =========================== */
+/* ------------------------------------------------------------ UpdateInt --- */
 
+static void UpdateInt(int *num)
+{
+    ++(*num);
+}
 
+/* ---------------------------------------------------------- UpdateUnsub --- */
 
+static void UpdateUnsub(int *num)
+{
+    (*num) += 3;
+    delete observer;
+    observer = nullptr;
+}
 
+/* ------------------------------------------------------------ UpdateSub --- */
+
+static void UpdateSub(int *num)
+{
+    (*num) += 7;
+    observer = new observer_t(dispatcher, &UpdateInt, &UpdateIntDeath);
+}
+
+/* ------------------------------------------------------- UpdateIntDeath --- */
+
+static void UpdateIntDeath()
+{
+    ++g_deathCount;
+}
 

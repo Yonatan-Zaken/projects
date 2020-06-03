@@ -1,4 +1,4 @@
-#command makefile
+#dispatcher makefile
 
 #flags
 CC=g++   
@@ -7,49 +7,41 @@ RFLAGS=-std=c++98 -ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3 -I$(INC)
 LDFLAGS_DEBUG=-L../lib/libdebug -Wl,-rpath=../lib/libdebug
 LDFLAGS_RELEASE=-L$(DIR_RELEASE) -Wl,-rpath,'$$ORIGIN'
 
-#command names
-SRC=command.cpp
-SRC_TEST=command_test.cpp
-TARGET_DEBUG=./command
-TARGET_RELEASE=./outrelease/command
-OBJ_DEBUG=./command.o
-OBJ_RELEASE=./objrelease/command.o
+#dispatcher names
+SRC=dispatcher.cpp
+SRC_TEST=dispatcher_test.cpp tests.cpp
+TARGET_DEBUG=./dispatcher
+TARGET_RELEASE=./outrelease/dispatcher
+OBJ_DEBUG=./dispatcher.o
+OBJ_RELEASE=./objrelease/dispatcher.o
 DIR_DEBUG=../lib/libdebug/
 DIR_RELEASE=../lib/librelease/
 INC=../include/
 
 .PHONY: clean release debug all
 
-debug: $(DIR_DEBUG)libcommand.so 
+debug: $(DIR_DEBUG)libdispatcher.so 
 
-release: $(DIR_RELEASE)libcommand.so 
+release: $(DIR_RELEASE)libdispatcher.so 
 
-all: $(DIR_DEBUG)libcommand.so $(DIR_RELEASE)libcommand.so
+all: $(DIR_DEBUG)libdispatcher.so $(DIR_RELEASE)libdispatcher.so
 
 test: $(TARGET_DEBUG)  
 
 #Debug Out
-$(TARGET_DEBUG): $(DIR_DEBUG)libcommand.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) $(LDFLAGS_DEBUG) -o $@ $(SRC_TEST) -lcommand -lmessage
+$(TARGET_DEBUG): $(SRC_TEST) 
+	$(CC) $(CFLAGS) $(LDFLAGS_DEBUG) -o $@ $(SRC_TEST) -llogger -lboost_system -lboost_thread -pthread
 	
-#Release Out	
-$(TARGET_RELEASE): $(DIR_RELEASE)libcommand.so $(SRC_TEST) 
-	$(CC) $(RFLAGS) $(LDFLAGS_RELEASE) -o $@ $(SRC_TEST) -lcommand  
-
 #Debug SO
-$(DIR_DEBUG)libcommand.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< 
+$(DIR_DEBUG)libdispatcher.so: $(OBJ_DEBUG)
+	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEBUG) 
 	  
-#Release SO
-$(DIR_RELEASE)libcommand.so: $(OBJ_RELEASE) 
-	$(CC) $(RFLAGS) -shared -o $@ $< $(LDFLAGS_DEBUG) -lmessage
-	
 #Debug Object
-$(OBJ_DEBUG): $(SRC) $(INC)command.hpp    
+$(OBJ_DEBUG): $(SRC) $(INC)dispatcher.hpp    
 	$(CC) $(CFLAGS) -c -fpic -o $@ $<
 
 #Release Object
-$(OBJ_RELEASE): $(SRC) $(INC)command.hpp
+$(OBJ_RELEASE): $(SRC) $(INC)dispatcher.hpp
 	$(CC) $(RFLAGS) -c -fpic -o $@ $<
 
 .PHONY: clean

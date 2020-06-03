@@ -4,11 +4,10 @@
     01/06/2020
     ILRD - RD8081           
 *********************/
-
 #ifndef ILRD_RD8081_DISPATCHER_HPP
 #define ILRD_RD8081_DISPATCHER_HPP
 
-#include <cassert>
+#include <cassert> // assert
 #include <vector> // std::vector
 #include <utility> // std::pair
 #include <algorithm> //std::for_each
@@ -64,10 +63,7 @@ private:
     class IsUnsubscribed
     {
     public:
-        bool operator()(const std::pair<OBSERVER*, Validity>& pair)
-        {
-            return (pair.second == UNSUBSCRIBED);
-        }
+        bool operator()(const std::pair<OBSERVER*, Validity>& pair);
     };
 };
 
@@ -79,7 +75,11 @@ Dispatcher<OBSERVER, PARAM>::~Dispatcher() noexcept
     std::size_t size = m_observerList.size();
     for (std::size_t i = 0; i < size; ++i)
     {
-        m_observerList[i].first->UpdateDeath();
+        if (SUBSCRIBED == m_observerList[i].second)
+        {
+            m_observerList[i].first->UpdateDeath();
+        }
+         
     }
 }
 
@@ -114,8 +114,17 @@ void Dispatcher<OBSERVER, PARAM>::Unsubscribe(OBSERVER *observer)
     typename std::vector<std::pair<OBSERVER*, Validity> >::iterator it;
     it = std::find_if(m_observerList.begin(), m_observerList.end(), IsSameObserver(observer));
     
-    //assert(it != m_observerList.end());
+    assert(it != m_observerList.end());
     it->second = UNSUBSCRIBED;
+}
+
+/******************************************************************************/
+/********************** IsUnsubscribed Functor Definitions ********************/
+
+template <class OBSERVER, class PARAM>
+bool Dispatcher<OBSERVER, PARAM>::IsUnsubscribed::operator()(const std::pair<OBSERVER*, Validity>& pair)
+{
+    return (UNSUBSCRIBED == pair.second);
 }
 
 /******************************************************************************/
@@ -126,7 +135,10 @@ void Dispatcher<OBSERVER, PARAM>::Broadcast(PARAM param)
     std::size_t size = m_observerList.size();
     for (std::size_t i = 0; i < size; ++i)
     {
-        m_observerList[i].first->Update(param);
+        if (SUBSCRIBED == m_observerList[i].second)
+        {
+            m_observerList[i].first->Update(param);
+        }
     }
 
     m_observerList.erase(std::remove_if(m_observerList.begin(), m_observerList.end(), IsUnsubscribed()), m_observerList.end());
@@ -176,7 +188,7 @@ ObserverBase<PARAM>::~ObserverBase() noexcept
 template <class PARAM>
 void ObserverBase<PARAM>::UpdateDeath()
 {
-    m_dispatcher = NULL;
+    m_dispatcher = nullptr;
     UpdateDeathIMP();
 }
 
