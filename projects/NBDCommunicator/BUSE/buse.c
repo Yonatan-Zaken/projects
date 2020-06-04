@@ -127,6 +127,9 @@ static int serve_nbd(int sk, const struct buse_operations * aop, void * userdata
 
   while ((bytes_read = read(sk, &request, sizeof(request))) > 0) 
   {
+    int i = 0;
+    i++;
+    printf("out of block on request %d!\n", i);
     assert(bytes_read == sizeof(request));
     memcpy(reply.handle, request.handle, sizeof(reply.handle));
     reply.error = htonl(0);
@@ -246,7 +249,7 @@ int buse_main(const char* dev_file, const struct buse_operations *aop, void *use
      * it seems there is no good way to handle such interruption.*/
     sigset_t sigset;
     if (
-      sigfillset(&sigset) != 0 ||
+      sigfillset(&sigsclose(sp[0]);et) != 0 ||
       sigprocmask(SIG_SETMASK, &sigset, NULL) != 0
     ) {
       warn("failed to block signals in child");

@@ -7,36 +7,41 @@
 #ifndef ILRD_RD8081_NBDCOMMUNICATOR_HPP
 #define ILRD_RD8081_NBDCOMMUNICATOR_HPP
 
+#include <boost/function.hpp>
+
+#include "reactor.hpp"
+#include "unix_socket.hpp"
+
 namespace ilrd
 {
 
-
-class NBDCommunicator
+class NBDCommunicator: private Uncopyable
 {
 public:	
-    explicit NBDCommunicator();	
-    NBDCommunicator(const NBDCommunicator& other);	
-    NBDCommunicator& operator=(const NBDCommunicator& other);	
-    ~NBDCommunicator();
+    typedef boost::function <void(void)> callback_t;
 
-    void SendTo();
-    void RecvFrom();
+    explicit NBDCommunicator(const char *dev, std::size_t size, Reactor& reactor, callback_t callback);	
+    // NBDCommunicator(const NBDCommunicator& other) = disabled;	
+    // NBDCommunicator& operator=(const NBDCommunicator& other) = disabled;	
+    ~NBDCommunicator() noexcept;
 
+    int GetMasterFD();
+    int GetNBDFD();
+
+    void Start();
+    
 private:
-    int m_fdl
-};
+    UnixSocket m_unixSocket;
+    callback_t m_callback;
+    Reactor &m_reactor;
+    int m_nbdFD;
 
-class Master
-{
-public:
-    Master();
-    ~Master();
-private:
-    Reactor& m_reactor;
+    int OpenDevice(const char *dev);
+    void InitDeviceSize(std::size_t size);
+    void ServeNBD();
+    void Ioctl();
 };
-
 
 } // namespace ilrd
-
 
 #endif // ILRD_RD8081_NBDCOMMUNICATOR_HPP
