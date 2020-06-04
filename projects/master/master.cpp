@@ -13,8 +13,8 @@ namespace ilrd
 {
 
 Master::Master(const char *dev, std::size_t size):
-    m_communicator(dev, size, reactor, boost::bind(&Master::Callback, this)),
-    m_reactor()
+    m_reactor(),
+    m_communicator(dev, size, m_reactor, boost::bind(&Master::Callback, this)),
 {
 
 }
@@ -30,8 +30,6 @@ Master::~Master()
 
 void Master::Callback()
 {
-    close(m_communicator.GetNBDFD());
-
     u_int64_t from;
     u_int32_t len;
     ssize_t bytes_read;
@@ -42,7 +40,8 @@ void Master::Callback()
     reply.magic = htonl(NBD_REPLY_MAGIC);
     reply.error = htonl(0);
 
-    while ((bytes_read = read(sk, &request, sizeof(request))) > 0) 
+    int fd = m_communicator.GetMasterFD();
+    while ((bytes_read = read(fd, &request, sizeof(request))) > 0) 
     {
         int i = 0;
         i++;
@@ -75,15 +74,15 @@ void Master::Callback()
             reply.error = htonl(EPERM);
         }
         
-        write_all(sk, (char*)&reply, sizeof(struct nbd_reply));
-        write_all(sk, (char*)chunk, len);
+        write_all(fd, (char*)&reply, sizeof(struct nbd_reply));
+        write_all(fd, (char*)chunk, len);
         free(chunk);
         break;
 
         case NBD_CMD_WRITE:
             if (BUSE_DEBUG) fprintf(stderr, "Request for write of size %d\n", len);
         chunk = malloc(len);
-        read_all(sk, chunk, len);
+        read_all(fd, chunk, len);
         if (aop->write) 
         {
             reply.error = aop->write(chunk, len, from, userdata);
@@ -95,7 +94,7 @@ void Master::Callback()
         }
         
         free(chunk);
-        write_all(sk, (char*)&reply, sizeof(struct nbd_reply));
+        write_all(fd, (char*)&reply, sizeof(struct nbd_reply));
         break;
 }
 

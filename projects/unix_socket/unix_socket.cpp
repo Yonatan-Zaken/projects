@@ -21,18 +21,33 @@ UnixSocket::UnixSocket():
       }
 }
 
+/******************************************************************************/
+
 UnixSocket::~UnixSocket() noexcept
 {
-    close(m_sockPair[0]);
-    close(m_sockPair[1]);
+    if (-1 == close(m_sockPair[0]))
+    {
+        // ?????????
+        LOG_ERROR("close syscall failed");
+    }
+    
+    if (-1 == close (m_sockPair[1))
+    {
+        // ?????????
+        LOG_ERROR("close syscall failed");
+    }
 }
 
-UnixSocket::GetChildFD() const noexcept
+/******************************************************************************/
+
+int UnixSocket::GetChildFD() const noexcept
 {
     return m_sockPair[0];
 }
 
-UnixSocket::GetParentFD() const noexcept
+/******************************************************************************/
+
+int UnixSocket::GetParentFD() const noexcept
 {
     return m_sockPair[1];
 }

@@ -25,10 +25,8 @@ public:
     // NBDCommunicator& operator=(const NBDCommunicator& other) = disabled;	
     ~NBDCommunicator() noexcept;
 
-    int GetMasterFD();
-    int GetNBDFD();
-
     void Start();
+    int GetMasterFD() const;
     
 private:
     UnixSocket m_unixSocket;

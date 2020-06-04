@@ -7,6 +7,8 @@
 #ifndef ILRD_RD8081_MASTER_HPP
 #define ILRD_RD8081_MASTER_HPP
 
+#include <linux/nbd.h>  // NBD_SET_SIZE
+
 #include "utility.hpp"
 #include "reactor.hpp"
 #include "NBDCommunicator.hpp"

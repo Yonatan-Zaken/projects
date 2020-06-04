@@ -120,5 +120,12 @@ void NBDCommunicator::Ioctl()
     }   
 }
 
+/******************************************************************************/
+
+int NBDCommunicator::GetMasterFD() const
+{
+    return m_unixSocket.GetChildFD();
+}
+
 } // namespace ilrd
 
