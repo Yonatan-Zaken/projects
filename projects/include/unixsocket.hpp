@@ -31,6 +31,29 @@ private:
     int m_sockPair[PAIR];
 };
 
+namespace details
+{
+
+class SockPairError: public std::exception
+{
+public:
+    virtual const char *what() const noexcept
+    {
+        return "fail to create sockpair";
+    }
+};
+
+class CloseFDError: public std::exception
+{
+public:
+    virtual const char *what() const noexcept
+    {
+        return "fail to close fd";
+    }
+};
+
+} // namespace details
+
 } // namespace ilrd
 
 #endif

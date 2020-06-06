@@ -19,7 +19,7 @@ namespace ilrd
 class Master: private Uncopyable
 {
 public:
-    explicit Master(const char *dev, std::size_t size);
+    explicit Master(const char *dev, std::size_t nbdSize, std::size_t storageSize);
     ~Master() noexcept;
     // Master(const Master& other) = disabled;	
     // Master& operator=(const Master& other) = disabled;	
@@ -27,9 +27,37 @@ public:
     void Callback();
 
 private:
-    NBDCommunicator m_communicator;
     Reactor m_reactor;
+    char *m_storage;
+    NBDCommunicator m_communicator;
+
+    void WriteAll(int fd, char *buffer, std::size_t count);
+    void ReadAll(int fd, char *buffer, std::size_t count);
+
 };
+
+namespace details
+{
+
+class ReadError: public std::exception
+{
+public:
+    const char *what() const noexcept
+    {
+        return "error reading from file descriptor";
+    }
+};
+
+class WriteError: public std::exception
+{
+public:
+    const char *what() const noexcept
+    {
+        return "error writing to file descriptor";
+    }
+};
+
+} // namespace details
 
 } // namespace ilrd
 

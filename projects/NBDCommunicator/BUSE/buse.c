@@ -124,8 +124,10 @@ static int serve_nbd(int sk, const struct buse_operations * aop, void * userdata
 
   reply.magic = htonl(NBD_REPLY_MAGIC);
   reply.error = htonl(0);
-
+  int i = 0;
   while ((bytes_read = read(sk, &request, sizeof(request))) > 0) {
+    ++i;
+    printf("recieved request from nbd %d\n", i);
     assert(bytes_read == sizeof(request));
     memcpy(reply.handle, request.handle, sizeof(reply.handle));
     reply.error = htonl(0);

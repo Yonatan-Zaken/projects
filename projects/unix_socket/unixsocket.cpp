@@ -7,7 +7,8 @@
 
 #include <unistd.h> // close
 
-#include "unix_socket.hpp"
+#include "logger_preprocessor.hpp"
+#include "unixsocket.hpp"
 
 namespace ilrd
 {
@@ -17,7 +18,8 @@ UnixSocket::UnixSocket():
 {
       if (-1 == socketpair(AF_UNIX, SOCK_STREAM, 0, m_sockPair))
       {
-          // throw
+          LOG_ERROR("socketpair failed");
+          throw details::SockPairError();
       }
 }
 
@@ -27,13 +29,11 @@ UnixSocket::~UnixSocket() noexcept
 {
     if (-1 == close(m_sockPair[0]))
     {
-        // ?????????
         LOG_ERROR("close syscall failed");
     }
     
-    if (-1 == close (m_sockPair[1))
+    if (-1 == close (m_sockPair[1]))
     {
-        // ?????????
         LOG_ERROR("close syscall failed");
     }
 }

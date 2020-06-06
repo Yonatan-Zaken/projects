@@ -5,25 +5,33 @@
     ILRD - RD8081           
 *********************/
 
+#include <cassert>      // assert
+#include <iostream>     // std::cout
+#include <arpa/inet.h>  // htonl
+
+#include <inttypes.h>   // be64toh
+
 #include <boost/bind.hpp>
 
 #include "master.hpp"
+#include "logger_preprocessor.hpp"
 
 namespace ilrd
 {
 
-Master::Master(const char *dev, std::size_t size):
+Master::Master(const char *dev, std::size_t nbdSize, std::size_t storageSize):
     m_reactor(),
-    m_communicator(dev, size, m_reactor, boost::bind(&Master::Callback, this)),
+    m_storage(new char[storageSize]),
+    m_communicator(dev, nbdSize, m_reactor, boost::bind(&Master::Callback, this))
 {
-
+    m_communicator.Start();
 }
 
 /******************************************************************************/
 
-Master::~Master()
+Master::~Master() noexcept
 {
-
+    delete[] m_storage;
 }
 
 /******************************************************************************/
@@ -35,67 +43,94 @@ void Master::Callback()
     ssize_t bytes_read;
     struct nbd_request request;
     struct nbd_reply reply;
-    void *chunk;
-
-    reply.magic = htonl(NBD_REPLY_MAGIC);
-    reply.error = htonl(0);
-
+    void *chunk = nullptr;
+ 
     int fd = m_communicator.GetMasterFD();
-    while ((bytes_read = read(fd, &request, sizeof(request))) > 0) 
+    
+    if (-1 == (bytes_read = read(fd, &request, sizeof(request))))
     {
-        int i = 0;
-        i++;
-        printf("out of block on request %d!\n", i);
-        assert(bytes_read == sizeof(request));
-        memcpy(reply.handle, request.handle, sizeof(reply.handle));
-        reply.error = htonl(0);
+        throw details::ReadError();
+    }
+    
+    int i = 0;
+    i++;
+    std::cout << "out of block on request: " << i << "\n";
 
-        len = ntohl(request.len);
-        from = ntohll(request.from);
-        assert(request.magic == htonl(NBD_REQUEST_MAGIC));
+    assert(bytes_read == sizeof(request));
+    memcpy(reply.handle, request.handle, sizeof(reply.handle));
+    reply.magic = htonl(NBD_REPLY_MAGIC);
 
-        switch(ntohl(request.type)) {
-      /* I may at some point need to deal with the the fact that the
-       * official nbd server has a maximum buffer size, and divides up
-       * oversized requests into multiple pieces. This applies to reads
-       * and writes.
-       */
-        case NBD_CMD_READ:
-            if (BUSE_DEBUG) fprintf(stderr, "Request for read of size %d\n", len);
-      /* Fill with zero in case actual read is not implemented */
-        chunk = malloc(len);
-        if (aop->read) 
-        {
-            reply.error = aop->read(chunk, len, from, userdata);
-        } 
-        else 
-        {
-            /* If user not specified read operation, return EPERM error */
-            reply.error = htonl(EPERM);
-        }
+    len = ntohl(request.len);
+    from = be64toh(request.from);
+    assert(request.magic == htonl(NBD_REQUEST_MAGIC));
+
+    switch(ntohl(request.type)) 
+    {
+    /* I may at some point need to deal with the the fact that the
+    * official nbd server has a maximum buffer size, and divides up
+    * oversized requests into multiple pieces. This applies to reads
+    * and writes.
+    */
+    case NBD_CMD_READ:
+        std::cout << "Request for read of size: " << len << "\n";
+        /* Fill with zero in case actual read is not implemented */
+        chunk = operator new(len);  
+        memcpy(chunk, m_storage + from, len);
         
-        write_all(fd, (char*)&reply, sizeof(struct nbd_reply));
-        write_all(fd, (char*)chunk, len);
-        free(chunk);
+        WriteAll(fd, (char *)&reply, sizeof(struct nbd_reply));
+        WriteAll(fd, static_cast<char *>(chunk), len);
+
+        operator delete(chunk);
         break;
 
-        case NBD_CMD_WRITE:
-            if (BUSE_DEBUG) fprintf(stderr, "Request for write of size %d\n", len);
-        chunk = malloc(len);
-        read_all(fd, chunk, len);
-        if (aop->write) 
+    case NBD_CMD_WRITE:
+        std::cout << "Request for write of size: " << len << "\n";
+        chunk = operator new(len);
+        ReadAll(fd, static_cast<char *>(chunk), len);
+        memcpy(m_storage + from, chunk, len);
+        
+        operator delete(chunk);
+        WriteAll(fd, (char *)&reply, sizeof(struct nbd_reply));
+        break;
+    }   
+}
+
+/****************************** Private Functions *****************************/
+
+void Master::WriteAll(int fd, char *buffer, std::size_t count)
+{
+    int bytes_written = 0;
+
+    while (count > 0) 
+    {
+        if (-1 == (bytes_written = write(fd, buffer, count)))
         {
-            reply.error = aop->write(chunk, len, from, userdata);
-        } 
-        else 
-        {
-            /* If user not specified write operation, return EPERM error */
-            reply.error = htonl(EPERM);
+            throw details::WriteError();
         }
         
-        free(chunk);
-        write_all(fd, (char*)&reply, sizeof(struct nbd_reply));
-        break;
+        buffer += bytes_written;
+        count -= bytes_written;
+    }
+    assert(count == 0);  
+}
+
+/******************************************************************************/
+
+void Master::ReadAll(int fd, char *buffer, std::size_t count)
+{
+    int bytes_read = 0;
+
+    while (count > 0) 
+    {
+        if (-1 == (bytes_read = read(fd, buffer, count)))
+        {
+            throw details::ReadError();
+        }
+        
+        buffer += bytes_read;
+        count -= bytes_read;
+    }
+    assert(count == 0);    
 }
 
 } // namespace ilrd
