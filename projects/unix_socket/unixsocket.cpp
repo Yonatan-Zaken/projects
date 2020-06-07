@@ -5,7 +5,8 @@
     ILRD - RD8081           
 *********************/
 
-#include <unistd.h> // close
+#include <unistd.h>     // close
+#include <sys/socket.h> // socketpair
 
 #include "logger_preprocessor.hpp"
 #include "unixsocket.hpp"
@@ -40,14 +41,14 @@ UnixSocket::~UnixSocket() noexcept
 
 /******************************************************************************/
 
-int UnixSocket::GetChildFD() const noexcept
+int UnixSocket::GetFirstFD() const noexcept
 {
     return m_sockPair[0];
 }
 
 /******************************************************************************/
 
-int UnixSocket::GetParentFD() const noexcept
+int UnixSocket::GetSecondFD() const noexcept
 {
     return m_sockPair[1];
 }

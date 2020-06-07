@@ -38,32 +38,6 @@ void Minion::Callback()
     boost::shared_ptr<ReplyMessage> reply(new ReplyMessage(request->GetOperation(), request->GetID(), errorCode, request->DataBlock()));
 
     m_connection.SendMessage(reply);
-
-/*
-    switch (type)
-    {
-    case 0:
-    {
-        uint8_t buffer[protocol::BLOCK_SIZE] = {0};
-        uint8_t error_code = m_storage->Read(buffer, request->GetBlockID());
-
-        boost::shared_ptr<Message> reply(new ReplyRead(request->GetOperation(), request->GetID(), error_code, buffer));
-
-        m_connection.SendMessage(reply);
-        break;
-    }
-    
-    case 1:
-    {
-        uint8_t error_code = m_storage->Write(request->DataBlock(), request->GetBlockID());
-
-        boost::shared_ptr<Message> reply(new ReplyWrite(request->GetOperation(), request->GetID(), error_code));
-      
-        m_connection.SendMessage(reply);
-        break;
-    }
-    } // switch-case    
-*/
 }
 
 /*****************************************************************************/

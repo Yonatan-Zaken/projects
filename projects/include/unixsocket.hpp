@@ -7,8 +7,7 @@
 #ifndef ILRD_RD8081_UNIXSOCKET_HPP
 #define ILRD_RD8081_UNIXSOCKET_HPP
 
-#include <sys/socket.h>
-#include <cstddef>
+#include <cstddef>  // std::size_t
 
 #include "utility.hpp"
 
@@ -23,13 +22,15 @@ public:
     // UnixSocket(const UnixSocket& other) = disabled;	
     // UnixSocket& operator=(const UnixSocket& other) = disabled;	
 
-    int GetChildFD() const noexcept;
-    int GetParentFD() const noexcept;
+    int GetFirstFD() const noexcept;
+    int GetSecondFD() const noexcept;
 
 private:
     static const std::size_t PAIR = 2;
     int m_sockPair[PAIR];
 };
+
+/***************************** Exception Details ******************************/
 
 namespace details
 {

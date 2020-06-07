@@ -8,7 +8,6 @@
 #include <cassert>      // assert
 #include <iostream>     // std::cout
 #include <arpa/inet.h>  // htonl
-
 #include <inttypes.h>   // be64toh
 
 #include <boost/bind.hpp>
@@ -38,12 +37,9 @@ Master::~Master() noexcept
 
 void Master::Callback()
 {
-    u_int64_t from;
-    u_int32_t len;
-    ssize_t bytes_read;
+    ssize_t bytes_read = 0;
     struct nbd_request request;
     struct nbd_reply reply;
-    void *chunk = nullptr;
  
     int fd = m_communicator.GetMasterFD();
     
@@ -51,30 +47,23 @@ void Master::Callback()
     {
         throw details::ReadError();
     }
-    
-    int i = 0;
-    i++;
-    std::cout << "out of block on request: " << i << "\n";
+    std::cout << "bytes read: " << bytes_read << "\n";
 
     assert(bytes_read == sizeof(request));
     memcpy(reply.handle, request.handle, sizeof(reply.handle));
     reply.magic = htonl(NBD_REPLY_MAGIC);
-
-    len = ntohl(request.len);
-    from = be64toh(request.from);
+    reply.error = htonl(0);
+    
+    u_int32_t len = ntohl(request.len);
+    u_int64_t from = be64toh(request.from);
     assert(request.magic == htonl(NBD_REQUEST_MAGIC));
 
     switch(ntohl(request.type)) 
     {
-    /* I may at some point need to deal with the the fact that the
-    * official nbd server has a maximum buffer size, and divides up
-    * oversized requests into multiple pieces. This applies to reads
-    * and writes.
-    */
+
     case NBD_CMD_READ:
         std::cout << "Request for read of size: " << len << "\n";
-        /* Fill with zero in case actual read is not implemented */
-        chunk = operator new(len);  
+        void *chunk = operator new(len);  
         memcpy(chunk, m_storage + from, len);
         
         WriteAll(fd, (char *)&reply, sizeof(struct nbd_reply));
@@ -85,7 +74,7 @@ void Master::Callback()
 
     case NBD_CMD_WRITE:
         std::cout << "Request for write of size: " << len << "\n";
-        chunk = operator new(len);
+        void *chunk = operator new(len);
         ReadAll(fd, static_cast<char *>(chunk), len);
         memcpy(m_storage + from, chunk, len);
         

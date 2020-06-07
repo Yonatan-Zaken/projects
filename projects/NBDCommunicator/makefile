@@ -35,7 +35,7 @@ $(TARGET_DEBUG): $(SRC_TEST)
 	
 #Debug SO
 $(DIR_DEBUG)libNBDCommunicator.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEPEND) -lreactor $(LDFLAGS_DEPEND) -lunix_socket
+	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEPEND) -lreactor $(LDFLAGS_DEPEND) -lunixsocket
 	  
 #Debug Object
 $(OBJ_DEBUG): $(SRC) $(INC)NBDCommunicator.hpp     

@@ -38,6 +38,7 @@ private:
     void InitDeviceSize(std::size_t size);
     void ServeNBD();
     void Ioctl();
+    void BlockSignals();
 };
 
 /**************************** Exception Details *******************************/
@@ -105,6 +106,15 @@ public:
     const char *what() const noexcept
     {
         return "error clearing nbd queue";
+    }
+};
+
+class BlockSignalsError: public std::exception
+{
+public:
+    const char *what() const noexcept
+    {
+        return "error blocking signals";
     }
 };
 
