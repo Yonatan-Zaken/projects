@@ -7,7 +7,8 @@
 #ifndef ILRD_RD8081_UNIXSOCKET_HPP
 #define ILRD_RD8081_UNIXSOCKET_HPP
 
-#include <cstddef>  // std::size_t
+#include <cstddef>      // std::size_t
+#include <stdexcept>    // std::runtime_error
 
 #include "utility.hpp"
 
@@ -16,44 +17,37 @@ namespace ilrd
 
 class UnixSocket: private Uncopyable
 {
-public:	
+public:	      
     explicit UnixSocket();	
     ~UnixSocket() noexcept;
     // UnixSocket(const UnixSocket& other) = disabled;	
     // UnixSocket& operator=(const UnixSocket& other) = disabled;	
 
-    int GetFirstFD() const noexcept;
-    int GetSecondFD() const noexcept;
+    inline int GetFirstFD() const noexcept;
+    inline int GetSecondFD() const noexcept;
+
+    class UnixSocketError: public std::runtime_error
+    {
+    public:
+        explicit UnixSocketError(const char *message);
+    };
 
 private:
     static const std::size_t PAIR = 2;
     int m_sockPair[PAIR];
 };
 
-/***************************** Exception Details ******************************/
+/***************************** Inline Definition ******************************/
 
-namespace details
+inline int UnixSocket::GetFirstFD() const noexcept
 {
+    return m_sockPair[0];
+}
 
-class SockPairError: public std::exception
+inline int UnixSocket::GetSecondFD() const noexcept
 {
-public:
-    virtual const char *what() const noexcept
-    {
-        return "fail to create sockpair";
-    }
-};
-
-class CloseFDError: public std::exception
-{
-public:
-    virtual const char *what() const noexcept
-    {
-        return "fail to close fd";
-    }
-};
-
-} // namespace details
+    return m_sockPair[1];
+}
 
 } // namespace ilrd
 

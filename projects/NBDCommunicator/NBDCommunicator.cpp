@@ -17,6 +17,15 @@
 namespace ilrd
 {
 
+/************************* Exception Definition *******************************/
+
+NBDCommunicator::NBDCommunicatorError::NBDCommunicatorError(const char *msg):
+    std::runtime_error(msg)
+{
+}
+
+/******************************************************************************/
+
 NBDCommunicator::NBDCommunicator(const char *dev, std::size_t sizeOfDev, Reactor& reactor, callback_t callback):
     m_unixSocket(),
     m_callback(callback),
@@ -24,6 +33,7 @@ NBDCommunicator::NBDCommunicator(const char *dev, std::size_t sizeOfDev, Reactor
     m_nbdFD(OpenDevice(dev))
 {
     InitDeviceSize(sizeOfDev);
+    m_reactor.InsertFD(m_unixSocket.GetFirstFD(), FDListener::READ, m_callback);
 }
 
 /******************************************************************************/
@@ -35,18 +45,26 @@ NBDCommunicator::~NBDCommunicator() noexcept
         LOG_ERROR("fail waitpid");
     }
 
+    if(-1 == ioctl(m_nbdFD, NBD_DISCONNECT)) 
+    {
+        LOG_ERROR("fail to disconnect nbd");
+    }
 
     close(m_nbdFD);
 }
  
 /******************************************************************************/
 
-void NBDCommunicator::Start()
+void NBDCommunicator::NBDSetUp()
 {
-    m_reactor.InsertFD(m_unixSocket.GetFirstFD(), FDListener::READ, m_callback);
-
     pid_t pid = {0};
-    if (0 == (pid = fork()))
+
+    if (-1 == (pid = fork()))
+    {
+        throw NBDCommunicator::NBDCommunicatorError("fail to fork process");
+    }
+    
+    else if (0 == pid)
     {
         BlockSignals();
         close(m_unixSocket.GetFirstFD());
@@ -55,7 +73,7 @@ void NBDCommunicator::Start()
     }
 
     close(m_unixSocket.GetSecondFD());
-    ServeNBD();
+    //ServeNBD();
 }
 
 /******************************************************************************/
@@ -73,7 +91,7 @@ int NBDCommunicator::OpenDevice(const char *dev)
     if (-1 == nbdFD) 
     {
         LOG_ERROR("fail to open nbd block device");
-        throw details::OpenDeviceError(); 
+        throw NBDCommunicator::NBDCommunicatorError("error opening network block device");
     }
 
     return nbdFD;
@@ -86,13 +104,13 @@ void NBDCommunicator::InitDeviceSize(std::size_t size)
     if (-1 == ioctl(m_nbdFD, NBD_SET_SIZE, size))
     {
         LOG_ERROR("fail to set nbd size");
-        throw details::NBDSetSizeError();
+        throw NBDCommunicator::NBDCommunicatorError("error setting nbd size");
     }
 
     if (-1 == ioctl(m_nbdFD, NBD_CLEAR_SOCK))
     {
         LOG_ERROR("fail to clear nbd socket");
-        throw details::NBDClearSocketError();
+        throw NBDCommunicator::NBDCommunicatorError("error clearing nbd socket");
     }
 }
 
@@ -107,44 +125,66 @@ void NBDCommunicator::ServeNBD()
 
 void NBDCommunicator::Ioctl()
 {
-    if(-1 == ioctl(m_nbdFD, NBD_SET_SOCK, m_unixSocket.GetSecondFD()))
-    {
-        LOG_ERROR("fail to set nbd socket");
-        exit(1);
-    }
-
-    std::cout << "m_nbdFD is: " << m_nbdFD << "\n";
-    if (-1 == ioctl(m_nbdFD, NBD_DO_IT))
-    {
-        std::cerr << "NBD_DO_IT fail\n";
-        LOG_ERROR("fail to nbd do it");
-        exit(1);
-    }
-
-    if (-1 == ioctl(m_nbdFD, NBD_CLEAR_QUE))
-    {
-        LOG_ERROR("fail to nbd clear que");
-        exit(1);
-    }
-    
-    if (-1 == ioctl(m_nbdFD, NBD_CLEAR_SOCK))
-    {
-        LOG_ERROR("fail to nbd clear sock");
-        exit(1);
-    }   
+    NBDSetSocket();
+    NBDDoIt();
+    NBDClearQueue();
+    NBDClearSocket();
 }
 
 /******************************************************************************/
 
 void NBDCommunicator::BlockSignals()
 {
-    sigset_t sigset;
-    memset(&sigset, 0, sizeof(sigset_t));
+    sigset_t sigset = {0};
 
     if ((0 != sigfillset(&sigset)) || (0 != sigprocmask(SIG_SETMASK, &sigset, nullptr)))
     {
-        throw details::BlockSignalsError();
+        throw NBDCommunicator::NBDCommunicatorError("error blocking signals");
     }
+}
+
+/******************************************************************************/
+
+void NBDCommunicator::NBDSetSocket()
+{
+    if(-1 == ioctl(m_nbdFD, NBD_SET_SOCK, m_unixSocket.GetSecondFD()))
+    {
+        LOG_ERROR("fail to set nbd socket");
+        exit(1);
+    }
+}
+
+/******************************************************************************/
+
+void NBDCommunicator::NBDDoIt()
+{
+    if (-1 == ioctl(m_nbdFD, NBD_DO_IT))
+    {
+        LOG_ERROR("fail to nbd do it");
+        exit(1);
+    }
+}
+
+/******************************************************************************/
+
+void NBDCommunicator::NBDClearQueue()
+{
+    if (-1 == ioctl(m_nbdFD, NBD_CLEAR_QUE))
+    {
+        LOG_ERROR("fail to nbd clear que");
+        exit(1);
+    }
+}
+
+/******************************************************************************/
+    
+void NBDCommunicator::NBDClearSocket()
+{
+    if (-1 == ioctl(m_nbdFD, NBD_CLEAR_SOCK))
+    {
+        LOG_ERROR("fail to nbd clear sock");
+        exit(1);
+    }    
 }
 
 } // namespace ilrd

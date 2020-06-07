@@ -25,9 +25,15 @@ public:
     // NBDCommunicator& operator=(const NBDCommunicator& other) = disabled;	
     ~NBDCommunicator() noexcept;
 
-    void Start();
+    void NBDSetUp();
     int GetMasterFD() const noexcept;
     
+    class NBDCommunicatorError: public std::runtime_error
+    {
+    public:
+        explicit NBDCommunicatorError(const char *message);
+    };
+
 private:
     UnixSocket m_unixSocket;
     callback_t m_callback;
@@ -39,87 +45,11 @@ private:
     void ServeNBD();
     void Ioctl();
     void BlockSignals();
+    void NBDSetSocket();
+    void NBDDoIt();
+    void NBDClearQueue();
+    void NBDClearSocket();
 };
-
-/**************************** Exception Details *******************************/
-
-namespace details
-{
-
-class WaitError: public std::exception
-{
-public:
-    const char *what() const noexcept
-    {
-        return "error calling wait";
-    }
-};
-
-class OpenDeviceError: public std::exception
-{
-public:
-    const char *what() const noexcept
-    {
-        return "error opening network block device";
-    }
-};
-
-class NBDSetSizeError: public std::exception
-{
-public:
-    const char *what() const noexcept
-    {
-        return "error setting nbd size";
-    }
-};
-
-class NBDClearSocketError: public std::exception
-{
-public:
-    const char *what() const noexcept
-    {
-        return "error clearing nbd socket";
-    }
-};
-
-class NBDSetSocketError: public std::exception
-{
-public:
-    const char *what() const noexcept
-    {
-        return "error setting nbd socket";
-    }
-};
-
-class NBDDoItError: public std::exception
-{
-public:
-    const char *what() const noexcept
-    {
-        return "error nbd do it";
-    }
-};
-
-class NBDClearQueueError: public std::exception
-{
-public:
-    const char *what() const noexcept
-    {
-        return "error clearing nbd queue";
-    }
-};
-
-class BlockSignalsError: public std::exception
-{
-public:
-    const char *what() const noexcept
-    {
-        return "error blocking signals";
-    }
-};
-
-} // namespace details
-
 
 } // namespace ilrd
 

@@ -23,7 +23,7 @@ Master::Master(const char *dev, std::size_t nbdSize, std::size_t storageSize):
     m_storage(new char[storageSize]),
     m_communicator(dev, nbdSize, m_reactor, boost::bind(&Master::Callback, this))
 {
-    m_communicator.Start();
+    m_communicator.NBDSetUp();
 }
 
 /******************************************************************************/
@@ -35,12 +35,19 @@ Master::~Master() noexcept
 
 /******************************************************************************/
 
+void Master::StartNBDCommunication()
+{
+    m_reactor.Run();
+}
+
+/******************************************************************************/
+
 void Master::Callback()
 {
     ssize_t bytes_read = 0;
     struct nbd_request request;
     struct nbd_reply reply;
- 
+    
     int fd = m_communicator.GetMasterFD();
     
     if (-1 == (bytes_read = read(fd, &request, sizeof(request))))
@@ -58,12 +65,13 @@ void Master::Callback()
     u_int64_t from = be64toh(request.from);
     assert(request.magic == htonl(NBD_REQUEST_MAGIC));
 
+    void *chunk = nullptr;
     switch(ntohl(request.type)) 
     {
 
     case NBD_CMD_READ:
         std::cout << "Request for read of size: " << len << "\n";
-        void *chunk = operator new(len);  
+        chunk = operator new(len);  
         memcpy(chunk, m_storage + from, len);
         
         WriteAll(fd, (char *)&reply, sizeof(struct nbd_reply));
@@ -74,7 +82,7 @@ void Master::Callback()
 
     case NBD_CMD_WRITE:
         std::cout << "Request for write of size: " << len << "\n";
-        void *chunk = operator new(len);
+        chunk = operator new(len);
         ReadAll(fd, static_cast<char *>(chunk), len);
         memcpy(m_storage + from, chunk, len);
         

@@ -25,6 +25,7 @@ public:
     // Master& operator=(const Master& other) = disabled;	
     
     void Callback();
+    void StartNBDCommunication();
 
 private:
     Reactor m_reactor;
@@ -33,7 +34,6 @@ private:
 
     void WriteAll(int fd, char *buffer, std::size_t count);
     void ReadAll(int fd, char *buffer, std::size_t count);
-
 };
 
 namespace details

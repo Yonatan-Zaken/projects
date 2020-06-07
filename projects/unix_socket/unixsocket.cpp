@@ -17,11 +17,11 @@ namespace ilrd
 UnixSocket::UnixSocket():
     m_sockPair()
 {
-      if (-1 == socketpair(AF_UNIX, SOCK_STREAM, 0, m_sockPair))
-      {
-          LOG_ERROR("socketpair failed");
-          throw details::SockPairError();
-      }
+    if (-1 == socketpair(AF_UNIX, SOCK_STREAM, 0, m_sockPair))
+    {
+        LOG_ERROR("socketpair failed");
+        throw UnixSocketError("fail to create sockpair");
+    }
 }
 
 /******************************************************************************/
@@ -39,18 +39,11 @@ UnixSocket::~UnixSocket() noexcept
     }
 }
 
-/******************************************************************************/
+/********************** UnixSocketError definition ****************************/
 
-int UnixSocket::GetFirstFD() const noexcept
+UnixSocket::UnixSocketError::UnixSocketError(const char *message):
+    std::runtime_error(message)
 {
-    return m_sockPair[0];
-}
-
-/******************************************************************************/
-
-int UnixSocket::GetSecondFD() const noexcept
-{
-    return m_sockPair[1];
 }
 
 } // namespace ilrd
