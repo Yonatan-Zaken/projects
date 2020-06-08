@@ -34,9 +34,9 @@ public:
     };
 
 private:
+    struct addrinfo *m_serverInfo;
     int m_sockfd;
-    struct sockaddr m_sendToAddr;
-    socklen_t m_addrLen;
+
     int GetUDPSocket(const char* port);
 };
 
