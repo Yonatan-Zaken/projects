@@ -18,19 +18,19 @@
 namespace ilrd
 {
 
-Master::Master(const char *dev, std::size_t nbdSize, std::size_t storageSize):
+Master::Master(const char *dev, std::size_t nbdSize, const char *minionPort):
     m_reactor(),
-    m_storage(new char[storageSize]),
-    m_communicator(dev, nbdSize, m_reactor, boost::bind(&Master::Callback, this))
+    m_nbdCommunicator(dev, nbdSize, m_reactor, boost::bind(&Master::RequestCallback, this)),
+    m_minionCommunicator(minionPort)
 {
-    m_communicator.NBDSetUp();
+    m_nbdCommunicator.NBDSetUp();
+    m_reactor.InsertFD(m_minionCommunicator.GetMinionFD(), FDListener::READ, boost::bind(&Master::ReplyCallback, this));
 }
 
 /******************************************************************************/
 
 Master::~Master() noexcept
 {
-    delete[] m_storage;
 }
 
 /******************************************************************************/
@@ -42,54 +42,74 @@ void Master::StartNBDCommunication()
 
 /******************************************************************************/
 
-void Master::Callback()
+void Master::RequestCallback()
 {
     ssize_t bytes_read = 0;
     struct nbd_request request;
-    struct nbd_reply reply;
-    
-    int fd = m_communicator.GetMasterFD();
+    int fd = m_nbdCommunicator.GetMasterFD();
     
     if (-1 == (bytes_read = read(fd, &request, sizeof(request))))
     {
         throw details::ReadError();
     }
-    std::cout << "bytes read: " << bytes_read << "\n";
 
     assert(bytes_read == sizeof(request));
-    memcpy(reply.handle, request.handle, sizeof(reply.handle));
-    reply.magic = htonl(NBD_REPLY_MAGIC);
-    reply.error = htonl(0);
-    
-    u_int32_t len = ntohl(request.len);
-    u_int64_t from = be64toh(request.from);
     assert(request.magic == htonl(NBD_REQUEST_MAGIC));
 
-    void *chunk = nullptr;
-    switch(ntohl(request.type)) 
+    std::cout << "bytes read: " << bytes_read << "\n";
+        
+    u_int32_t type = ntohl(request.type);
+    u_int32_t len = ntohl(request.len);
+    u_int64_t from = be64toh(request.from);
+
+    switch(type) 
     {
 
     case NBD_CMD_READ:
         std::cout << "Request for read of size: " << len << "\n";
-        chunk = operator new(len);  
-        memcpy(chunk, m_storage + from, len);
+        m_minionCommunicator.WriteRequest(type, from, request.handle);
         
-        WriteAll(fd, (char *)&reply, sizeof(struct nbd_reply));
-        WriteAll(fd, static_cast<char *>(chunk), len);
-
-        operator delete(chunk);
         break;
 
     case NBD_CMD_WRITE:
         std::cout << "Request for write of size: " << len << "\n";
-        chunk = operator new(len);
-        ReadAll(fd, static_cast<char *>(chunk), len);
-        memcpy(m_storage + from, chunk, len);
+        char *chunk = new char[len];
+        ReadAll(fd, chunk, len);
+        m_minionCommunicator.WriteRequest(request.type, request.from, request.handle, chunk);
         
-        operator delete(chunk);
-        WriteAll(fd, (char *)&reply, sizeof(struct nbd_reply));
+        delete[] chunk;
         break;
     }   
+}
+
+/******************************************************************************/
+
+void Master::ReplyCallback()
+{
+    struct nbd_reply reply;
+    char *buffer = new char[protocol::BLOCK_SIZE + protocol::REPLY_METADATA_SIZE];
+
+    m_minionCommunicator.ReadReply(buffer);
+    u_int8_t type = buffer[0];
+    
+    InitReplyToNBD(reply, buffer);
+
+    int fd = m_nbdCommunicator.GetMasterFD();
+    WriteAll(fd, (char *)&reply, sizeof(struct nbd_reply));
+
+    switch (type)
+    {
+    case 0:
+        WriteAll(fd, buffer + protocol::READ_DATA_BLOCK_OFFSET, protocol::BLOCK_SIZE);
+        delete[] buffer;
+        
+        break;
+
+    case 1:
+        delete[] buffer;
+
+        break;
+    }
 }
 
 /****************************** Private Functions *****************************/
@@ -128,6 +148,15 @@ void Master::ReadAll(int fd, char *buffer, std::size_t count)
         count -= bytes_read;
     }
     assert(count == 0);    
+}
+
+/******************************************************************************/
+
+void Master::InitReplyToNBD(struct nbd_reply& reply, const char *data)
+{
+    reply.magic = htonl(NBD_REPLY_MAGIC);
+    memcpy(reply.handle, data + protocol::REQUEST_ID_OFFSET, sizeof(u_int64_t));
+    memcpy(&(reply.error), data + protocol::ERROR_CODE_OFFSET, sizeof(u_int8_t));
 }
 
 } // namespace ilrd

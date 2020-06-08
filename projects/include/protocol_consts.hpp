@@ -22,9 +22,17 @@ namespace protocol
         NUM_OF_OPERATIONS
     };
     
+    enum Connection
+    {
+        CLIENT,
+        SERVER
+    };
+
     static const uint64_t BLOCK_SIZE = 4096;
 
-    static const uint8_t REPLY_READ_METADATA_SIZE = 2 * sizeof(uint8_t) + sizeof(uint64_t);
+    static const uint64_t REPLY_METADATA_SIZE = 2 * sizeof(uint8_t) + sizeof(uint64_t);
+
+    static const uint8_t REPLY_READ_METADATA_SIZE = REPLY_METADATA_SIZE;
 
     static const uint8_t REPLY_WRITE_METADATA_SIZE = REPLY_READ_METADATA_SIZE;
 

@@ -27,8 +27,8 @@ public:
     //Minion(const minion& other); = disabled	
     //Minion& operator=(const minion& other); = disabled
 
-    void MinionStart();	
-    //static const uint64_t BLOCK_SIZE = 4096;
+    void MinionStart();
+    inline int GetFD() const noexcept;
 
 private:
     boost::shared_ptr<Storage> m_storage;
@@ -37,6 +37,11 @@ private:
     FactoryWrap m_factory;
     void Callback();
 };
+
+inline int Minion::GetFD() const noexcept
+{
+    return m_connection.GetFD();
+}
 
 } // namespace ilrd
 

@@ -36,7 +36,7 @@ $(TARGET_DEBUG): $(SRC_TEST)
 	
 #Debug SO
 $(DIR_DEBUG)libmaster.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEPEND) -lNBDCommunicator $(LDFLAGS_DEPEND) -llogger $(LOGGER_FLAGS)
+	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEPEND) -lminioncommunicator $(LDFLAGS_DEPEND) -lNBDCommunicator  $(LDFLAGS_DEPEND) -llogger $(LOGGER_FLAGS)
 	  
 #Debug Object
 $(OBJ_DEBUG): $(SRC) $(INC)master.hpp     

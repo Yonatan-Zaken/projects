@@ -12,6 +12,7 @@
 #include "utility.hpp"
 #include "reactor.hpp"
 #include "NBDCommunicator.hpp"
+#include "minioncommunicator.hpp"
 
 namespace ilrd
 {
@@ -19,21 +20,23 @@ namespace ilrd
 class Master: private Uncopyable
 {
 public:
-    explicit Master(const char *dev, std::size_t nbdSize, std::size_t storageSize);
+    explicit Master(const char *dev, std::size_t nbdSize, const char *minionPort);
     ~Master() noexcept;
     // Master(const Master& other) = disabled;	
     // Master& operator=(const Master& other) = disabled;	
     
-    void Callback();
+    void RequestCallback();
+    void ReplyCallback();
     void StartNBDCommunication();
 
 private:
     Reactor m_reactor;
-    char *m_storage;
-    NBDCommunicator m_communicator;
+    NBDCommunicator m_nbdCommunicator;
+    MinionCommunicator m_minionCommunicator;
 
     void WriteAll(int fd, char *buffer, std::size_t count);
     void ReadAll(int fd, char *buffer, std::size_t count);
+    void InitReplyToNBD(struct nbd_reply& reply, const char *data);
 };
 
 namespace details
