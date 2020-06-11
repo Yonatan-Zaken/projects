@@ -20,6 +20,7 @@ Minion::Minion(boost::shared_ptr<Storage> storage, const char* port):
     m_connection(port, m_reactor, boost::bind(&Minion::Callback, this)),
     m_factory()
 {
+    std::cout << "minion fd udp: " << GetFD() << "\n";
 }
 
 /*****************************************************************************/
@@ -29,8 +30,9 @@ void Minion::Callback()
     boost::shared_ptr<RequestMessage> request(m_connection.ConstructRequest());
     uint8_t type = request->GetOperation();
 
-    std::cout << type << "\n";
-    std::cout << request->GetBlockID() << "\n";
+    std::cout << "request type: " << static_cast<int>(type) << "\n";
+    std::cout << "request block ID: " << htobe64(request->GetBlockID()) << "\n";
+    std::cout << "request ID: "  << htobe64(request->GetID()) << "\n";
 
     boost::shared_ptr<Command> command(m_factory.Fabricate(type, request));
     uint8_t errorCode = command->Operation(m_storage, request->DataBlock());

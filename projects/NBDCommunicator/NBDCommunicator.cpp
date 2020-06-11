@@ -24,16 +24,14 @@ NBDCommunicator::NBDCommunicatorError::NBDCommunicatorError(const char *msg):
 {
 }
 
-/******************************************************************************/
+/*********************** NBD Communicator Definitions *************************/
 
-NBDCommunicator::NBDCommunicator(const char *dev, std::size_t sizeOfDev, Reactor& reactor, callback_t callback):
+NBDCommunicator::NBDCommunicator(const char *dev, std::size_t sizeOfDev, Reactor& reactor):
     m_unixSocket(),
-    m_callback(callback),
     m_reactor(reactor),
     m_nbdFD(OpenDevice(dev))
 {
     InitDeviceSize(sizeOfDev);
-    m_reactor.InsertFD(m_unixSocket.GetFirstFD(), FDListener::READ, m_callback);
 }
 
 /******************************************************************************/
@@ -73,7 +71,6 @@ void NBDCommunicator::NBDSetUp()
     }
 
     close(m_unixSocket.GetSecondFD());
-    //ServeNBD();
 }
 
 /******************************************************************************/

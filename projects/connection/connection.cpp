@@ -44,8 +44,12 @@ boost::shared_ptr<RequestMessage> Connection::ConstructRequest()
     m_udp.ReceiveFrom(buffer);
 
     uint8_t requestType = buffer[protocol::OPERATION_TYPE_OFFSET];
-    uint64_t requestID = *(reinterpret_cast<uint64_t *>(buffer + protocol::REQUEST_ID_OFFSET));
-    uint64_t blockID = *(reinterpret_cast<uint64_t *>(buffer + protocol::BLOCK_ID_OFFSET));
+    uint64_t requestID;
+    memcpy(&requestID, buffer + protocol::REQUEST_ID_OFFSET, sizeof(uint64_t));
+    //uint64_t requestID = *(reinterpret_cast<uint64_t *>(buffer + protocol::REQUEST_ID_OFFSET));
+    uint64_t blockID;
+    memcpy(&blockID, buffer + protocol::BLOCK_ID_OFFSET, sizeof(uint64_t));
+    //uint64_t blockID = *(reinterpret_cast<uint64_t *>(buffer + protocol::BLOCK_ID_OFFSET));
 
     boost::shared_ptr<RequestMessage> request(new RequestMessage(requestType, be64toh(requestID), be64toh(blockID), buffer + protocol::WRITE_DATA_BLOCK_OFFSET));
 

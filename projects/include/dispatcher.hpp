@@ -30,7 +30,7 @@ class Dispatcher : private Uncopyable
 {
 public:
     // explicit Dispatcher() = default;
-    ~Dispatcher() noexcept;
+    virtual ~Dispatcher() noexcept;
 
     void Broadcast(PARAM param);
 

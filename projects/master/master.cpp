@@ -20,11 +20,16 @@ namespace ilrd
 
 Master::Master(const char *dev, std::size_t nbdSize, const char *minionPort):
     m_reactor(),
-    m_nbdCommunicator(dev, nbdSize, m_reactor, boost::bind(&Master::RequestCallback, this)),
+    m_nbdCommunicator(dev, nbdSize, m_reactor),
     m_minionCommunicator(minionPort)
 {
     m_nbdCommunicator.NBDSetUp();
+    m_reactor.InsertFD(m_nbdCommunicator.GetMasterFD(), FDListener::READ, boost::bind(&Master::RequestCallback, this));
     m_reactor.InsertFD(m_minionCommunicator.GetMinionFD(), FDListener::READ, boost::bind(&Master::ReplyCallback, this));
+
+    std::cout << "nbd fd" << m_nbdCommunicator.GetMasterFD() << "\n";
+    std::cout << "minion fd" << m_minionCommunicator.GetMinionFD() << "\n";
+
 }
 
 /******************************************************************************/
@@ -57,24 +62,27 @@ void Master::RequestCallback()
     assert(request.magic == htonl(NBD_REQUEST_MAGIC));
 
     std::cout << "bytes read: " << bytes_read << "\n";
-        
-    u_int32_t type = ntohl(request.type);
-    u_int32_t len = ntohl(request.len);
-    u_int64_t from = be64toh(request.from);
+    std::cout << "request type: " << request.type << "\n";
+    std::cout << "request ID: " << request.handle << "\n";
+    std::cout << "request Block ID: " << request.from << "\n";
 
-    switch(type) 
+    //u_int32_t type = ntohl(request.type);
+    //u_int32_t len = ntohl(request.len);
+    //u_int64_t from = be64toh(request.from);
+
+    switch(request.type) 
     {
 
     case NBD_CMD_READ:
-        std::cout << "Request for read of size: " << len << "\n";
-        m_minionCommunicator.WriteRequest(type, from, request.handle);
+        std::cout << "Request for read of size: " << ntohl(request.len) << "\n";
+        m_minionCommunicator.WriteRequest(request.type, request.from, request.handle);
         
         break;
 
     case NBD_CMD_WRITE:
-        std::cout << "Request for write of size: " << len << "\n";
-        char *chunk = new char[len];
-        ReadAll(fd, chunk, len);
+        std::cout << "Request for write of size: " << ntohl(request.len) << "\n";
+        char *chunk = new char[request.len];
+        ReadAll(fd, chunk, request.len);
         m_minionCommunicator.WriteRequest(request.type, request.from, request.handle, chunk);
         
         delete[] chunk;
@@ -156,7 +164,8 @@ void Master::InitReplyToNBD(struct nbd_reply& reply, const char *data)
 {
     reply.magic = htonl(NBD_REPLY_MAGIC);
     memcpy(reply.handle, data + protocol::REQUEST_ID_OFFSET, sizeof(u_int64_t));
-    memcpy(&(reply.error), data + protocol::ERROR_CODE_OFFSET, sizeof(u_int8_t));
+    reply.error = 0;
+    //reply.error = data[protocol::ERROR_CODE_OFFSET];
 }
 
 } // namespace ilrd

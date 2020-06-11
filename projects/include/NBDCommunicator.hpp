@@ -20,7 +20,7 @@ class NBDCommunicator: private Uncopyable
 public:	
     typedef boost::function <void(void)> callback_t;
     
-    explicit NBDCommunicator(const char *dev, std::size_t size, Reactor& reactor, callback_t callback);	
+    explicit NBDCommunicator(const char *dev, std::size_t size, Reactor& reactor);	
     // NBDCommunicator(const NBDCommunicator& other) = disabled;	
     // NBDCommunicator& operator=(const NBDCommunicator& other) = disabled;	
     ~NBDCommunicator() noexcept;
@@ -36,7 +36,6 @@ public:
 
 private:
     UnixSocket m_unixSocket;
-    callback_t m_callback;
     Reactor &m_reactor;
     int m_nbdFD;
 

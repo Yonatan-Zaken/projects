@@ -59,6 +59,8 @@ static int CommunicateWithServer(int sockfd, struct addrinfo* res)
     char buf[MAXBUFLEN] = {0};
     char msg_to_send[30] = {0};
 
+    printf("udp client fd = %d\n", sockfd);
+
     while (1)
     {
         fgets(msg_to_send, sizeof(msg_to_send), stdin);

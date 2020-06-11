@@ -57,6 +57,8 @@ static int CommunicateWithServer(int sockfd)
     char buf[MAXBUFLEN] = {0};
     char pong[5] = "pong";
     
+    printf("udp server fd: %d\n", sockfd);    
+
     addr_len = sizeof(their_addr);
     while (1)
     {
