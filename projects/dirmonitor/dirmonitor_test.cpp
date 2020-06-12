@@ -24,11 +24,9 @@ static void DirMonitorTest()
 {
 	Reactor r1;
 
-	DirMonitor d1(r1, "/home/student/dir1");
-
+	DirMonitor d1(r1, "/home/yonatan10/dir1");
 	Observer<InotifyEvent> o1(&d1, Update, Death);
-	// put the broadcast in the callback
-	d1.Broadcast()
+	r1.Run();
 
 }
 

@@ -31,7 +31,7 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(DIR_DEBUG)libdirmonitor.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -ldirmonitor 
+	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -ldirmonitor -lreactor
 	
 #Release Out	
 $(TARGET_RELEASE): $(DIR_RELEASE)libdirmonitor.so $(SRC_TEST) 

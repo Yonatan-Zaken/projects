@@ -11,7 +11,7 @@ using namespace ilrd;
 
 static void InotifyTest()
 {
-	Inotify i1("/home/student/dir1");
+	Inotify i1("/home/yonatan10/dir1");
 
 	const struct inotify_event *event = nullptr;
 	char buffer[sizeof(struct inotify_event) + NAME_MAX + 1] = {0};

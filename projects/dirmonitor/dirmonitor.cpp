@@ -22,7 +22,6 @@ DirMonitor::DirMonitor(Reactor& reactor, const char *pathname):
     m_event()
 {
     m_reactor.InsertFD(m_inotify.GetFD(), FDListener::READ, boost::bind(&DirMonitor::Callback, this));
-    m_reactor.Run();
 }
 
 /******************************************************************************/
@@ -40,6 +39,7 @@ void DirMonitor::Callback()
     const struct inotify_event *event = reinterpret_cast<const struct inotify_event*>(buffer);
 
     InitEventInfo(event);
+    this->Broadcast(m_event);
 }
 
 /*************************** Private Definitions ******************************/
