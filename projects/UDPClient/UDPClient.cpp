@@ -46,11 +46,14 @@ void UDPClient::SendTo(const uint8_t *buffer) const
 
 void UDPClient::ReceiveFrom(uint8_t *buffer)
 {
-    if (-1 == (recvfrom(m_sockfd, buffer, protocol::RECV_BLOCK_SIZE, 0, 
+    int bytes_read = 0;
+    if (-1 == (bytes_read = recvfrom(m_sockfd, buffer, protocol::REPLY_READ_SIZE, 0, 
     m_serverInfo->ai_addr, &(m_serverInfo->ai_addrlen)))) 
     {
         throw UDPClientError("revcfrom error");
     }
+
+    std::cout << "bytes read udp client: " << bytes_read << "\n";
 }
 
 /******************************************************************************/

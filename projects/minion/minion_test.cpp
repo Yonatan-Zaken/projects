@@ -7,7 +7,7 @@ using namespace ilrd;
 
 int main()
 {
-	boost::shared_ptr<HeapStorage> storage(new HeapStorage(20));
+	boost::shared_ptr<HeapStorage> storage(new HeapStorage(4000));
 	Minion minion(storage, "4443");
 
 	minion.MinionStart();

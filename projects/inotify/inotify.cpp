@@ -15,10 +15,9 @@ namespace ilrd
 {
 
 Inotify::Inotify(const char *path):
-    m_path(path),
     m_inotifyFD(InotifyInit())
 {
-    if (-1 == inotify_add_watch(m_inotifyFD, m_path, IN_CREATE | IN_DELETE))
+    if (-1 == inotify_add_watch(m_inotifyFD, path, IN_CREATE | IN_DELETE))
     {
         throw InotifyError("inotify fail to add watch");
     }

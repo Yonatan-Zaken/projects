@@ -13,6 +13,7 @@
 #include "UDPServer.hpp"
 #include "message.hpp"
 #include "utility.hpp"
+#include "eventqueue.hpp"
 
 namespace ilrd
 {
@@ -35,6 +36,7 @@ private:
     UDPServer m_udp;
     Reactor& m_reactor;
     callback_t m_callback;
+    EventQueue<boost::shared_ptr<ReplyMessage> > m_eventqueue;
 };
 
 } // namespace ilrd

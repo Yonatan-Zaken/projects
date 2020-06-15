@@ -6,7 +6,7 @@ using namespace ilrd;
 
 int main()
 {
-	Master m("/dev/nbd0", 128 * 1024 * 1024, "4443");
+	Master m("/dev/nbd0", 4000, "4443");
 	m.StartNBDCommunication();
 
 	return 0;

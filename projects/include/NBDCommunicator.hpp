@@ -20,7 +20,7 @@ class NBDCommunicator: private Uncopyable
 public:	
     typedef boost::function <void(void)> callback_t;
     
-    explicit NBDCommunicator(const char *dev, std::size_t size, Reactor& reactor);	
+    explicit NBDCommunicator(const char *dev, std::size_t numOfBlocks, Reactor& reactor);	
     // NBDCommunicator(const NBDCommunicator& other) = disabled;	
     // NBDCommunicator& operator=(const NBDCommunicator& other) = disabled;	
     ~NBDCommunicator() noexcept;
@@ -40,7 +40,7 @@ private:
     int m_nbdFD;
 
     int OpenDevice(const char *dev);
-    void InitDeviceSize(std::size_t size);
+    void InitDeviceSize(std::size_t numOfBlocks);
     void ServeNBD();
     void Ioctl();
     void BlockSignals();

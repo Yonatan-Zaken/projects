@@ -17,8 +17,7 @@ namespace ilrd
 
 DirMonitor::DirMonitor(Reactor& reactor, const char *pathname):
     m_reactor(reactor),
-    m_path(pathname),
-    m_inotify(m_path),
+    m_inotify(pathname),
     m_event()
 {
     m_reactor.InsertFD(m_inotify.GetFD(), FDListener::READ, boost::bind(&DirMonitor::Callback, this));
@@ -36,6 +35,7 @@ void DirMonitor::Callback()
 {
     char buffer[sizeof(struct inotify_event) + NAME_MAX + 1];
     ReadEvent(buffer);
+    
     const struct inotify_event *event = reinterpret_cast<const struct inotify_event*>(buffer);
 
     InitEventInfo(event);

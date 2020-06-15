@@ -100,7 +100,7 @@ FDListener::vector_t FDListener::MonitorIMP(const vector_t &vector, struct timev
             readyFDs.push_back(FDListener::key_t(i, FDListener::WRITE));
         }
 
-        if (FD_ISSET(i, &masterFDs[FDListener::WRITE])) 
+        if (FD_ISSET(i, &masterFDs[FDListener::EXCEPT])) 
         { 
             readyFDs.push_back(FDListener::key_t(i, FDListener::EXCEPT));
         }

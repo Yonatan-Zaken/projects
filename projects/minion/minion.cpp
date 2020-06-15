@@ -31,7 +31,7 @@ void Minion::Callback()
     uint8_t type = request->GetOperation();
 
     std::cout << "request type: " << static_cast<int>(type) << "\n";
-    std::cout << "request block ID: " << htobe64(request->GetBlockID()) << "\n";
+    std::cout << "request block ID: " << ((request->GetBlockID())) << "\n";
     std::cout << "request ID: "  << htobe64(request->GetID()) << "\n";
 
     boost::shared_ptr<Command> command(m_factory.Fabricate(type, request));

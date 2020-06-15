@@ -31,7 +31,6 @@ public:
     };
 
 private:
-    const char *m_path;
     int m_inotifyFD;
     int InotifyInit();
 };

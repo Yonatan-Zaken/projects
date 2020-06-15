@@ -11,6 +11,7 @@
 #include <linux/nbd.h>  // NBD_SET_SIZE
 #include <sys/ioctl.h>  // ioctl
 
+#include "protocol_consts.hpp"
 #include "NBDCommunicator.hpp"
 #include "logger_preprocessor.hpp"
 
@@ -26,12 +27,12 @@ NBDCommunicator::NBDCommunicatorError::NBDCommunicatorError(const char *msg):
 
 /*********************** NBD Communicator Definitions *************************/
 
-NBDCommunicator::NBDCommunicator(const char *dev, std::size_t sizeOfDev, Reactor& reactor):
+NBDCommunicator::NBDCommunicator(const char *dev, std::size_t numOfBlocks, Reactor& reactor):
     m_unixSocket(),
     m_reactor(reactor),
     m_nbdFD(OpenDevice(dev))
 {
-    InitDeviceSize(sizeOfDev);
+    InitDeviceSize(numOfBlocks);
 }
 
 /******************************************************************************/
@@ -96,12 +97,18 @@ int NBDCommunicator::OpenDevice(const char *dev)
 
 /******************************************************************************/
 
-void NBDCommunicator::InitDeviceSize(std::size_t size)
+void NBDCommunicator::InitDeviceSize(std::size_t numOfBlocks)
 {
-    if (-1 == ioctl(m_nbdFD, NBD_SET_SIZE, size))
+    if (-1 == ioctl(m_nbdFD, NBD_SET_BLKSIZE, protocol::BLOCK_SIZE))
     {
-        LOG_ERROR("fail to set nbd size");
-        throw NBDCommunicator::NBDCommunicatorError("error setting nbd size");
+        LOG_ERROR("fail to set nbd block size");
+        throw NBDCommunicator::NBDCommunicatorError("error setting nbd block size");
+    }
+    
+    if (-1 == ioctl(m_nbdFD, NBD_SET_SIZE_BLOCKS, numOfBlocks))
+    {
+        LOG_ERROR("fail to set nbd num of blocks");
+        throw NBDCommunicator::NBDCommunicatorError("error setting nbd num of blocks");
     }
 
     if (-1 == ioctl(m_nbdFD, NBD_CLEAR_SOCK))

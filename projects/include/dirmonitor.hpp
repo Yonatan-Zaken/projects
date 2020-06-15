@@ -19,12 +19,15 @@ namespace ilrd
 
 struct InotifyEvent
 {
+public:
+    explicit InotifyEvent(const char *buffer);
     enum IdentifedOP
     {
         CREATE,
         DELETE
     };
-
+    
+private:
     char name[NAME_MAX];
     IdentifedOP operation;
 };
@@ -47,7 +50,6 @@ public:
 
 private:
     Reactor& m_reactor;
-    const char *m_path;
     Inotify m_inotify;
     InotifyEvent m_event;
 
