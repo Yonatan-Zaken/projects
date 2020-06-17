@@ -11,10 +11,12 @@
  * Config Derived Class:
  * Supports data saved in following ENV variables:
  * ILRD_NUM_OF_THREADS
+ * ILRD_THREADPOOL_TIMEOUT
  * ILRD_NUM_OF_MINIONS
  * ILRD_MINION_IP
  * ILRD_MINION_PORT
- * 
+ * ILRD_DIRMONITOR_PATH
+ * ILRD_NUMBER_OF_4K_BLOCKS
  */
 
 #include <stdexcept>    //std::invalid_argument
@@ -24,7 +26,7 @@
 namespace ilrd
 {
 
-class Config: public ConfigurationBase<std::string, std::string>
+class Config: public ConfigurationBase
 {
 public:
     //explicit Config() = default;

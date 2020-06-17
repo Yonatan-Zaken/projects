@@ -9,6 +9,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include "framework.hpp"
+
 #include "reactor.hpp"
 #include "storage.hpp"
 #include "connection.hpp"
@@ -31,6 +33,8 @@ public:
     inline int GetFD() const noexcept;
 
 private:
+    Framework m_framework;
+
     boost::shared_ptr<Storage> m_storage;
     Reactor m_reactor;
     Connection m_connection;

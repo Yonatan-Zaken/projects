@@ -14,7 +14,6 @@
 namespace ilrd
 {
 
-template <class KEY, class VALUE>
 class ConfigurationBase
 {
 public:	
@@ -22,7 +21,7 @@ public:
     //Configuration(const Configuration& other) default;
     //Configuration& operator=(const Configuration& other) = default;	
     ~ConfigurationBase() noexcept {}
-    virtual VALUE Get(KEY key) = 0;
+    virtual std::string Get(std::string key) = 0;
 };
 
 } // namespace ilrd
