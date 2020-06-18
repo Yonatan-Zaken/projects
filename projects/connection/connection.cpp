@@ -16,8 +16,7 @@ namespace ilrd
 Connection::Connection(const char* port, Reactor& reactor, callback_t callback):
     m_udp(UDPServer(port)),
     m_reactor(reactor),
-    m_callback(callback),
-    m_eventqueue()
+    m_callback(callback)
 {
     m_reactor.InsertFD(GetFD(), FDListener::READ, m_callback);
 }
@@ -54,7 +53,7 @@ boost::shared_ptr<RequestMessage> Connection::ConstructRequest()
     memcpy(&blockID, buffer + protocol::BLOCK_ID_OFFSET, sizeof(uint64_t));
     //uint64_t blockID = *(reinterpret_cast<uint64_t *>(buffer + protocol::BLOCK_ID_OFFSET));
 
-    boost::shared_ptr<RequestMessage> request(new RequestMessage(requestType, be64toh(requestID), (be64toh(blockID) / protocol::BLOCK_SIZE), buffer + protocol::WRITE_DATA_BLOCK_OFFSET));
+    boost::shared_ptr<RequestMessage> request(new RequestMessage(requestType, be64toh(requestID), (be64toh(blockID)), buffer + protocol::WRITE_DATA_BLOCK_OFFSET));
 
 
     return request;
@@ -64,9 +63,6 @@ boost::shared_ptr<RequestMessage> Connection::ConstructRequest()
 
 void Connection::SendMessage(boost::shared_ptr<ReplyMessage> reply) 
 {
-    
-
-
     uint8_t replyType = reply->GetOperation();
     uint8_t errorCode = reply->GetStatusCode();
     uint64_t requestId = htobe64(reply->GetID());
@@ -85,7 +81,7 @@ void Connection::SendMessage(boost::shared_ptr<ReplyMessage> reply)
 }
 
 /******************************************************************************/
-
+/*
 void EventCallback()
 {
     uint8_t replyType = reply->GetOperation();
@@ -104,7 +100,7 @@ void EventCallback()
 
     m_udp.SendTo(buffer);
 }
-
+*/
 } // namespace ilrd
 
 

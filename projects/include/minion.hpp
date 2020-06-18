@@ -24,21 +24,23 @@ namespace ilrd
 class Minion: private Uncopyable
 {
 public:	
-    Minion(boost::shared_ptr<Storage> storage, const char *port);
+    //Minion(boost::shared_ptr<Storage> storage, const char *port);
     //~Minion() noexcept = default;
     //Minion(const minion& other); = disabled	
     //Minion& operator=(const minion& other); = disabled
+
+    Minion(ConfigurationBase *config);
 
     void MinionStart();
     inline int GetFD() const noexcept;
 
 private:
-    Framework m_framework;
-
+    Framework m_framework;  
     boost::shared_ptr<Storage> m_storage;
-    Reactor m_reactor;
+    Reactor* m_reactor;
     Connection m_connection;
     FactoryWrap m_factory;
+
     void Callback();
 };
 
@@ -50,4 +52,3 @@ inline int Minion::GetFD() const noexcept
 } // namespace ilrd
 
 #endif
-

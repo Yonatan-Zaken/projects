@@ -76,6 +76,8 @@ void MinionCommunicator::BuildRequestProtocol(u_int32_t requestType, u_int64_t b
 {
     buffer[0] = be32toh(requestType);
     memcpy(buffer + protocol::REQUEST_ID_OFFSET, requestID, sizeof(uint64_t));
+    
+    blockOffset = htobe64(be64toh(blockOffset) / protocol::BLOCK_SIZE);
     memcpy(buffer + protocol::BLOCK_ID_OFFSET, &blockOffset, sizeof(uint64_t));
 }
 

@@ -36,7 +36,7 @@ private:
     UDPServer m_udp;
     Reactor& m_reactor;
     callback_t m_callback;
-    EventQueue<boost::shared_ptr<ReplyMessage> > m_eventqueue;
+    //EventQueue<boost::shared_ptr<ReplyMessage> > m_eventqueue;
 };
 
 } // namespace ilrd

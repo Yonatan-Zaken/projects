@@ -5,6 +5,7 @@ CC=g++
 CFLAGS=-std=c++98 -ansi -pedantic-errors -Wall -Wextra -g -I$(INC)
 RFLAGS=-std=c++98 -ansi -pedantic-errors -Wall -Wextra -DNDEBUG -O3 -I$(INC) 
 LDFLAGS_DEBUG=-L../lib/libdebug -Wl,-rpath=../lib/libdebug
+LDFLAGS_DEPEND=-L../lib/libdebug -Wl,-rpath,'$$ORIGIN'
 LDFLAGS_RELEASE=-L$(DIR_RELEASE) -Wl,-rpath,'$$ORIGIN'
 
 #minion names
@@ -30,7 +31,7 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(DIR_DEBUG)libminion.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lminion -lconnection -lUDPServer -lstorage -lfactory_wrap -lcommand
+	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lminion -lconnection -lUDPServer -lstorage -lfactory_wrap -lcommand -lframework -ltimer -ldirmonitor -lthread_pool -lconfig -lboost_system -lboost_thread -lboost_chrono
 
 #Release Out	
 $(TARGET_RELEASE): $(DIR_RELEASE)libminion.so $(SRC_TEST) 
@@ -38,7 +39,7 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libminion.so $(SRC_TEST)
 
 #Debug SO
 $(DIR_DEBUG)libminion.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< -L$(DIR_DEBUG) -Wl,-rpath,'$$ORIGIN' -lreactor -L$(DIR_DEBUG) -Wl,-rpath,'$$ORIGIN' -lconnection -L$(DIR_DEBUG) -Wl,-rpath,'$$ORIGIN' -lstorage -L$(DIR_DEBUG) -Wl,-rpath,'$$ORIGIN' -lfactory_wrap -L$(DIR_DEBUG) -Wl,-rpath,'$$ORIGIN' -lcommand
+	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEPEND) -lreactor $(LDFLAGS_DEPEND) -lconnection $(LDFLAGS_DEPEND) -lstorage $(LDFLAGS_DEPEND) -lfactory_wrap $(LDFLAGS_DEPEND) -lcommand $(LDFLAGS_DEPEND) -lframework
 	
 #Release SO
 $(DIR_RELEASE)libminion.so: $(OBJ_RELEASE)

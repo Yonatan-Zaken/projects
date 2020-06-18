@@ -18,5 +18,8 @@ int main()
 
 	Framework f1(&c1);
 
+	Reactor* r1 = f1.Get<Reactor*>("reactor");
+	boost::shared_ptr<Storage> s1(f1.Get<boost::shared_ptr<Storage> >("storage"));
+
 	return 0;
 }

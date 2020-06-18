@@ -17,6 +17,7 @@
  * ILRD_MINION_PORT
  * ILRD_DIRMONITOR_PATH
  * ILRD_NUMBER_OF_4K_BLOCKS
+ * ILRD_NBD_PATH
  */
 
 #include <stdexcept>    //std::invalid_argument

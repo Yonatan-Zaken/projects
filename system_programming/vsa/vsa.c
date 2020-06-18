@@ -29,7 +29,7 @@ struct BlockHeader
 typedef vsa_t block_header_t;
 typedef char* byte_t;
 
-static  long Abs(long block_size)
+static long Abs(long block_size)
 {
     if (0 > block_size)
     {

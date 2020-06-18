@@ -22,7 +22,7 @@ Framework::Framework(ConfigurationBase *config):
     Add("reactor", &m_reactor);
     Add("threadpool", &m_threadpool);
     Add("dirmonitor", &m_dirmonitor);
-    Add("storage", &m_storage);
+    Add<boost::shared_ptr<Storage> >("storage", m_storage);
     Add("scheduler", &m_scheduler);
     Add("servicelovator", &m_servicelocator);
 }
@@ -68,7 +68,7 @@ Framework::seconds_t Framework::GetThreadpoolTimeout()
 
 uint64_t Framework::GetNumOf4KBlocks()
 {
-    return static_cast<uint64_t>(atoi(m_config->Get("ILRD_NUMBER_OF_4K_BLOCKS")));
+    return static_cast<uint64_t>(atoi(m_config->Get("ILRD_NUMBER_OF_4K_BLOCKS").c_str()));
 }
 
 } // namespace ilrd

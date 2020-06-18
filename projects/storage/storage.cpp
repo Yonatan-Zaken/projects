@@ -6,7 +6,7 @@
 *******************************/
 
 #include <cstring>  // memcpy
-
+#include <iostream>
 #include "storage.hpp"
 #include "protocol_consts.hpp"
 

@@ -31,7 +31,7 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(DIR_DEBUG)libframework.so $(SRC_TEST) 
-	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lframework -lconfig -lscheduler -ltimer -lthread_pool -ldirmonitor -lboost_system -lboost_chrono -lboost_thread -pthread
+	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lframework -lconfig -lscheduler -ltimer -lthread_pool -ldirmonitor -lstorage -llogger -lboost_system -lboost_chrono -lboost_thread -pthread
 	
 #Release Out
 $(TARGET_RELEASE): $(DIR_RELEASE)libframework.so $(SRC_TEST)
@@ -39,7 +39,7 @@ $(TARGET_RELEASE): $(DIR_RELEASE)libframework.so $(SRC_TEST)
 
 #Debug SO
 $(DIR_DEBUG)libframework.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< $ $(LDFLAGS_DEPEND) -lconfig $(LDFLAGS_DEPEND) -ltimer $(LDFLAGS_DEPEND) -ldirmonitor $(LDFLAGS_DEPEND) -lreactor $(LDFLAGS_DEPEND) -lscheduler $(LDFLAGS_DEPEND) -lthread_pool
+	$(CC) $(CFLAGS) -shared -o $@ $< $ $(LDFLAGS_DEPEND) -lconfig $(LDFLAGS_DEPEND) -ltimer $(LDFLAGS_DEPEND) -ldirmonitor $(LDFLAGS_DEPEND) -lreactor $(LDFLAGS_DEPEND) -lscheduler $(LDFLAGS_DEPEND) -lthread_pool $(LDFLAGS_DEPEND) -lstorage $(LDFLAGS_DEPEND) -llogger
 	
 #Release SO
 $(DIR_RELEASE)libframework.so: $(OBJ_RELEASE)

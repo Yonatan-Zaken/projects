@@ -4,6 +4,8 @@
     26/05/2020
     ILRD - RD8081               
 *********************/
+#ifndef ILRD_RD8081_THREADPOOL_HPP
+#define ILRD_RD8081_THREADPOOL_HPP
 
 #include <vector>   // std::vector
 #include <queue>    // std::queue
@@ -135,5 +137,5 @@ private:
 
 } // namespace ilrd
 
-
+#endif // ILRD_RD8081_THREADPOOL_HPP
 

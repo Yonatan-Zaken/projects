@@ -62,7 +62,7 @@ private:
 template <class T>
 void Framework::Add(std::string key, T object)
 {
-    m_servicelocator.Add(key, object);
+    m_servicelocator.Add<T>(key, object);
 }
 
 /******************************************************************************/
@@ -70,7 +70,7 @@ void Framework::Add(std::string key, T object)
 template <class T>
 T Framework::Get(std::string key)
 {
-    return m_servicelocator.Get<std::string>(key);
+    return m_servicelocator.Get<T>(key);
 }
 
 } // namespace ilrd

@@ -13,7 +13,7 @@
 
 namespace ilrd
 {
-
+/*
 Minion::Minion(boost::shared_ptr<Storage> storage, const char* port):
     m_storage(storage),
     m_reactor(),
@@ -21,6 +21,16 @@ Minion::Minion(boost::shared_ptr<Storage> storage, const char* port):
     m_factory()
 {
     std::cout << "minion fd udp: " << GetFD() << "\n";
+}
+*/
+
+Minion::Minion(ConfigurationBase* config):
+    m_framework(config),
+    m_storage(m_framework.Get<boost::shared_ptr<Storage> >("storage")),
+    m_reactor(m_framework.Get<Reactor *>("reactor")),
+    m_connection(config->Get("ILRD_MINION_PORT").c_str(), *m_reactor, boost::bind(&Minion::Callback, this)),
+    m_factory()
+{
 }
 
 /*****************************************************************************/
@@ -31,7 +41,7 @@ void Minion::Callback()
     uint8_t type = request->GetOperation();
 
     std::cout << "request type: " << static_cast<int>(type) << "\n";
-    std::cout << "request block ID: " << ((request->GetBlockID())) << "\n";
+    std::cout << "request block ID: " << (request->GetBlockID()) << "\n";
     std::cout << "request ID: "  << htobe64(request->GetID()) << "\n";
 
     boost::shared_ptr<Command> command(m_factory.Fabricate(type, request));
@@ -46,7 +56,7 @@ void Minion::Callback()
 
 void Minion::MinionStart()
 {
-    m_reactor.Run();
+    m_framework.Start();
 }
 
 } // namespace ilrd

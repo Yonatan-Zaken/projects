@@ -32,12 +32,12 @@ test: $(TARGET_DEBUG)
 
 #Debug Out
 $(TARGET_DEBUG): $(SRC_TEST) 
-	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lmaster 
-	
+	$(CC) $(CFLAGS) -o $@ $(SRC_TEST) $(LDFLAGS_DEBUG) -lmaster $(LOGGER_FLAGS) -ldirmonitor -lthread_pool -lconfig -lframework -lboost_chrono $(LOGGER_FLAGS)
+
 #Debug SO
 $(DIR_DEBUG)libmaster.so: $(OBJ_DEBUG)
-	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEPEND) -lminioncommunicator $(LDFLAGS_DEPEND) -lNBDCommunicator  $(LDFLAGS_DEPEND) -llogger $(LOGGER_FLAGS)
-	  
+	$(CC) $(CFLAGS) -shared -o $@ $< $(LDFLAGS_DEPEND) -lminioncommunicator $(LDFLAGS_DEPEND) -lNBDCommunicator  $(LDFLAGS_DEPEND) -llogger $(LDFLAGS_DEPEND) -lframework 
+
 #Debug Object
 $(OBJ_DEBUG): $(SRC) $(INC)master.hpp     
 	$(CC) $(CFLAGS) -c -fpic -o $@ $<

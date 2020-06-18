@@ -13,19 +13,22 @@
 #include <boost/bind.hpp>
 
 #include "master.hpp"
+#include "protocol_consts.hpp"
 #include "logger_preprocessor.hpp"
 
 namespace ilrd
 {
 
-Master::Master(const char *dev, std::size_t nbdSize, const char *minionPort):
-    m_reactor(),
-    m_nbdCommunicator(dev, nbdSize, m_reactor),
-    m_minionCommunicator(minionPort)
+Master::Master(ConfigurationBase *config):
+    m_config(config),
+    m_framework(config),
+    m_reactor(m_framework.Get<Reactor *>("reactor")),
+    m_nbdCommunicator(m_config->Get("ILRD_NBD_PATH").c_str(), GetNumOfBlocks(), *m_reactor),
+    m_minionCommunicator(m_config->Get("ILRD_MINION_PORT").c_str())
 {
     m_nbdCommunicator.NBDSetUp();
-    m_reactor.InsertFD(m_nbdCommunicator.GetMasterFD(), FDListener::READ, boost::bind(&Master::RequestCallback, this));
-    m_reactor.InsertFD(m_minionCommunicator.GetMinionFD(), FDListener::READ, boost::bind(&Master::ReplyCallback, this));
+    m_reactor->InsertFD(m_nbdCommunicator.GetMasterFD(), FDListener::READ, boost::bind(&Master::RequestCallback, this));
+    m_reactor->InsertFD(m_minionCommunicator.GetMinionFD(), FDListener::READ, boost::bind(&Master::ReplyCallback, this));
 
     std::cout << "nbd fd" << m_nbdCommunicator.GetMasterFD() << "\n";
     std::cout << "minion fd" << m_minionCommunicator.GetMinionFD() << "\n";
@@ -41,7 +44,7 @@ Master::~Master() noexcept
 
 void Master::StartNBDCommunication()
 {
-    m_reactor.Run();
+    m_reactor->Run();
 }
 
 /******************************************************************************/
@@ -173,6 +176,27 @@ void Master::InitReplyToNBD(struct nbd_reply& reply, const char *data)
     memcpy(reply.handle, data + protocol::REQUEST_ID_OFFSET, sizeof(u_int64_t));
     reply.error = data[protocol::ERROR_CODE_OFFSET];
     std::cout << "reply error: " << reply.error << "\n";
+}
+
+/******************************************************************************/
+
+const char *Master::GetNBDPath() const
+{
+    return m_config->Get("ILRD_NBD_PATH").c_str();
+}
+
+/******************************************************************************/
+
+const char *Master::GetMinionPort() const
+{
+    return m_config->Get("ILRD_MINION_PORT").c_str();
+}
+
+/******************************************************************************/
+
+std::size_t Master::GetNumOfBlocks() const
+{
+    return atoi(m_config->Get("ILRD_NUMBER_OF_4K_BLOCKS").c_str());
 }
 
 } // namespace ilrd

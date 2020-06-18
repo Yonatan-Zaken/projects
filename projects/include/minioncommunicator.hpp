@@ -10,7 +10,6 @@
 #include <boost/function.hpp> 
 
 #include "reactor.hpp"
-#include "minion.hpp"
 #include "UDPClient.hpp"
 #include "utility.hpp"
 
