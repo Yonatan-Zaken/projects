@@ -180,20 +180,6 @@ void Master::InitReplyToNBD(struct nbd_reply& reply, const char *data)
 
 /******************************************************************************/
 
-const char *Master::GetNBDPath() const
-{
-    return m_config->Get("ILRD_NBD_PATH").c_str();
-}
-
-/******************************************************************************/
-
-const char *Master::GetMinionPort() const
-{
-    return m_config->Get("ILRD_MINION_PORT").c_str();
-}
-
-/******************************************************************************/
-
 std::size_t Master::GetNumOfBlocks() const
 {
     return atoi(m_config->Get("ILRD_NUMBER_OF_4K_BLOCKS").c_str());

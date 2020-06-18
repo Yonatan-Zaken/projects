@@ -40,8 +40,6 @@ private:
     void WriteAll(int fd, char *buffer, std::size_t count);
     void ReadAll(int fd, char *buffer, std::size_t count);
     void InitReplyToNBD(struct nbd_reply& reply, const char *data);
-    const char *GetNBDPath() const;
-    const char *GetMinionPort() const;
     std::size_t GetNumOfBlocks() const;
 };
 
