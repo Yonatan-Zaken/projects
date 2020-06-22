@@ -11,12 +11,12 @@
 
 namespace ilrd
 {
-
+    
 class DLOpener
 {
-public:	
-    explicit DLOpener(Dispatcher *dispatcher);	
-    //DLOpener(const DLOpener& other) = default;	
+public:
+    explicit DLOpener(Dispatcher *dispatcher);
+    //DLOpener(const DLOpener& other) = default;
     //DLOpener& operator=(const DLOpener& other) = default;	
     ~DLOpener() noexcept;
 private:

@@ -6,24 +6,21 @@
 *******************************/
 #include "DLOpener.hpp"
 
+namespace ilrd
+{
 
-    DLOpener()
+DLOpener::DLOpener()
 {
 
 }
 	
-    DLOpener(const DLOpener& other)
+DLOpener::~DLOpener() noexcept
 {
 
 }
-	
-    DLOpener& operator=(const DLOpener& other)
-{
 
-}
-	
-    ~DLOpener()
-{
 
-}
+
+} // namespace ilrd
+
 
