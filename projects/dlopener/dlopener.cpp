@@ -4,14 +4,15 @@
     CPP
     ILRD - RD8081               
 *******************************/
-#include "DLOpener.hpp"
+
+#include "dlopener.hpp"
 
 namespace ilrd
 {
 
-DLOpener::DLOpener()
+DLOpener::DLOpener(const char *pluginPath, Framework& framework):
+    
 {
-
 }
 	
 DLOpener::~DLOpener() noexcept
