@@ -7,24 +7,30 @@
 *******************************/
 #include "plugin_manager.hpp"
 
-
-    plugin_manager()
+namespace ilrd
 {
 
-}
-	
-    plugin_manager(const plugin_manager& other)
+PluginManager::PluginManager(const char *pluginPath, Framework& framework):
+    m_framework(framework)
 {
-
 }
-	
-    plugin_manager& operator=(const plugin_manager& other)
+
+void PluginManager::Add(std::string pluginName, plugin_t plugin)
 {
-
+    pluginList[pluginName] = plugin;
 }
-	
-    ~plugin_manager()
+
+void PluginManager::Remove(std::string pluginName)
 {
-
+    pluginList_t::iterator it = pluginList.find(pluginName);
+    if (it == pluginList.end())
+    {
+        throw PluginManager("invalid key for remove from map");
+    }
+    
+    pluginList.erase(it);
 }
+
+} // namespace ilrd
+
 

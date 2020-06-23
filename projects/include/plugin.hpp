@@ -36,6 +36,8 @@ private:
     void DLClose();
 };
 
+/******************************************************************************/
+
 class Plugin : private Uncopyable
 {
 public:

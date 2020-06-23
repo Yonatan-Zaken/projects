@@ -28,6 +28,14 @@ public:
     void Add(std::string pluginName, plugin_t plugin);
     void Remove(std::string pluginName);
 
+    class PluginManagerError: public std::invalid_argument
+    {
+    public:
+        explicit PluginManagerError(const char *error):
+            std::invalid_argument(error)
+        {}
+    };
+
 private:
     typedef std::map<std::string, plugin_t> pluginList_t;
     typedef std::pair<std::string, plugin_t> pluginElement_t;

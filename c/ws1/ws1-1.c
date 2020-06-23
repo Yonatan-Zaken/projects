@@ -20,7 +20,7 @@ float Pow_Ten(int num)
 	return result;
 }
 
-
+ssssssssssssssssssss
 int main()
 {
 return 0;

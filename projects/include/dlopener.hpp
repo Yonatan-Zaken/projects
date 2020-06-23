@@ -27,6 +27,9 @@ private:
     PluginManager m_pluginManager;
     Framework& m_framework;
     Observer<InotifyEvent> m_observer;
+
+    void UpdateFunc(InotifyEvent event);
+    void DeathFunc();
 };
 
 } // namespace ilrd

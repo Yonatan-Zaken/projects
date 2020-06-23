@@ -24,6 +24,18 @@ SharedObject::~SharedObject() noexcept
     DLClose();
 }
 
+template <class FUNC_PTR>
+FUNC_PTR SharedObject::GetFunc(const char *funcName)
+{
+    void *symbol;
+    if (nullptr == (symbol = dlsym(m_objectHandle, funcName)))
+    {
+        throw OpenError("fail to dlsym");
+    }
+
+    return static_cast<FUNC_PTR>(symbol);
+}
+
 /**************************** Private Definitions *****************************/
 
 void *SharedObject::DLOpen(const char *fileName, int flags)
@@ -47,24 +59,26 @@ void SharedObject::DLClose()
 
 /**************************** Plugin Definitions ******************************/
 
-Plugin()
+Plugin::Plugin(Framework& framework, const char *soFileName):
+    m_framework(framework),
+    m_sharedObject(soFileName, RTLD_LAZY),
+    m_initPlugin(m_sharedObject.GetFunc("InitPlugin")),
+    m_removePlugin(m_sharedObject.GetFunc("RemovePlugin"))
 {
-
 }
 
-Plugin(const Plugin& other)
+Plugin::~Plugin() noexcept
 {
-
 }
 
-Plugin& operator=(const Plugin& other)
+void Plugin::InitPlugin()
 {
-
+    m_initPlugin(m_framework);
 }
 
-~Plugin()
+void Plugin::RemovePlugin()
 {
-
+    m_removePlugin(m_framework);
 }
 
 } // namespace ilrd

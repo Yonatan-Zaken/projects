@@ -7,6 +7,7 @@
 #ifndef ILRD_RD8081_DIRMONITOR_HPP
 #define ILRD_RD8081_DIRMONITOR_HPP
 
+#include <string>           // std::string
 #include <sys/inotify.h>    // inotify_init
 #include <linux/limits.h>   // NAME_MAX
 
@@ -20,15 +21,15 @@ namespace ilrd
 struct InotifyEvent
 {
 public:
-    explicit InotifyEvent(const char *buffer);
+    //explicit InotifyEvent(const char *buffer);
     enum IdentifedOP
     {
         CREATE,
         DELETE
     };
-    
-private:
-    char name[NAME_MAX];
+
+    std::string name;
+    //char name[NAME_MAX];
     IdentifedOP operation;
 };
 

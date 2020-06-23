@@ -46,8 +46,8 @@ void DirMonitor::Callback()
 
 void DirMonitor::InitEventInfo(const struct inotify_event *event)
 {
-    memcpy(&m_event.name, event->name, event->len + 1);
-
+    //memcpy(&m_event.name, event->name, event->len + 1);
+    m_event.name = event->name;
     if (IN_DELETE == event->mask)
     {
         m_event.operation = InotifyEvent::DELETE;
