@@ -10,7 +10,6 @@
 #include "utility.hpp"
 #include "dispatcher.hpp"
 #include "dirmonitor.hpp"
-#include "framework.hpp"
 #include "plugin_manager.hpp"
 
 namespace ilrd
@@ -24,8 +23,9 @@ public:
     //DLOpener& operator=(const DLOpener& other) = default;	
     //~DLOpener() noexcept = default;
 private:
-    PluginManager m_pluginManager;
+    const char *m_pluginPath;
     Framework& m_framework;
+    PluginManager m_pluginManager;
     Observer<InotifyEvent> m_observer;
 
     void UpdateFunc(InotifyEvent event);

@@ -7,6 +7,7 @@
 #ifndef ILRD_RD8081_PLUGIN_HPP
 #define ILRD_RD8081_PLUGIN_HPP
 
+#include <dlfcn.h>   // dlsym
 #include <stdexcept> // std::runtime_error
 
 #include "utility.hpp"  // noexcept
@@ -35,6 +36,19 @@ private:
     void *DLOpen(const char *fileName, int flags);
     void DLClose();
 };
+
+template <class FUNC_PTR>
+FUNC_PTR SharedObject::GetFunc(const char *funcName)
+{
+    std::cout << "funcName dlsym: " << funcName << "\n";
+    FUNC_PTR handle;
+    if (nullptr == (*(void**)(&handle) = dlsym(m_objectHandle, funcName)))
+    {
+        throw OpenError("fail to dlsym");
+    }
+
+    return handle;
+}
 
 /******************************************************************************/
 

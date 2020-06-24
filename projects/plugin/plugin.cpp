@@ -24,23 +24,12 @@ SharedObject::~SharedObject() noexcept
     DLClose();
 }
 
-template <class FUNC_PTR>
-FUNC_PTR SharedObject::GetFunc(const char *funcName)
-{
-    void *symbol;
-    if (nullptr == (symbol = dlsym(m_objectHandle, funcName)))
-    {
-        throw OpenError("fail to dlsym");
-    }
-
-    return static_cast<FUNC_PTR>(symbol);
-}
-
 /**************************** Private Definitions *****************************/
 
 void *SharedObject::DLOpen(const char *fileName, int flags)
 {
     void *handle;
+    std::cout << "filename dlopen: " << fileName << "\n";
     if (nullptr == (handle = dlopen(fileName, flags)))
     {
         throw OpenError("fail to dlopen");
@@ -51,7 +40,7 @@ void *SharedObject::DLOpen(const char *fileName, int flags)
 
 void SharedObject::DLClose()
 {
-    if (nullptr == dlclose(m_objectHandle))
+    if (0 != dlclose(m_objectHandle))
     {
         // logger
     }
@@ -61,10 +50,11 @@ void SharedObject::DLClose()
 
 Plugin::Plugin(Framework& framework, const char *soFileName):
     m_framework(framework),
-    m_sharedObject(soFileName, RTLD_LAZY),
-    m_initPlugin(m_sharedObject.GetFunc("InitPlugin")),
-    m_removePlugin(m_sharedObject.GetFunc("RemovePlugin"))
+    m_sharedObject(soFileName, RTLD_NOW),
+    m_initPlugin(m_sharedObject.GetFunc<void(*)(Framework&)>("InitPlugin")),
+    m_removePlugin(m_sharedObject.GetFunc<void(*)(Framework&)>("RemovePlugin"))
 {
+    InitPlugin();
 }
 
 Plugin::~Plugin() noexcept

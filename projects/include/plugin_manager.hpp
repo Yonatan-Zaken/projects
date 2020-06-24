@@ -11,7 +11,6 @@
 #include <stdexcept> // std::runtime_error
 
 #include "utility.hpp"  // noexcept
-#include "framework.hpp" // Framework&
 #include "plugin.hpp" // Plugin
 
 namespace ilrd
@@ -41,7 +40,7 @@ private:
     typedef std::pair<std::string, plugin_t> pluginElement_t;
 
     Framework& m_framework;
-    pluginList_t pluginList;
+    pluginList_t m_pluginList;
 };
 
 } // namespace ilrd
