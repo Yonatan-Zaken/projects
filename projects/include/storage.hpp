@@ -24,22 +24,23 @@ public:
 
     virtual uint8_t Read(uint8_t *buffer, uint64_t blockNum) = 0;
     virtual uint8_t Write(const uint8_t *data, uint64_t blockNum) = 0;
-}; // class Storage
+}; 
 
 /******************************************************************************/
 
 class HeapStorage: public Storage
 {
 public:
-    HeapStorage(uint64_t numOfBlocks);
+    HeapStorage(std::string storagePath);
     virtual ~HeapStorage() noexcept;
     virtual uint8_t Read(uint8_t *buffer, uint64_t blockNum);
     virtual uint8_t Write(const uint8_t *data, uint64_t blockNum);
     
 private:
-    uint8_t *m_storage;
-    uint64_t m_numOfBlocks;
-}; // class HeapStorage
+    //uint8_t *m_storage;
+    //uint64_t m_numOfBlocks;
+    std::string m_storagePath;
+}; 
 
 } //namespace ilrd
 

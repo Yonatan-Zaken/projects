@@ -17,6 +17,7 @@ int main()
 	setenv("ILRD_MINION_PORT", "4443", 0);
 	setenv("ILRD_DIRMONITOR_PATH", "/home/student/dir1", 0);
 	setenv("ILRD_NUMBER_OF_4K_BLOCKS", "4000", 0);
+	setenv("ILRD_STORAGE_PATH", "/home/student/storage/", 0);
 
 	Minion minion(&c1);
 	minion.MinionStart();

@@ -15,7 +15,7 @@ Framework::Framework(ConfigurationBase *config):
     m_reactor(),
     m_threadpool(GetNumThreads(), GetThreadpoolTimeout()),
     m_dirmonitor(m_reactor, GetPath().c_str()),
-    m_storage(new HeapStorage(GetNumOf4KBlocks())),
+    m_storage(new HeapStorage(GetStoragePath())),
     m_scheduler(m_reactor),
     m_servicelocator()
 {
@@ -69,6 +69,14 @@ Framework::seconds_t Framework::GetThreadpoolTimeout()
 uint64_t Framework::GetNumOf4KBlocks()
 {
     return static_cast<uint64_t>(atoi(m_config->Get("ILRD_NUMBER_OF_4K_BLOCKS").c_str()));
+}
+
+/******************************************************************************/
+
+std::string Framework::GetStoragePath()
+{
+    std::string path(m_config->Get("ILRD_STORAGE_PATH").c_str());
+    return path;
 }
 
 } // namespace ilrd

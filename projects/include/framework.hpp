@@ -52,6 +52,7 @@ private:
     ServiceLocator<std::string> m_servicelocator;
 
     std::string GetPath();
+    std::string GetStoragePath();
     int GetNumThreads();
     seconds_t GetThreadpoolTimeout();
     uint64_t GetNumOf4KBlocks();
