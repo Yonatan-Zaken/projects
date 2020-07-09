@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "rcstring.hpp"
-
+/*
 #define NORMAL "\033[0m"
 #define RED "\033[;031m"
 #define GREEN "\033[;032m"
@@ -22,7 +22,7 @@
         printf(NORMAL);\
     }\
 }
-
+*/
 using namespace ilrd;
 
 static void CtorTest()

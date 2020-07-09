@@ -147,7 +147,7 @@ std::ostream& operator<<(std::ostream& os, const RCString& rcstr) noexcept
     return (os << rcstr.GetCStr());
 }
 
-std::istream& operator>>(std::istream& is, RCString& rcstr)
+std::istream& RCString::operator>>(std::istream& is, RCString& rcstr)
 {
     char *buffer = new char[RCString::RCSTR_BUFFER_SIZE];
     is >> buffer;

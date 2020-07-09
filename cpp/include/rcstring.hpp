@@ -32,7 +32,9 @@ public:
     RCString& operator+=(const RCString& other); 
     CharProxy operator[](std::size_t index);
     char operator[](std::size_t index) const noexcept;
-    
+
+    static std::istream& operator>>(std::istream& is, RCString& rcstr);    
+
     static const size_t RCSTR_BUFFER_SIZE = 75;
     
 private:
@@ -55,7 +57,7 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& os, const RCString& rcstr) noexcept;
-std::istream& operator>>(std::istream& is, RCString& rcstr);
+//std::istream& operator>>(std::istream& is, RCString& rcstr);
 bool operator==(const RCString& lhs, const RCString& rhs) noexcept;
 bool operator!=(const RCString& lhs, const RCString& rhs) noexcept;
 bool operator>(const RCString& lhs, const RCString& rhs) noexcept;
