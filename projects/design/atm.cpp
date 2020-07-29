@@ -50,7 +50,7 @@ public:
         
     }
 
-    virtual void Dispense();
+    virtual void Dispense(int ammount);
 
 protected:
     ChangeDispenser *m_next;
@@ -62,7 +62,7 @@ class Dispense200: public ChangeDispenser
 public:
     void Dispense(int counter)
     {
-        
+        std::cout << "Number of 200 bills: " << counter << "\n";
     }
 };  
 
@@ -71,7 +71,7 @@ class Dispense100: public ChangeDispenser
 public:
     void Dispense(int counter)
     {
-
+        std::cout << "Number of 100 bills: " << counter << "\n";
     }
 };
 
@@ -80,7 +80,7 @@ class Dispense50: public ChangeDispenser
 public:
     void Dispense(int counter)
     {
-
+        std::cout << "Number of 50 bills: " << counter << "\n";
     }
 };
 
@@ -89,9 +89,12 @@ public:
 class Context
 {
 public:
-    explicit Context():
-        m_currState(Singleton<WaitForCard>::GetInstance())
+    class ATMState;
+    //class WaitForCard;
+    explicit Context()
+    //:    m_currState(Singleton<WaitForCard>::GetInstance())
     {
+        m_currState = Singleton<WaitForCard>::GetInstance();
     }
 
     void SetState(ATMState* state)
@@ -118,7 +121,7 @@ public:
 private:
     ATMState *m_currState;
     std::map<int, int> m_clientMap;
-}
+};
 
 class ATMState
 {
