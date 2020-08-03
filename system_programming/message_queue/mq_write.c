@@ -49,9 +49,9 @@ int main (int argc, char *argv[])
         if (-1 == msgsnd(msqid, &buffer, msg_buf_size, 0)) 
         {
             perror("msgsnd");
-            return 1;    
-        } 
+            return 1;
+        }
     }
-    
+
     return 0;
 }
