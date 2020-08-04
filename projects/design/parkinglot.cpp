@@ -115,11 +115,13 @@ public:
     int GetSpotID() const;
     int GetNextFree() const;
     int GetSpotNum() const;
+    int GetFloor() const;
 
     void SetSpotSize(SPOT_SIZE size);
     void SetSpotID(int ID);
     void SetNextFree(int nextID);
     void SetSpotNum(int num);
+    void SetFloor(int floor);
 
 private:
     Vehicle *m_parkedVehicle;
@@ -127,6 +129,7 @@ private:
     int m_spotID;
     int m_nextFree;
     int m_spotNum;
+    int m_floor;
 };
 
 ParkingSpot::ParkingSpot(): 
@@ -164,6 +167,11 @@ int ParkingSpot::GetSpotNum() const
     return m_spotNum;
 }
 
+int ParkingSpot::GetFloor() const
+{
+    return m_floor;
+}
+
 void ParkingSpot::SetSpotID(int ID)
 {
     m_spotID = ID;
@@ -182,6 +190,11 @@ void ParkingSpot::SetSpotSize(SPOT_SIZE size)
 void ParkingSpot::SetSpotNum(int num)
 {
     m_spotNum = num;
+}
+
+void ParkingSpot::SetFloor(int floor)
+{
+    m_floor = floor;
 }
 
 /******************************************************************************/
@@ -326,6 +339,7 @@ void ParkingFloor::ExitVehicle(Vehicle *vehicle, int spotIndex)
         m_nextMotorcycleFree = spotIndex;
     }
     
+
 }
 
 bool ParkingFloor::IsFull(SPOT_SIZE size)
@@ -348,8 +362,6 @@ bool ParkingFloor::IsFull(SPOT_SIZE size)
     return false;
 }
 
-
-
 /******************************************************************************/
 
 class ParkingLot
@@ -363,6 +375,7 @@ public:
     
 private:
     std::vector<ParkingFloor> m_floors;
+    ParkingAdmin m_admin;
     int m_capacity;
 };
 
@@ -385,8 +398,8 @@ void ParkingLot::ParkVehicle(Vehicle *vehicle)
     {
         if (!it->IsFull(vehicle->GetSize()))
         {
-            it->ParkVehicle(vehicle);
-
+            ParkingSpot& spot = it->ParkVehicle(vehicle);
+            m_admin.Register(vehicle->GetLicenseNum(), spot);
             return;
         }
     }
@@ -396,8 +409,11 @@ void ParkingLot::ParkVehicle(Vehicle *vehicle)
 
 void ParkingLot::ExitVehicle(Vehicle *vehicle)
 {
-
+    ParkingSpot& spot = m_admin.GetVehicleSpot(vehicle->GetLicenseNum());
+    m_floors[spot.GetFloor()].ExitVehicle(vehicle, spot.GetSpotID());
+    m_admin.Unregister(vehicle->GetLicenseNum());
 }
+
 
 /******************************************************************************/
 
